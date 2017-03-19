@@ -5,7 +5,12 @@ import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Properties;
+
+import dao.DAOTablaUsuarios;
+import vos.ListaUsuarios;
+import vos.Usuario;
 
 public class FestivAndesMaster {
 
@@ -87,5 +92,8 @@ public class FestivAndesMaster {
 	
 	// Transacciones
 	
-	
+	public ListaUsuarios darUsuarios() {
+		ArrayList<Usuario> usuarios;
+		DAOTablaUsuarios daoUsuarios = new DAOTablaUsuarios();
+	}
 }

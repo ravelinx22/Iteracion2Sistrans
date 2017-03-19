@@ -50,10 +50,10 @@ public class Funcion {
 	 * @param boletasDisponibles - Boletas disponibles actualmente para la funcion
 	 * @param idReserva - Id de la reserva del sitio en donde se va a realizar la funcion
 	 */
-	public Funcion(@JsonProperty(value="id") int id, @JsonProperty(value="fecha") Date fecha, @JsonProperty(value="hora_inicio") int horaInicion, @JsonProperty(value="boletas_disponibles") int boletasDisponibles,@JsonProperty(value="boletas_totales") int boletasTotales, @JsonProperty(value="id_reserva") int idReserva) {
+	public Funcion(@JsonProperty(value="id") int id, @JsonProperty(value="fecha") Date fecha, @JsonProperty(value="hora_inicio") int horaInicio, @JsonProperty(value="boletas_disponibles") int boletasDisponibles,@JsonProperty(value="boletas_totales") int boletasTotales, @JsonProperty(value="id_reserva") int idReserva) {
 		this.id = id;
 		this.fecha = fecha;
-		this.horaInicio = horaInicion;
+		this.horaInicio = horaInicio;
 		this.boletasDisponibles = boletasDisponibles;
 		this.boletasTotales = boletasTotales;
 		this.idReserva = idReserva;
