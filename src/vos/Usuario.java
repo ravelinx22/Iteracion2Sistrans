@@ -33,6 +33,12 @@ public class Usuario {
 	 */
 	@JsonProperty(value="rol")
 	private String rol;
+	
+	/**
+	 * Id de la preferencia del usuario.
+	 */
+	@JsonProperty(value="id_preferencia")
+	private int idPreferencia;
 
 	/**
 	 * Constructor de la clase usuario.
@@ -41,14 +47,16 @@ public class Usuario {
 	 * @param identificacion - Identificacion del usuario
 	 * @param correo - Correo del usuario
 	 * @param rol - Rol del usuario
+	 * @param idPreferencia - Id de la preferencia del usuario.
 	 */
-	public Usuario(@JsonProperty(value="id") int id,@JsonProperty(value="nombre") String nombre,@JsonProperty(value="identificacion") int identificacion,@JsonProperty(value="correo") String correo,@JsonProperty(value="rol") String rol) {
+	public Usuario(@JsonProperty(value="id") int id,@JsonProperty(value="nombre") String nombre,@JsonProperty(value="identificacion") int identificacion,@JsonProperty(value="correo") String correo,@JsonProperty(value="rol") String rol, @JsonProperty(value="id_preferencia") int idPreferencia ) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.identificacion = identificacion;
 		this.correo = correo;
 		this.rol = rol;
+		this.idPreferencia = idPreferencia;
 	}
 
 	/**
@@ -129,5 +137,21 @@ public class Usuario {
 	 */
 	public void setRol(String rol) {
 		this.rol = rol;
+	}
+
+	/**
+	 * Da el id de la preferencia del usuario.
+	 * @return Id de la prefenrencia del usuario
+	 */
+	public int getIdPreferencia() {
+		return idPreferencia;
+	}
+
+	/**
+	 * Modifica el id de la preferencia del usuario
+	 * @param idPreferencia Nuevo id de la preferencia del usuario.
+	 */
+	public void setIdPreferencia(int idPreferencia) {
+		this.idPreferencia = idPreferencia;
 	}
 }
