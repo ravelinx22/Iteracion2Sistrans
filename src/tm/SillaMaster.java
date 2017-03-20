@@ -129,7 +129,7 @@ public class SillaMaster {
 	 * @param silla Silla a agregar
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public void addSillas(Silla silla) throws Exception {
+	public void addSilla(Silla silla) throws Exception {
 		DAOTablaSillas daoSillas = new DAOTablaSillas();
 		try {
 			this.conn = darConexion();

@@ -1,14 +1,22 @@
 package rest;
 
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import tm.CompañiaMaster;
 import tm.LocalidadMaster;
+import vos.Compañia;
 import vos.ListaLocalidades;
+import vos.Localidad;
 
 @Path("localidades")
 public class LocalidadServices extends FestivAndesServices {
@@ -45,5 +53,62 @@ public class LocalidadServices extends FestivAndesServices {
 		}
 		
 		return Response.status(200).entity(localidades).build();
+	}
+	
+	/**
+	 * Agrega una localidad a la base de datos
+	 * @param localidad Localidad a agregar
+	 * @return Resultado de intentar agregar la localidad
+	 */
+	@PUT
+	@Path("/localidad")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addCompañia(Localidad localidad) {
+		LocalidadMaster tm = new LocalidadMaster(getPath());
+		try {
+			tm.addLocalidad(localidad);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(localidad).build();
+	}
+	
+	/**
+	 * Actualiza una localidad de la base de datos.
+	 * @param localidad Localidad con los nuevos datos.
+	 * @return Resultado de intentar actualizar la localidad
+	 */
+	@POST
+	@Path("/localidad")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateLocalidad(Localidad localidad) {
+		LocalidadMaster tm = new LocalidadMaster(getPath());
+		try {
+			tm.updateLocalidad(localidad);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(localidad).build();
+	}
+	
+	/**
+	 * Elimina una localidad de la base de datos
+	 * @param localidad Localidad a eliminar de la base de datos.
+	 * @return Resultado de intentar eliminar la localidad
+	 */
+	@DELETE
+	@Path("/localidad")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteLocalidad(Localidad localidad) {
+		LocalidadMaster tm = new LocalidadMaster(getPath());
+		try {
+			tm.deleteLocalidad(localidad);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(localidad).build();
 	}
 }

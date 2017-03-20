@@ -127,7 +127,7 @@ public class FuncionMaster {
 	 * @param funcion Funcion a agregar
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public void addEspectaculo(Funcion funcion) throws Exception {
+	public void addFuncion(Funcion funcion) throws Exception {
 		DAOTablaFunciones daoFunciones = new DAOTablaFunciones();
 		try {
 			this.conn = darConexion();
