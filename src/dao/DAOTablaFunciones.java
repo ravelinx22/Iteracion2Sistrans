@@ -115,18 +115,18 @@ public class DAOTablaFunciones {
 	 */
 	public void updateFuncion(Funcion funcion) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.FUNCIONES SET ";
-		sql += "fecha='" + funcion.getFecha() + "',";
-		sql += "hora_inicio=" + funcion.getHoraInicio() + ",";
-		sql += "boletas_disponibles=" + funcion.getBoletasDisponibles() + ",";
-		sql += "boletas_totales=" + funcion.getBoletasTotales() + ",";
-		sql += "id_reserva=" + funcion.getIdReserva();
-		sql += "id_espectaculo=" + funcion.getIdEspectaculo();
-		sql += " WHERE id = " + funcion.getId();
+		String sql = "UPDATE FESTIVANDES.FUNCIONES SET fecha = ?, hora_inicio = ?, boletas_disponibles = ?, boletas_totales = ?, id_reserva = ?, id_espectaculo = ? WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setDate(1, funcion.getFecha());
+		prepStmt.setInt(2, funcion.getHoraInicio());
+		prepStmt.setInt(3, funcion.getBoletasDisponibles());
+		prepStmt.setInt(4, funcion.getBoletasTotales());
+		prepStmt.setInt(5, funcion.getIdReserva());
+		prepStmt.setInt(6, funcion.getIdEspectaculo());
+		prepStmt.setInt(7, funcion.getId());
 
 		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}

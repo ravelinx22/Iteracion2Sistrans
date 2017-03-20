@@ -108,15 +108,14 @@ public class DAOTablaReserva {
 	 */
 	public void updateReserva(Reserva reserva) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.RESERVAS SET ";
-		sql += "fecha='" + reserva.getFecha() + "',";
-		sql += "hora_reserva=" +reserva.getHoraReserva() + ",";
-		sql += "id_sitio=" + reserva.getIdSitio();
-		sql += " WHERE id = " + reserva.getId();
+		String sql = "UPDATE FESTIVANDES.RESERVAS SET fecha = ?, hora_reserva = ?, id_sitio = ? WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setDate(1, reserva.getFecha());
+		prepStmt.setInt(2, reserva.getHoraReserva());
+		prepStmt.setInt(3, reserva.getIdSitio());
+		prepStmt.setInt(4, reserva.getId());
 
 		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}

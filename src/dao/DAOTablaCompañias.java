@@ -108,16 +108,15 @@ public class DAOTablaCompañias {
 	 */
 	public void updateCompañia(Compañia compañia) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.COMPAÑIAS SET ";
-		sql += "nombre='" + compañia.getNombre() + "',";
-		sql += "pais='" + compañia.getPais() + "',";
-		sql += "pagina_web='" +compañia.getPaginaWeb() + "',";
-		sql += "nombre_representante='" +compañia.getNombreRepresentante();
-		sql += " WHERE id = " + compañia.getId();
+		String sql = "UPDATE FESTIVANDES.COMPAÑIAS SET nombre = ?,pais = ?, pagina_web = ?, nombre_representante = ? WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setString(1, compañia.getNombre());
+		prepStmt.setString(2, compañia.getPais());
+		prepStmt.setString(3, compañia.getPaginaWeb());
+		prepStmt.setString(4, compañia.getNombreRepresentante());
+		prepStmt.setInt(5, compañia.getId());
 
 		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}

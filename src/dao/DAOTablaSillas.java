@@ -108,17 +108,17 @@ public class DAOTablaSillas {
 	 */
 	public void updateSilla(Silla silla) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.SILLAS SET ";
-		sql += "numero_silla=" + silla.getNumeroSilla() + ",";
-		sql += "numero_fila=" + silla.getNumeroFila() + ",";
-		sql += "ocupado=" + silla.estaOcupado() + ",";
-		sql += "id_localidad=" + silla.getIdLocalidad();
+		String sql = "UPDATE FESTIVANDES.SILLAS SET numero_silla = ?, numero_fila = ?, ocupado = ?, id_localidad = ? WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
-		sql += " WHERE id = " + silla.getId();
+		prepStmt.setInt(1, silla.getNumeroSilla());
+		prepStmt.setInt(2, silla.getNumeroFila());
+		prepStmt.setBoolean(3, silla.estaOcupado());
+		prepStmt.setInt(4, silla.getIdLocalidad());
+		prepStmt.setInt(5, silla.getId());
 
 		System.out.println("SQL stmt:" + sql);
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}

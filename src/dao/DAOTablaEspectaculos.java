@@ -118,19 +118,20 @@ public class DAOTablaEspectaculos {
 	 */
 	public void updateEspectaculo(Espectaculo espec) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.ESPECTACULOS SET ";
-		sql += "nombre='" + espec.getNombre() + "',";
-		sql += "duracion=" + espec.getDuracion() + ",";
-		sql += "idioma='" + espec.getIdioma() + "',";
-		sql += "costo=" + espec.getCosto() + ",";
-		sql += "descripcion='" + espec.getDescripcion() + "',";
-		sql += "publico_objetivo='" + espec.getPublicoObjetivo() + "',";
-		sql += "genero='" + espec.getGenero();
-		sql += " WHERE id = " + espec.getId();
+		String sql = "UPDATE FESTIVANDES.ESPECTACULOS SET nombre = ?, duracion = ?, idioma = ?, costo = ?, descripcion = ? , publico_objetivo = ?, genero = ? WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setString(1, espec.getNombre());
+		prepStmt.setInt(2, espec.getDuracion());
+		prepStmt.setString(3, espec.getIdioma());
+		prepStmt.setDouble(4, espec.getCosto());
+		prepStmt.setString(5, espec.getDescripcion());
+		prepStmt.setString(6, espec.getPublicoObjetivo());
+		prepStmt.setString(7, espec.getGenero());
+		prepStmt.setInt(8, espec.getId());
 
 		System.out.println("SQL stmt:" + sql);
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}

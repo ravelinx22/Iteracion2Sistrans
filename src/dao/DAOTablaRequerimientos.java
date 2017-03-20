@@ -105,13 +105,14 @@ public class DAOTablaRequerimientos {
 	 */
 	public void updateRequerimiento(RequerimientoTecnico requerimiento) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.REQUERIMIENTOS_TECNICOS SET ";
-		sql += "nombre='" + requerimiento.getNombre();
-		sql += " WHERE id = " + requerimiento.getId();
+		String sql = "UPDATE FESTIVANDES.REQUERIMIENTOS_TECNICOS SET nombre = ? WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setString(1, requerimiento.getNombre());
+		prepStmt.setInt(2, requerimiento.getId());
 
 		System.out.println("SQL stmt:" + sql);
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}

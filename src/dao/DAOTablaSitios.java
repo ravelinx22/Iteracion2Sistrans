@@ -125,24 +125,24 @@ public class DAOTablaSitios {
 	 */
 	public void updateSitio(Sitio sitio) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.SITIOS SET ";
-		sql += "nombre='" + sitio.getNombre() + "',";
-		sql += "capacidad=" + sitio.getCapacidad() + ",";
-		sql += "apto_discapacitados=" + sitio.esAptoDiscapacitados() + ",";
-		sql += "tipo_silleteria='" + sitio.getTipoSilleteria() + "',";
-		sql += "tiene_cobertura=" + sitio.tieneCobertura() + ",";
-		sql += "disponible_lunes=" + sitio.isDisponibleLunes() + ",";
-		sql += "disponible_martes=" + sitio.isDisponibleMartes() + ",";
-		sql += "disponible_miercoles=" + sitio.isDisponibleMiercoles() + ",";
-		sql += "disponible_jueves=" + sitio.isDisponibleJueves() + ",";
-		sql += "disponible_viernes=" + sitio.isDisponibleViernes() + ",";
-		sql += "disponible_sabados=" + sitio.isDisponibleSabado() + ",";
-		sql += "disponible_domingos=" + sitio.isDisponibleDomingo();
-		sql += " WHERE id = " + sitio.getId();
+		String sql = "UPDATE FESTIVANDES.SITIOS SET nombre = ?, capacidad = ?, apto_discapacitados = ?, tipo_silleteria = ?, tiene_cobertura = ?, disponible_lunes = ?, disponible_martes = ?, disponible_miercoles = ?, disponible_jueves = ?, disponible_viernes = ?, disponible_sabados = ?, disponible_domingos = ? WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setString(1, sitio.getNombre());
+		prepStmt.setInt(2, sitio.getCapacidad());
+		prepStmt.setBoolean(3, sitio.esAptoDiscapacitados());
+		prepStmt.setString(4, sitio.getTipoSilleteria());
+		prepStmt.setBoolean(5, sitio.tieneCobertura());
+		prepStmt.setBoolean(6, sitio.isDisponibleLunes());
+		prepStmt.setBoolean(7, sitio.isDisponibleMartes());
+		prepStmt.setBoolean(8, sitio.isDisponibleMiercoles());
+		prepStmt.setBoolean(9, sitio.isDisponibleJueves());
+		prepStmt.setBoolean(10, sitio.isDisponibleViernes());
+		prepStmt.setBoolean(11, sitio.isDisponibleSabado());
+		prepStmt.setBoolean(12, sitio.isDisponibleDomingo());
+		prepStmt.setInt(13, sitio.getId());
 
 		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}

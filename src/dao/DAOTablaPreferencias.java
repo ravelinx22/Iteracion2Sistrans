@@ -102,13 +102,13 @@ public class DAOTablaPreferencias {
 	 */
 	public void updatePreferencia(Preferencia preferencia) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.PREFERENCIAS SET ";
-		sql += "nombre='" + preferencia.getNombre();
-		sql += " WHERE id = " + preferencia.getId();
+		String sql = "UPDATE FESTIVANDES.PREFERENCIAS SET nombre = ? WHERE id = ? ";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setString(1, preferencia.getNombre());
+		prepStmt.setInt(2, preferencia.getId());
 
 		System.out.println("SQL stmt:" + sql);
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}

@@ -110,17 +110,17 @@ public class DAOTablaUsuarios {
 	 */
 	public void updateUsuario(Usuario usuario) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.USUARIOS SET ";
-		sql += "nombre='" + usuario.getNombre() + "',";
-		sql += "identificacion=" + usuario.getIdentificacion() + ",";
-		sql += "correo='" + usuario.getCorreo() + "',";
-		sql += "rol='" + usuario.getRol() + "',";
-		sql += "id_preferencia=" + usuario.getIdPreferencia();
-		sql += " WHERE id = " + usuario.getId();
+		String sql = "UPDATE FESTIVANDES.USUARIOS SET nombre = ?, identificacion = ?, correo = ?, rol = ?, id_preferencia = ? WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setString(1, usuario.getNombre());
+		prepStmt.setInt(2, usuario.getIdentificacion());
+		prepStmt.setString(3, usuario.getCorreo());
+		prepStmt.setString(4, usuario.getRol());
+		prepStmt.setInt(5, usuario.getIdPreferencia());
+		prepStmt.setInt(6, usuario.getId());
 
 		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}

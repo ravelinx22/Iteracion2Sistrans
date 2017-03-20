@@ -105,15 +105,15 @@ public class DAOTablaLocalidades {
 	 */
 	public void updateLocalidad(Localidad localidad) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.LOCALIDADES SET ";
-		sql += "nombre='" + localidad.getNombre() + "',";
-		sql += "capacidad=" + localidad.getCapacidad() + ",";
-		sql += "id_sitio=" + localidad.getIdSitio();
-		sql += " WHERE id = " + localidad.getId();
+		String sql = "UPDATE FESTIVANDES.LOCALIDADES SET nombre = ?, capacidad = ?, id_sitio = ? WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setString(1, localidad.getNombre());
+		prepStmt.setInt(2, localidad.getCapacidad());
+		prepStmt.setInt(3, localidad.getIdSitio());
+		prepStmt.setInt(4, localidad.getId());
 
 		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
