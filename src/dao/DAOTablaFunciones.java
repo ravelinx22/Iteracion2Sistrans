@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import vos.Espectaculo;
 import vos.Funcion;
 
 public class DAOTablaFunciones {

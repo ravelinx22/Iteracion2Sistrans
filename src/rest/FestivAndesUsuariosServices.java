@@ -5,7 +5,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import tm.FestivAndesMaster;
+import tm.UsuarioMaster;
 import tm.VideoAndesMaster;
 import vos.ListaUsuarios;
 
@@ -29,7 +29,7 @@ public class FestivAndesUsuariosServices extends FestivAndesServices {
 	// Rest
 	
 	public Response getUsuarios() {
-		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+		UsuarioMaster tm = new UsuarioMaster(getPath());
 		ListaUsuarios usuarios;
 		try {
 			

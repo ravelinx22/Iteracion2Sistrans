@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import vos.Compañia;
 
-public class DAOCompañias {
+public class DAOTablaCompañias {
 	/**
 	 * Arraylist de recursos que se usan para la ejecución de sentencias SQL
 	 */
@@ -22,7 +22,7 @@ public class DAOCompañias {
 	/**
 	 * Constructor DAO espectaculos.
 	 */
-	public DAOCompañias() {
+	public DAOTablaCompañias() {
 		recursos = new ArrayList<Object>();
 	}
 
