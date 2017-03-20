@@ -83,13 +83,12 @@ public class DAOTablaPreferencias {
 	 */
 	public void addPreferencia(Preferencia preferencia) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.PREFERENCIAS VALUES (";
-		sql += preferencia.getId() + ",'";
-		sql += preferencia.getNombre() + "')";
+		String sql = "INSERT INTO FESTIVANDES.PREFERENCIAS VALUES (?,?)";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, preferencia.getId());
+		prepStmt.setString(2, preferencia.getNombre());
 
 		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 

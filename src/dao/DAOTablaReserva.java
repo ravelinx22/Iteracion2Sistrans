@@ -86,15 +86,15 @@ public class DAOTablaReserva {
 	 */
 	public void addReserva(Reserva reserva) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.RESERVAS VALUES (";
-		sql += reserva.getId() + ",'";
-		sql += reserva.getFecha() + "',";
-		sql += reserva.getHoraReserva() + ",";
-		sql += reserva.getIdSitio() + ")";
+		String sql = "INSERT INTO FESTIVANDES.RESERVAS VALUES (?,?,?,?)";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		
+		prepStmt.setInt(1, reserva.getId());
+		prepStmt.setDate(2, reserva.getFecha());
+		prepStmt.setInt(3, reserva.getHoraReserva());
+		prepStmt.setInt(4, reserva.getIdSitio());
 
 		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 

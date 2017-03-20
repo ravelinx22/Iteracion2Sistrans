@@ -93,24 +93,25 @@ public class DAOTablaSitios {
 	 */
 	public void addSitio(Sitio sitio) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.SITIOS VALUES (";
-		sql += sitio.getId() + ",'";
-		sql += sitio.getNombre() + "',";
-		sql += sitio.getCapacidad() + ",";
-		sql += sitio.esAptoDiscapacitados() + ",'";
-		sql += sitio.getTipoSilleteria() + "',";
-		sql += sitio.tieneCobertura() + ",";
-		sql += sitio.isDisponibleLunes() + ",";
-		sql += sitio.isDisponibleMartes() + ",";
-		sql += sitio.isDisponibleMiercoles() + ",";
-		sql += sitio.isDisponibleJueves() + ",";
-		sql += sitio.isDisponibleViernes() + ",";
-		sql += sitio.isDisponibleSabado() + ",";
-		sql += sitio.isDisponibleDomingo() + ")";
+		String sql = "INSERT INTO FESTIVANDES.SITIOS VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setInt(1, sitio.getId());
+		prepStmt.setString(2, sitio.getNombre());
+		prepStmt.setInt(3, sitio.getCapacidad());
+		prepStmt.setBoolean(4, sitio.esAptoDiscapacitados());
+		prepStmt.setString(5, sitio.getTipoSilleteria());
+		prepStmt.setBoolean(6, sitio.tieneCobertura());
+		prepStmt.setBoolean(7, sitio.isDisponibleLunes());
+		prepStmt.setBoolean(8, sitio.isDisponibleMartes());
+		prepStmt.setBoolean(9, sitio.isDisponibleMiercoles());
+		prepStmt.setBoolean(10, sitio.isDisponibleJueves());
+		prepStmt.setBoolean(11, sitio.isDisponibleViernes());
+		prepStmt.setBoolean(12, sitio.isDisponibleSabado());
+		prepStmt.setBoolean(13, sitio.isDisponibleDomingo());
 
 		System.out.println("SQL stmt:" + sql);
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 

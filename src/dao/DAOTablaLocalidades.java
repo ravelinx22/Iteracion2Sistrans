@@ -84,15 +84,14 @@ public class DAOTablaLocalidades {
 	 */
 	public void addLocalidad(Localidad localidad) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.LOCALIDADES VALUES (";
-		sql += localidad.getId() + ",'";
-		sql += localidad.getNombre() + "',";
-		sql += localidad.getCapacidad() + ",";
-		sql += localidad.getIdSitio() + ")";
-
-		System.out.println("SQL stmt:" + sql);
-
+		String sql = "INSERT INTO FESTIVANDES.LOCALIDADES VALUES (?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, localidad.getId());
+		prepStmt.setString(2, localidad.getNombre());
+		prepStmt.setInt(3, localidad.getCapacidad());
+		prepStmt.setInt(4, localidad.getIdSitio());
+		
+		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 

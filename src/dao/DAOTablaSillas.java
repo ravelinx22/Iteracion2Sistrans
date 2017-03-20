@@ -85,16 +85,16 @@ public class DAOTablaSillas {
 	 */
 	public void addSilla(Silla silla) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.SILLAS VALUES (";
-		sql += silla.getId() + ",";
-		sql += silla.getNumeroSilla() + ",";
-		sql += silla.getNumeroFila() + ",";
-		sql += silla.estaOcupado() + ",";
-		sql += silla.getIdLocalidad() + ")";
+		String sql = "INSERT INTO FESTIVANDES.SILLAS VALUES (?,?,?,?,?)";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setInt(1, silla.getId());
+		prepStmt.setInt(2, silla.getNumeroSilla());
+		prepStmt.setInt(3, silla.getNumeroFila());
+		prepStmt.setBoolean(4, silla.estaOcupado());
+		prepStmt.setInt(5, silla.getIdLocalidad());
 
 		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 

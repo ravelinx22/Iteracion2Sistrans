@@ -86,16 +86,15 @@ public class DAOTablaCompañias {
 	 */
 	public void addCompañia(Compañia compañia) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.COMPAÑIAS VALUES (";
-		sql += compañia.getId() + ",'";
-		sql += compañia.getNombre()+ "','";
-		sql += compañia.getPais() + "','";
-		sql += compañia.getPaginaWeb()+ "','";
-		sql += compañia.getNombreRepresentante() + "')";
-
-		System.out.println("SQL stmt:" + sql);
-
+		String sql = "INSERT INTO FESTIVANDES.COMPAÑIAS VALUES (?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, compañia.getId());
+		prepStmt.setString(2, compañia.getNombre());
+		prepStmt.setString(3, compañia.getPais());
+		prepStmt.setString(4, compañia.getPaginaWeb());
+		prepStmt.setString(5, compañia.getNombreRepresentante());
+		
+		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 

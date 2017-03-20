@@ -86,17 +86,18 @@ public class DAOTablaUsuarios {
 	 * @throws Exception Si hay error conviertiendo los datos a usuario.
 	 */
 	public void addUsuario(Usuario usuario) throws SQLException, Exception {
-		String sql = "INSERT INTO FESTIVANDES.USUARIOS VALUES (";
-		sql += usuario.getId() + ",'";
-		sql += usuario.getNombre() + "',";
-		sql += usuario.getIdentificacion() + ",'";
-		sql += usuario.getCorreo() + "','";
-		sql += usuario.getRol() + "',";
-		sql += usuario.getIdPreferencia() + ")";
+		String sql = "INSERT INTO FESTIVANDES.USUARIOS VALUES (?,?,?,?,?,?)";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setInt(1, usuario.getId());
+		prepStmt.setString(2, usuario.getNombre());
+		prepStmt.setInt(3, usuario.getIdentificacion());
+		prepStmt.setString(4, usuario.getCorreo());
+		prepStmt.setString(5, usuario.getRol());
+		prepStmt.setInt(6, usuario.getIdPreferencia());
 
 		System.out.println("SQL stmt:" + sql);
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}

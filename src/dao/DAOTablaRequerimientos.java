@@ -83,13 +83,15 @@ public class DAOTablaRequerimientos {
 	 */
 	public void addRequerimiento(RequerimientoTecnico requerimiento) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.REQUERIMIENTOS_TECNICOS VALUES (";
-		sql += requerimiento.getId() + ",'";
-		sql += requerimiento.getNombre() + "')";
+		String sql = "INSERT INTO FESTIVANDES.REQUERIMIENTOS_TECNICOS VALUES (?,?)";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		
+		prepStmt.setInt(1, requerimiento.getId());
+		prepStmt.setString(2, requerimiento.getNombre());
 
 		System.out.println("SQL stmt:" + sql);
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 

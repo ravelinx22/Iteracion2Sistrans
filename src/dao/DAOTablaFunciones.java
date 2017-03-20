@@ -90,18 +90,18 @@ public class DAOTablaFunciones {
 	 */
 	public void addFuncion(Funcion funcion) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.FUNCIONES VALUES (";
-		sql += funcion.getId() + ",'";
-		sql += funcion.getFecha() + "',";
-		sql += funcion.getHoraInicio() + ",";
-		sql += funcion.getBoletasDisponibles() + ",";
-		sql += funcion.getBoletasTotales() + ",";
-		sql += funcion.getIdReserva() + ",";
-		sql += funcion.getIdEspectaculo() + ")";
-
+		String sql = "INSERT INTO FESTIVANDES.FUNCIONES VALUES (?,?,?,?,?,?,?)";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		
+		prepStmt.setInt(1, funcion.getId());
+		prepStmt.setDate(2, funcion.getFecha());
+		prepStmt.setInt(3, funcion.getHoraInicio());
+		prepStmt.setInt(4, funcion.getBoletasDisponibles());
+		prepStmt.setInt(5, funcion.getBoletasTotales());
+		prepStmt.setInt(6, funcion.getIdReserva());
+		prepStmt.setInt(7, funcion.getIdEspectaculo());
 		System.out.println("SQL stmt:" + sql);
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 

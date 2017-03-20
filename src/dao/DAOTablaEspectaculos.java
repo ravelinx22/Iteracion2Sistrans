@@ -91,19 +91,20 @@ public class DAOTablaEspectaculos {
 	 */
 	public void addEspectaculo(Espectaculo espec) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.ESPECTACULOS VALUES (";
-		sql += espec.getId() + ",'";
-		sql += espec.getNombre() + "',";
-		sql += espec.getDuracion() + ",'";
-		sql += espec.getIdioma() + "',";
-		sql += espec.getCosto() + ",'";
-		sql += espec.getDescripcion() + "','";
-		sql += espec.getPublicoObjetivo() + "','";
-		sql += espec.getGenero() + "')";
+		String sql = "INSERT INTO FESTIVANDES.ESPECTACULOS VALUES (?,?,?,?,?,?,?,?)";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setInt(1, espec.getId());
+		prepStmt.setString(2, espec.getNombre());
+		prepStmt.setInt(3, espec.getDuracion());
+		prepStmt.setString(4, espec.getIdioma());
+		prepStmt.setDouble(5, espec.getCosto());
+		prepStmt.setString(6, espec.getDescripcion());
+		prepStmt.setString(7, espec.getPublicoObjetivo());
+		prepStmt.setString(8, espec.getGenero());
 
 		System.out.println("SQL stmt:" + sql);
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 
