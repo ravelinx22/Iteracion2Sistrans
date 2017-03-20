@@ -75,8 +75,9 @@ public class DAOTablaFunciones {
 			int boletasDisponibles = Integer.parseInt(rs.getString("BOLETAS_DISPONIBLES"));
 			int boletasTotales = Integer.parseInt(rs.getString("BOLETAS_TOTALES"));
 			int idReserva = Integer.parseInt(rs.getString("ID_RESERVA"));
+			int idEspectaculo = Integer.parseInt(rs.getString("ID_ESPECTACULO"));
 
-			funciones.add(new Funcion(id, fecha, horaInicio, boletasDisponibles, boletasTotales, idReserva));
+			funciones.add(new Funcion(id, fecha, horaInicio, boletasDisponibles, boletasTotales, idReserva, idEspectaculo));
 		}
 		return funciones;
 	}
@@ -95,7 +96,8 @@ public class DAOTablaFunciones {
 		sql += funcion.getHoraInicio() + ",";
 		sql += funcion.getBoletasDisponibles() + ",";
 		sql += funcion.getBoletasTotales() + ",";
-		sql += funcion.getIdReserva() + ")";
+		sql += funcion.getIdReserva() + ",";
+		sql += funcion.getIdEspectaculo() + ")";
 
 		System.out.println("SQL stmt:" + sql);
 
@@ -119,6 +121,7 @@ public class DAOTablaFunciones {
 		sql += "boletas_disponibles=" + funcion.getBoletasDisponibles() + ",";
 		sql += "boletas_totales=" + funcion.getBoletasTotales() + ",";
 		sql += "id_reserva=" + funcion.getIdReserva();
+		sql += "id_espectaculo=" + funcion.getIdEspectaculo();
 		sql += " WHERE id = " + funcion.getId();
 
 		System.out.println("SQL stmt:" + sql);

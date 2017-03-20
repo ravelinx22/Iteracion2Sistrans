@@ -43,6 +43,13 @@ public class Funcion {
 	private int boletasTotales;
 	
 	/**
+	 * Id del espectaculo al que pertenece la funcion
+	 */
+	@JsonProperty(value="id_espectaculo")
+	private int idEspectaculo;
+
+	
+	/**
 	 * Constructor de la clase funcion
 	 * @param id - Id de la funcion
 	 * @param fecha - Fecha en la que se realiza la funcion
@@ -50,13 +57,14 @@ public class Funcion {
 	 * @param boletasDisponibles - Boletas disponibles actualmente para la funcion
 	 * @param idReserva - Id de la reserva del sitio en donde se va a realizar la funcion
 	 */
-	public Funcion(@JsonProperty(value="id") int id, @JsonProperty(value="fecha") Date fecha, @JsonProperty(value="hora_inicio") int horaInicio, @JsonProperty(value="boletas_disponibles") int boletasDisponibles,@JsonProperty(value="boletas_totales") int boletasTotales, @JsonProperty(value="id_reserva") int idReserva) {
+	public Funcion(@JsonProperty(value="id") int id, @JsonProperty(value="fecha") Date fecha, @JsonProperty(value="hora_inicio") int horaInicio, @JsonProperty(value="boletas_disponibles") int boletasDisponibles,@JsonProperty(value="boletas_totales") int boletasTotales, @JsonProperty(value="id_reserva") int idReserva, @JsonProperty(value="id_espectaculo") int idEspectaculo) {
 		this.id = id;
 		this.fecha = fecha;
 		this.horaInicio = horaInicio;
 		this.boletasDisponibles = boletasDisponibles;
 		this.boletasTotales = boletasTotales;
 		this.idReserva = idReserva;
+		this.idEspectaculo = idEspectaculo;
 	}
 
 	/**
@@ -153,5 +161,21 @@ public class Funcion {
 	 */
 	public void setIdReserva(int idReserva) {
 		this.idReserva = idReserva;
+	}
+	
+	/**
+	 * Da el id del espectaculo al que pertenece la funcion
+	 * @return Id del espectaculo al que pertenece la funcion
+	 */
+	public int getIdEspectaculo() {
+		return idEspectaculo;
+	}
+
+	/**
+	 * Modifica el id del espectaculo al que pertence la funcion
+	 * @param idEspectaculo Nuevo valor del id espectaculo
+	 */
+	public void setIdEspectaculo(int idEspectaculo) {
+		this.idEspectaculo = idEspectaculo;
 	}
 }
