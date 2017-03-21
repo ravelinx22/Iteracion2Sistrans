@@ -61,7 +61,7 @@ public class DAOTablaEspectaculos {
 	public ArrayList<Espectaculo> darEspectaculos() throws SQLException, Exception {
 		ArrayList<Espectaculo> espectaculos = new ArrayList<Espectaculo>();
 
-		String sql = "SELECT * FROM FESTIVANDES.ESPECTACULOS";
+		String sql = "SELECT * FROM ISIS2304B221710.ESPECTACULOS";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -91,7 +91,7 @@ public class DAOTablaEspectaculos {
 	 */
 	public void addEspectaculo(Espectaculo espec) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.ESPECTACULOS VALUES (?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.ESPECTACULOS VALUES (?,?,?,?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setInt(1, espec.getId());
@@ -118,7 +118,7 @@ public class DAOTablaEspectaculos {
 	 */
 	public void updateEspectaculo(Espectaculo espec) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.ESPECTACULOS SET nombre = ?, duracion = ?, idioma = ?, costo = ?, descripcion = ? , publico_objetivo = ?, genero = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.ESPECTACULOS SET nombre = ?, duracion = ?, idioma = ?, costo = ?, descripcion = ? , publico_objetivo = ?, genero = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setString(1, espec.getNombre());
@@ -144,7 +144,7 @@ public class DAOTablaEspectaculos {
 	 */
 	public void deleteEspectaculo(Espectaculo espec) throws SQLException, Exception {
 
-		String sql = "DELETE FROM FESTIVANDES.ESPECTACULOS";
+		String sql = "DELETE FROM ISIS2304B221710.ESPECTACULOS";
 		sql += " WHERE id = " + espec.getId();
 
 		System.out.println("SQL stmt:" + sql);

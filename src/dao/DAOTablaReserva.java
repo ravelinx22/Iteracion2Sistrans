@@ -60,7 +60,7 @@ public class DAOTablaReserva {
 	public ArrayList<Reserva> darReservas() throws SQLException, Exception {
 		ArrayList<Reserva> reservas = new ArrayList<Reserva>();
 
-		String sql = "SELECT * FROM FESTIVANDES.RESERVAS";
+		String sql = "SELECT * FROM ISIS2304B221710.RESERVAS";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -86,7 +86,7 @@ public class DAOTablaReserva {
 	 */
 	public void addReserva(Reserva reserva) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.RESERVAS VALUES (?,?,?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.RESERVAS VALUES (?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		
 		prepStmt.setInt(1, reserva.getId());
@@ -108,7 +108,7 @@ public class DAOTablaReserva {
 	 */
 	public void updateReserva(Reserva reserva) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.RESERVAS SET fecha = ?, hora_reserva = ?, id_sitio = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.RESERVAS SET fecha = ?, hora_reserva = ?, id_sitio = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setDate(1, reserva.getFecha());
 		prepStmt.setInt(2, reserva.getHoraReserva());
@@ -128,7 +128,7 @@ public class DAOTablaReserva {
 	 */
 	public void deleteReserva(Reserva reserva) throws SQLException, Exception {
 
-		String sql = "DELETE FROM FESTIVANDES.RESERVAS";
+		String sql = "DELETE FROM ISIS2304B221710.RESERVAS";
 		sql += " WHERE id = " + reserva.getId();
 
 		System.out.println("SQL stmt:" + sql);

@@ -38,7 +38,7 @@ public class Usuario {
 	 * Id de la preferencia del usuario.
 	 */
 	@JsonProperty(value="id_preferencia")
-	private int idPreferencia;
+	private int id_preferencia;
 
 	/**
 	 * Constructor de la clase usuario.
@@ -56,7 +56,7 @@ public class Usuario {
 		this.identificacion = identificacion;
 		this.correo = correo;
 		this.rol = rol;
-		this.idPreferencia = idPreferencia;
+		this.id_preferencia = idPreferencia;
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class Usuario {
 	 * @return Id de la prefenrencia del usuario
 	 */
 	public int getIdPreferencia() {
-		return idPreferencia;
+		return id_preferencia;
 	}
 
 	/**
@@ -152,6 +152,6 @@ public class Usuario {
 	 * @param idPreferencia Nuevo id de la preferencia del usuario.
 	 */
 	public void setIdPreferencia(int idPreferencia) {
-		this.idPreferencia = idPreferencia;
+		this.id_preferencia = idPreferencia;
 	}
 }

@@ -60,7 +60,7 @@ public class DAOTablaUsuarios {
 	public ArrayList<Usuario> darUsuarios() throws SQLException, Exception {
 		ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
 
-		String sql = "SELECT * FROM FESTIVANDES.USUARIOS";
+		String sql = "SELECT * FROM ISIS2304B221710.USUARIOS";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -86,7 +86,7 @@ public class DAOTablaUsuarios {
 	 * @throws Exception Si hay error conviertiendo los datos a usuario.
 	 */
 	public void addUsuario(Usuario usuario) throws SQLException, Exception {
-		String sql = "INSERT INTO FESTIVANDES.USUARIOS VALUES (?,?,?,?,?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.USUARIOS VALUES (?,?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setInt(1, usuario.getId());
@@ -110,7 +110,7 @@ public class DAOTablaUsuarios {
 	 */
 	public void updateUsuario(Usuario usuario) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.USUARIOS SET nombre = ?, identificacion = ?, correo = ?, rol = ?, id_preferencia = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.USUARIOS SET nombre = ?, identificacion = ?, correo = ?, rol = ?, id_preferencia = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setString(1, usuario.getNombre());
@@ -133,7 +133,7 @@ public class DAOTablaUsuarios {
 	 */
 	public void deleteUsuario(Usuario usuario) throws SQLException, Exception {
 
-		String sql = "DELETE FROM FESTIVANDES.USUARIOS";
+		String sql = "DELETE FROM ISIS2304B221710.USUARIOS";
 		sql += " WHERE id = " + usuario.getId();
 
 		System.out.println("SQL stmt:" + sql);

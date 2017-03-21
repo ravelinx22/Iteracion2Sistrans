@@ -23,13 +23,13 @@ public class Reserva {
 	 * Hora de la reserva
 	 */
 	@JsonProperty(value="hora_reserva")
-	private int horaReserva;
+	private int hora_reserva;
 	
 	/**
 	 * Id del sitio al que se le realiza la reserva
 	 */
 	@JsonProperty(value="id_sitio")
-	private int idSitio;
+	private int id_sitio;
 	
 	/**
 	 * Constructor de la clase reserva.
@@ -41,8 +41,8 @@ public class Reserva {
 	public Reserva(@JsonProperty(value="id") int id, @JsonProperty(value="fecha") Date fecha, @JsonProperty(value="hora_reserva") int horaReserva, @JsonProperty(value="id_sitio") int idSitio) {
 		this.id = id;
 		this.fecha = fecha;
-		this.horaReserva = horaReserva;
-		this.idSitio = idSitio;
+		this.hora_reserva = horaReserva;
+		this.id_sitio = idSitio;
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class Reserva {
 	 * @return Hora de la reserva.
 	 */
 	public int getHoraReserva() {
-		return horaReserva;
+		return hora_reserva;
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class Reserva {
 	 * @param horaReserva - Nuevo valor de la hora de la reserva.
 	 */
 	public void setHoraReserva(int horaReserva) {
-		this.horaReserva = horaReserva;
+		this.hora_reserva = horaReserva;
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class Reserva {
 	 * @return Id del sitio donde se realiza la reserva.
 	 */
 	public int getIdSitio() {
-		return idSitio;
+		return id_sitio;
 	}
 
 	/**
@@ -106,6 +106,6 @@ public class Reserva {
 	 * @param idSitio - Nuevo valor del id del sitio donde se realiza la reseva.
 	 */
 	public void setIdSitio(int idSitio) {
-		this.idSitio = idSitio;
+		this.id_sitio = idSitio;
 	}
 }

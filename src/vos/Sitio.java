@@ -26,61 +26,61 @@ public class Sitio {
 	 * Disponibilidad del sitio para discapacitados
 	 */
 	@JsonProperty(value="apto_discapacitados")
-	private boolean aptoDiscapacitados;
+	private boolean apto_discapacitados;
 
 	/**
 	 * Tipo de silleteria del sitio.
 	 */
 	@JsonProperty(value="tipo_silleteria")
-	private String tipoSilleteria;
+	private String tipo_silleteria;
 
 	/**
 	 * Verifica si el sitio tiene cobertura
 	 */
 	@JsonProperty(value="tiene_cobertura")
-	private boolean tieneCobertura;
+	private boolean tiene_cobertura;
 
 	/**
 	 * Disponibilidad de sitio para el lunes
 	 */
 	@JsonProperty(value="disponible_lunes")
-	private boolean disponibleLunes;
+	private boolean disponible_lunes;
 
 	/**
 	 * Disponibilidad de sitio para el martes
 	 */
 	@JsonProperty(value="disponible_martes")
-	private boolean disponibleMartes;
+	private boolean disponible_martes;
 
 	/**
 	 * Disponibilidad de sitio para el miercoles
 	 */
 	@JsonProperty(value="disponible_miercoles")
-	private boolean disponibleMiercoles;
+	private boolean disponible_miercoles;
 
 	/**
 	 * Disponibilidad de sitio para el jueves
 	 */
 	@JsonProperty(value="disponible_jueves")
-	private boolean disponibleJueves;
+	private boolean disponible_jueves;
 
 	/**
 	 * Disponibilidad de sitio para el viernes
 	 */
 	@JsonProperty(value="disponible_viernes")
-	private boolean disponibleViernes;
+	private boolean disponible_viernes;
 
 	/**
 	 * Disponibilidad de sitio para el sabado
 	 */
 	@JsonProperty(value="disponible_sabado")
-	private boolean disponibleSabado;
+	private boolean disponible_sabado;
 
 	/**
 	 * Disponibilidad de sitio para el domingo
 	 */
 	@JsonProperty(value="disponible_domingo")
-	private boolean disponibleDomingo;
+	private boolean disponible_domingo;
 
 	/**
 	 * Constructor de la clase sitio.
@@ -102,16 +102,16 @@ public class Sitio {
 		this.id = id;
 		this.nombre = nombre;
 		this.capacidad = capacidad;
-		this.aptoDiscapacitados = aptoDiscapacitados;
-		this.tipoSilleteria = tipoSilleteria;
-		this.tieneCobertura = tieneCobertura;
-		this.disponibleLunes = disponibleLunes;
-		this.disponibleMartes = disponibleMartes;
-		this.disponibleMiercoles = disponibleMiercoles;
-		this.disponibleJueves = disponibleJueves;
-		this.disponibleViernes = disponibleViernes;
-		this.disponibleSabado = disponibleSabado;
-		this.disponibleDomingo = disponibleDomingo;
+		this.apto_discapacitados = aptoDiscapacitados;
+		this.tipo_silleteria = tipoSilleteria;
+		this.tiene_cobertura = tieneCobertura;
+		this.disponible_lunes = disponibleLunes;
+		this.disponible_martes = disponibleMartes;
+		this.disponible_miercoles = disponibleMiercoles;
+		this.disponible_jueves = disponibleJueves;
+		this.disponible_viernes = disponibleViernes;
+		this.disponible_sabado = disponibleSabado;
+		this.disponible_domingo = disponibleDomingo;
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class Sitio {
 	 * @return Disponibilidad del sitio para discapacitados.
 	 */
 	public boolean esAptoDiscapacitados() {
-		return aptoDiscapacitados;
+		return apto_discapacitados;
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class Sitio {
 	 * @param aptoDiscapacitados - Nuevo disponibilidad del sitio para los discapacitados.
 	 */
 	public void setAptoDiscapacitados(boolean aptoDiscapacitados) {
-		this.aptoDiscapacitados = aptoDiscapacitados;
+		this.apto_discapacitados = aptoDiscapacitados;
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class Sitio {
 	 * @return Tipo de silleteria del sitio
 	 */
 	public String getTipoSilleteria() {
-		return tipoSilleteria;
+		return tipo_silleteria;
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class Sitio {
 	 * @param Tipo de silleteria del sitio.
 	 */
 	public void setTipoSilleteria(String tipoSilleteria) {
-		this.tipoSilleteria = tipoSilleteria;
+		this.tipo_silleteria = tipoSilleteria;
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class Sitio {
 	 * @return True si el sitio tiene cobertura, false de lo contrario.
 	 */
 	public boolean tieneCobertura() {
-		return tieneCobertura;
+		return tiene_cobertura;
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class Sitio {
 	 * @param Nuevo valor que verifica si el sitio tiene cobertura
 	 */
 	public void setTieneCobertura(boolean tieneCobertura) {
-		this.tieneCobertura = tieneCobertura;
+		this.tiene_cobertura = tieneCobertura;
 	}
 
 	/**
@@ -215,7 +215,7 @@ public class Sitio {
 	 * @return Disponibilidad del sitio los lunes
 	 */
 	public boolean isDisponibleLunes() {
-		return disponibleLunes;
+		return disponible_lunes;
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class Sitio {
 	 * @param disponibleLunes Nueva disponibilidad del sitio los lunes
 	 */
 	public void setDisponibleLunes(boolean disponibleLunes) {
-		this.disponibleLunes = disponibleLunes;
+		this.disponible_lunes = disponibleLunes;
 	}
 
 	/**
@@ -231,7 +231,7 @@ public class Sitio {
 	 * @return Disponibilidad del sitio los martes.
 	 */
 	public boolean isDisponibleMartes() {
-		return disponibleMartes;
+		return disponible_martes;
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class Sitio {
 	 * @param disponibleMartes Nueva disponibilidad del sitio los martes
 	 */
 	public void setDisponibleMartes(boolean disponibleMartes) {
-		this.disponibleMartes = disponibleMartes;
+		this.disponible_martes = disponibleMartes;
 	}
 
 	/**
@@ -247,15 +247,15 @@ public class Sitio {
 	 * @return Disponibilidad del sitio los miercoles
 	 */
 	public boolean isDisponibleMiercoles() {
-		return disponibleMiercoles;
+		return disponible_miercoles;
 	}
 
 	/**
 	 * Modifica la disponibilidad del sitio los jueves.
-	 * @param disponibleJueves Nueva disponibilidad del sitio los jueves
+	 * @param disponible_jueves Nueva disponibilidad del sitio los jueves
 	 */
 	public void setDisponibleMiercoles(boolean disponibleMiercoles) {
-		this.disponibleMiercoles = disponibleMiercoles;
+		this.disponible_miercoles = disponibleMiercoles;
 	}
 
 	/**
@@ -263,7 +263,7 @@ public class Sitio {
 	 * @return Disponibilidad del sitio los jueves
 	 */
 	public boolean isDisponibleJueves() {
-		return disponibleJueves;
+		return disponible_jueves;
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class Sitio {
 	 * @param disponibleJueves Nueva disponibilidad del sitio los jueves
 	 */
 	public void setDisponibleJueves(boolean disponibleJueves) {
-		this.disponibleJueves = disponibleJueves;
+		this.disponible_jueves = disponibleJueves;
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class Sitio {
 	 * @return Disponibilidad del sitio los viernes
 	 */
 	public boolean isDisponibleViernes() {
-		return disponibleViernes;
+		return disponible_viernes;
 	}
 
 	/**
@@ -287,7 +287,7 @@ public class Sitio {
 	 * @param disponibleViernes Nueva disponibilidad del sitio los viernes
 	 */
 	public void setDisponibleViernes(boolean disponibleViernes) {
-		this.disponibleViernes = disponibleViernes;
+		this.disponible_viernes = disponibleViernes;
 	}
 
 	/**
@@ -295,7 +295,7 @@ public class Sitio {
 	 * @return Disponibilidad del sitio los sabados
 	 */
 	public boolean isDisponibleSabado() {
-		return disponibleSabado;
+		return disponible_sabado;
 	}
 
 	/**
@@ -303,7 +303,7 @@ public class Sitio {
 	 * @param disponibleSabado Nueva disponibilidad del sitio los sabados
 	 */
 	public void setDisponibleSabado(boolean disponibleSabado) {
-		this.disponibleSabado = disponibleSabado;
+		this.disponible_sabado = disponibleSabado;
 	}
 
 	/**
@@ -311,7 +311,7 @@ public class Sitio {
 	 * @return Disponibilidad del sitio los domingos.
 	 */
 	public boolean isDisponibleDomingo() {
-		return disponibleDomingo;
+		return disponible_domingo;
 	}
 
 	/**
@@ -319,6 +319,6 @@ public class Sitio {
 	 * @param disponibleDomingo Nueva disponibilidad del sitio los domingos
 	 */
 	public void setDisponibleDomingo(boolean disponibleDomingo) {
-		this.disponibleDomingo = disponibleDomingo;
+		this.disponible_domingo = disponibleDomingo;
 	}
 }

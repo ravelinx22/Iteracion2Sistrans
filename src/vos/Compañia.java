@@ -26,13 +26,13 @@ public class Compañia {
 	 * Pagina web de la compañia
 	 */
 	@JsonProperty(value="pagina_web")
-	private String paginaWeb;
+	private String pagina_web;
 	
 	/**
 	 * Nombre del representante de la compañia.
 	 */
 	@JsonProperty(value="nombre_representante")
-	private String nombreRepresentante;
+	private String nombre_representante;
 
 	/**
 	 * Constructor de la clase compañia.
@@ -47,8 +47,8 @@ public class Compañia {
 		this.id = id;
 		this.nombre = nombre;
 		this.pais = pais;
-		this.paginaWeb = paginaWeb;
-		this.nombreRepresentante = nombreRepresentante;
+		this.pagina_web = paginaWeb;
+		this.nombre_representante = nombreRepresentante;
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class Compañia {
 	 * @return Pagina web de la compañia
 	 */
 	public String getPaginaWeb() {
-		return paginaWeb;
+		return pagina_web;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class Compañia {
 	 * @param Nueva pagina web de la compañia
 	 */
 	public void setPaginaWeb(String paginaWeb) {
-		this.paginaWeb = paginaWeb;
+		this.pagina_web = paginaWeb;
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class Compañia {
 	 * @return Nombre del representante de la compañia
 	 */
 	public String getNombreRepresentante() {
-		return nombreRepresentante;
+		return nombre_representante;
 	}
 
 	/**
@@ -128,6 +128,6 @@ public class Compañia {
 	 * @param nombreRepresentante Nuevo nombre del representante 
 	 */
 	public void setNombreRepresentante(String nombreRepresentante) {
-		this.nombreRepresentante = nombreRepresentante;
+		this.nombre_representante = nombreRepresentante;
 	}
 }

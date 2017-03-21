@@ -14,13 +14,13 @@ public class Silla {
 	 * Numero de la silla
 	 */
 	@JsonProperty(value="numero_silla")
-	private int numeroSilla;
+	private int numero_silla;
 	
 	/**
 	 * Numero de la fila donde esta la silla
 	 */
 	@JsonProperty(value="numero_fila")
-	private int numeroFila;
+	private int numero_fila;
 	
 	/**
 	 * Estado de la silla
@@ -32,7 +32,7 @@ public class Silla {
 	 * Id de la localidad a la que pertenece la silla
 	 */
 	@JsonProperty(value="id_localidad")
-	private int idLocalidad;
+	private int id_localidad;
 
 	/**
 	 * Constructor de la silla.
@@ -45,10 +45,10 @@ public class Silla {
 	public Silla(@JsonProperty(value="id") int id,@JsonProperty(value="numero_silla") int numeroSilla,@JsonProperty(value="numero_fila") int numeroFila,@JsonProperty(value="ocupado") boolean ocupado,@JsonProperty(value="id_localidad") int idLocalidad) {
 		super();
 		this.id = id;
-		this.numeroSilla = numeroSilla;
-		this.numeroFila = numeroFila;
+		this.numero_silla = numeroSilla;
+		this.numero_fila = numeroFila;
 		this.ocupado = ocupado;
-		this.idLocalidad = idLocalidad;
+		this.id_localidad = idLocalidad;
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class Silla {
 	 * @return Numero de la silla
 	 */
 	public int getNumeroSilla() {
-		return numeroSilla;
+		return numero_silla;
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class Silla {
 	 * @param numeroSilla Nuevo valor del numero de la silla.
 	 */
 	public void setNumeroSilla(int numeroSilla) {
-		this.numeroSilla = numeroSilla;
+		this.numero_silla = numeroSilla;
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class Silla {
 	 * @return Numero de la fila donde esta la silla.
 	 */
 	public int getNumeroFila() {
-		return numeroFila;
+		return numero_fila;
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class Silla {
 	 * @param numeroFila Nuevo valor del numero de la fila donde esta la silla.
 	 */
 	public void setNumeroFila(int numeroFila) {
-		this.numeroFila = numeroFila;
+		this.numero_fila = numeroFila;
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class Silla {
 	 * @return Id de la localidad donde esta la silla.
 	 */
 	public int getIdLocalidad() {
-		return idLocalidad;
+		return id_localidad;
 	}
 
 	/**
@@ -128,6 +128,6 @@ public class Silla {
 	 * @param idLocalidad Nuevo id de la localidad donde esta la silla.
 	 */
 	public void setIdLocalidad(int idLocalidad) {
-		this.idLocalidad = idLocalidad;
+		this.id_localidad = idLocalidad;
 	}
 }

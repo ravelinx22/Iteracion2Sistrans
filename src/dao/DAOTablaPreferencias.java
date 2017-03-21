@@ -60,7 +60,7 @@ public class DAOTablaPreferencias {
 	public ArrayList<Preferencia> darPreferencias() throws SQLException, Exception {
 		ArrayList<Preferencia> preferencias = new ArrayList<Preferencia>();
 
-		String sql = "SELECT * FROM FESTIVANDES.PREFERENCIAS";
+		String sql = "SELECT * FROM ISIS2304B221710.PREFERENCIAS";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -83,7 +83,7 @@ public class DAOTablaPreferencias {
 	 */
 	public void addPreferencia(Preferencia preferencia) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.PREFERENCIAS VALUES (?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.PREFERENCIAS VALUES (?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setInt(1, preferencia.getId());
 		prepStmt.setString(2, preferencia.getNombre());
@@ -102,7 +102,7 @@ public class DAOTablaPreferencias {
 	 */
 	public void updatePreferencia(Preferencia preferencia) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.PREFERENCIAS SET nombre = ? WHERE id = ? ";
+		String sql = "UPDATE ISIS2304B221710.PREFERENCIAS SET nombre = ? WHERE id = ? ";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setString(1, preferencia.getNombre());
 		prepStmt.setInt(2, preferencia.getId());
@@ -121,7 +121,7 @@ public class DAOTablaPreferencias {
 	 */
 	public void deletePreferencia(Preferencia preferencia) throws SQLException, Exception {
 
-		String sql = "DELETE FROM FESTIVANDES.PREFERENCIAS";
+		String sql = "DELETE FROM ISIS2304B221710.PREFERENCIAS";
 		sql += " WHERE id = " + preferencia.getId();
 
 		System.out.println("SQL stmt:" + sql);

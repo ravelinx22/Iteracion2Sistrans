@@ -26,7 +26,7 @@ public class Localidad {
 	 * Id del sitio al que pertenece la localidad
 	 */
 	@JsonProperty(value="id_sitio")
-	private int idSitio;
+	private int id_sitio;
 
 	/**
 	 * Constructor de la clase localidad.
@@ -40,7 +40,7 @@ public class Localidad {
 		this.id = id;
 		this.capacidad = capacidad;
 		this.nombre = nombre;
-		this.idSitio = idSitio;
+		this.id_sitio = idSitio;
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class Localidad {
 	 * @return Da el id del sitio de la localidad
 	 */
 	public int getIdSitio() {
-		return idSitio;
+		return id_sitio;
 	}
 
 	/**
@@ -104,6 +104,6 @@ public class Localidad {
 	 * @param idSitio Nuevo id del sitio al que pertenece la localidad.
 	 */
 	public void setIdSitio(int idSitio) {
-		this.idSitio = idSitio;
+		this.id_sitio = idSitio;
 	}
 }

@@ -12,10 +12,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import tm.CompañiaMaster;
-import tm.VideoAndesMaster;
 import vos.Compañia;
 import vos.ListaCompañias;
-import vos.Video;
 
 @Path("compañias")
 public class CompañiaServices extends FestivAndesServices {

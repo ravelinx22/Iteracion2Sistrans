@@ -60,7 +60,7 @@ public class DAOTablaRequerimientos {
 	public ArrayList<RequerimientoTecnico> darRequerimientos() throws SQLException, Exception {
 		ArrayList<RequerimientoTecnico> requerimientos = new ArrayList<RequerimientoTecnico>();
 
-		String sql = "SELECT * FROM FESTIVANDES.REQUERIMIENTOS_TECNICOS";
+		String sql = "SELECT * FROM ISIS2304B221710.REQUERIMIENTOS_TECNICOS";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -83,7 +83,7 @@ public class DAOTablaRequerimientos {
 	 */
 	public void addRequerimiento(RequerimientoTecnico requerimiento) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.REQUERIMIENTOS_TECNICOS VALUES (?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.REQUERIMIENTOS_TECNICOS VALUES (?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		
 		prepStmt.setInt(1, requerimiento.getId());
@@ -105,7 +105,7 @@ public class DAOTablaRequerimientos {
 	 */
 	public void updateRequerimiento(RequerimientoTecnico requerimiento) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.REQUERIMIENTOS_TECNICOS SET nombre = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.REQUERIMIENTOS_TECNICOS SET nombre = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setString(1, requerimiento.getNombre());
@@ -125,7 +125,7 @@ public class DAOTablaRequerimientos {
 	 */
 	public void deleteRequerimiento(RequerimientoTecnico requerimiento) throws SQLException, Exception {
 
-		String sql = "DELETE FROM FESTIVANDES.REQUERIMIENTOS_TECNICOS";
+		String sql = "DELETE FROM ISIS2304B221710.REQUERIMIENTOS_TECNICOS";
 		sql += " WHERE id = " + requerimiento.getId();
 
 		System.out.println("SQL stmt:" + sql);

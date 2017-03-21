@@ -61,7 +61,7 @@ public class DAOTablaFunciones {
 	public ArrayList<Funcion> darFunciones() throws SQLException, Exception {
 		ArrayList<Funcion> funciones = new ArrayList<Funcion>();
 
-		String sql = "SELECT * FROM FESTIVANDES.FUNCIONES";
+		String sql = "SELECT * FROM ISIS2304B221710.FUNCIONES";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -90,7 +90,7 @@ public class DAOTablaFunciones {
 	 */
 	public void addFuncion(Funcion funcion) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.FUNCIONES VALUES (?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.FUNCIONES VALUES (?,?,?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		
 		prepStmt.setInt(1, funcion.getId());
@@ -115,7 +115,7 @@ public class DAOTablaFunciones {
 	 */
 	public void updateFuncion(Funcion funcion) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.FUNCIONES SET fecha = ?, hora_inicio = ?, boletas_disponibles = ?, boletas_totales = ?, id_reserva = ?, id_espectaculo = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.FUNCIONES SET fecha = ?, hora_inicio = ?, boletas_disponibles = ?, boletas_totales = ?, id_reserva = ?, id_espectaculo = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setDate(1, funcion.getFecha());
@@ -139,7 +139,7 @@ public class DAOTablaFunciones {
 	 */
 	public void deleteFuncion(Funcion funcion) throws SQLException, Exception {
 
-		String sql = "DELETE FROM FESTIVANDES.FUNCIONES";
+		String sql = "DELETE FROM ISIS2304B221710.FUNCIONES";
 		sql += " WHERE id = " + funcion.getId();
 
 		System.out.println("SQL stmt:" + sql);

@@ -24,31 +24,31 @@ public class Funcion {
 	 * Hora a la que se realiza al funcion
 	 */
 	@JsonProperty(value="hora_inicio")
-	private int horaInicio;
+	private int hora_inicio;
 	
 	/**
 	 * Boletas disponibles para la funcion
 	 */
 	@JsonProperty(value="boletas_disponible")
-	private int boletasDisponibles;
+	private int boletas_disponibles;
 
 	/**
 	 * Id de la reserva del sitio en donde se va a realizar la funcion
 	 */
 	@JsonProperty(value="id_reserva")
-	private int idReserva;
+	private int id_reserva;
 	
 	/**
 	 * Cantidad de boletas que hay para la funcion.
 	 */
 	@JsonProperty(value="boletas_totales")
-	private int boletasTotales;
+	private int boletas_totales;
 	
 	/**
 	 * Id del espectaculo al que pertenece la funcion
 	 */
 	@JsonProperty(value="id_espectaculo")
-	private int idEspectaculo;
+	private int id_espectaculo;
 
 	
 	/**
@@ -62,11 +62,11 @@ public class Funcion {
 	public Funcion(@JsonProperty(value="id") int id, @JsonProperty(value="fecha") Date fecha, @JsonProperty(value="hora_inicio") int horaInicio, @JsonProperty(value="boletas_disponibles") int boletasDisponibles,@JsonProperty(value="boletas_totales") int boletasTotales, @JsonProperty(value="id_reserva") int idReserva, @JsonProperty(value="id_espectaculo") int idEspectaculo) {
 		this.id = id;
 		this.fecha = fecha;
-		this.horaInicio = horaInicio;
-		this.boletasDisponibles = boletasDisponibles;
-		this.boletasTotales = boletasTotales;
-		this.idReserva = idReserva;
-		this.idEspectaculo = idEspectaculo;
+		this.hora_inicio = horaInicio;
+		this.boletas_disponibles = boletasDisponibles;
+		this.boletas_totales = boletasTotales;
+		this.id_reserva = idReserva;
+		this.id_espectaculo = idEspectaculo;
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class Funcion {
 	 * @return La hora de inicio de la funcion.
 	 */
 	public int getHoraInicio() {
-		return horaInicio;
+		return hora_inicio;
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class Funcion {
 	 * @param horaInicio Nueva hora de inicio de la funcion.
 	 */
 	public void setHoraInicio(int horaInicio) {
-		this.horaInicio = horaInicio;
+		this.hora_inicio = horaInicio;
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class Funcion {
 	 * @return La cantidad de boletas disponibles la funcion.
 	 */
 	public int getBoletasDisponibles() {
-		return boletasDisponibles;
+		return boletas_disponibles;
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class Funcion {
 	 * @param boletasDisponibles Nueva cantidad de boletas disponibles.
 	 */
 	public void setBoletasDisponibles(int boletasDisponibles) {
-		this.boletasDisponibles = boletasDisponibles;
+		this.boletas_disponibles = boletasDisponibles;
 	}
 	
 	/**
@@ -138,7 +138,7 @@ public class Funcion {
 	 * @return Cantidad de boletas totales para la funcion
 	 */
 	public int getBoletasTotales() {
-		return boletasTotales;
+		return boletas_totales;
 	}
 	
 	/**
@@ -146,7 +146,7 @@ public class Funcion {
 	 * @param boletasTotales El nuevo valor de las boletas totales para la funcion.
 	 */
 	public void setBoletasTotales(int boletasTotales) {
-		this.boletasTotales = boletasTotales;
+		this.boletas_totales = boletasTotales;
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class Funcion {
 	 * @returnel El id de la reserva del sitio para la funcion.
 	 */
 	public int getIdReserva() {
-		return idReserva;
+		return id_reserva;
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class Funcion {
 	 * @param idReserva Nuevo id de la reserva para el sition donde se realiza la funcion.
 	 */
 	public void setIdReserva(int idReserva) {
-		this.idReserva = idReserva;
+		this.id_reserva = idReserva;
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public class Funcion {
 	 * @return Id del espectaculo al que pertenece la funcion
 	 */
 	public int getIdEspectaculo() {
-		return idEspectaculo;
+		return id_espectaculo;
 	}
 
 	/**
@@ -178,6 +178,6 @@ public class Funcion {
 	 * @param idEspectaculo Nuevo valor del id espectaculo
 	 */
 	public void setIdEspectaculo(int idEspectaculo) {
-		this.idEspectaculo = idEspectaculo;
+		this.id_espectaculo = idEspectaculo;
 	}
 }

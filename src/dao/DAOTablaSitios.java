@@ -60,7 +60,7 @@ public class DAOTablaSitios {
 	public ArrayList<Sitio> darSitios() throws SQLException, Exception {
 		ArrayList<Sitio> sitios = new ArrayList<Sitio>();
 
-		String sql = "SELECT * FROM FESTIVANDES.SITIOS";
+		String sql = "SELECT * FROM ISIS2304B221710.SITIOS";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -93,7 +93,7 @@ public class DAOTablaSitios {
 	 */
 	public void addSitio(Sitio sitio) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.SITIOS VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.SITIOS VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setInt(1, sitio.getId());
@@ -125,7 +125,7 @@ public class DAOTablaSitios {
 	 */
 	public void updateSitio(Sitio sitio) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.SITIOS SET nombre = ?, capacidad = ?, apto_discapacitados = ?, tipo_silleteria = ?, tiene_cobertura = ?, disponible_lunes = ?, disponible_martes = ?, disponible_miercoles = ?, disponible_jueves = ?, disponible_viernes = ?, disponible_sabados = ?, disponible_domingos = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.SITIOS SET nombre = ?, capacidad = ?, apto_discapacitados = ?, tipo_silleteria = ?, tiene_cobertura = ?, disponible_lunes = ?, disponible_martes = ?, disponible_miercoles = ?, disponible_jueves = ?, disponible_viernes = ?, disponible_sabados = ?, disponible_domingos = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setString(1, sitio.getNombre());
@@ -155,7 +155,7 @@ public class DAOTablaSitios {
 	 */
 	public void deleteSitio(Sitio sitio) throws SQLException, Exception {
 
-		String sql = "DELETE FROM FESTIVANDES.SITIOS";
+		String sql = "DELETE FROM ISIS2304B221710.SITIOS";
 		sql += " WHERE id = " + sitio.getId();
 
 		System.out.println("SQL stmt:" + sql);

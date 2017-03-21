@@ -60,7 +60,7 @@ public class DAOTablaCompañias {
 	public ArrayList<Compañia> darCompañias() throws SQLException, Exception {
 		ArrayList<Compañia> compañias = new ArrayList<Compañia>();
 
-		String sql = "SELECT * FROM FESTIVANDES.COMPAÑIAS";
+		String sql = "SELECT * FROM ISIS2304B221710.COMPAÑIAS";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -86,7 +86,7 @@ public class DAOTablaCompañias {
 	 */
 	public void addCompañia(Compañia compañia) throws SQLException, Exception {
 
-		String sql = "INSERT INTO FESTIVANDES.COMPAÑIAS VALUES (?,?,?,?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.COMPAÑIAS VALUES (?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setInt(1, compañia.getId());
 		prepStmt.setString(2, compañia.getNombre());
@@ -108,7 +108,7 @@ public class DAOTablaCompañias {
 	 */
 	public void updateCompañia(Compañia compañia) throws SQLException, Exception {
 
-		String sql = "UPDATE FESTIVANDES.COMPAÑIAS SET nombre = ?,pais = ?, pagina_web = ?, nombre_representante = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.COMPAÑIAS SET nombre = ?,pais = ?, pagina_web = ?, nombre_representante = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setString(1, compañia.getNombre());
 		prepStmt.setString(2, compañia.getPais());
@@ -129,7 +129,7 @@ public class DAOTablaCompañias {
 	 */
 	public void deleteCompañia(Compañia compañia) throws SQLException, Exception {
 
-		String sql = "DELETE FROM FESTIVANDES.COMPAÑIAS";
+		String sql = "DELETE FROM ISIS2304B221710.COMPAÑIAS";
 		sql += " WHERE id = " + compañia.getId();
 
 		System.out.println("SQL stmt:" + sql);

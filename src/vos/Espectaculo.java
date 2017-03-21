@@ -44,7 +44,7 @@ public class Espectaculo {
 	 * Publico objetivo del espectaculo
 	 */
 	@JsonProperty(value="publico_objetivo")
-	private String publicoObjetivo;
+	private String publico_objetivo;
 	
 	/**
 	 * Genero del espectaculo
@@ -70,7 +70,7 @@ public class Espectaculo {
 		this.idioma = idioma;
 		this.costo = costo;
 		this.descripcion = descripcion;
-		this.publicoObjetivo = publicoObjetivo;
+		this.publico_objetivo = publicoObjetivo;
 		this.genero = genero;
 	}
 
@@ -175,7 +175,7 @@ public class Espectaculo {
 	 * @return Publico objectivo del espectaculo
 	 */
 	public String getPublicoObjetivo() {
-		return publicoObjetivo;
+		return publico_objetivo;
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class Espectaculo {
 	 * @param publicoObjetibo Nuevo publico objetivo del espectaculo
 	 */
 	public void setPublicoObjetivo(String publicoObjetivo) {
-		this.publicoObjetivo = publicoObjetivo;
+		this.publico_objetivo = publicoObjetivo;
 	}
 
 	/**
