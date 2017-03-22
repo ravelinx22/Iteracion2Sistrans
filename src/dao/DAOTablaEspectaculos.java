@@ -1,5 +1,6 @@
 package dao;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import vos.Espectaculo;
+import vos.RequerimientoTecnico;
 
 public class DAOTablaEspectaculos {
 	
@@ -62,6 +64,7 @@ public class DAOTablaEspectaculos {
 		ArrayList<Espectaculo> espectaculos = new ArrayList<Espectaculo>();
 
 		String sql = "SELECT * FROM ISIS2304B221710.ESPECTACULOS";
+		
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -69,16 +72,27 @@ public class DAOTablaEspectaculos {
 
 		while (rs.next()) {
 			int id = Integer.parseInt(rs.getString("ID"));
+			
+			String req = "SELECT ID_REQUERIMIENTO_TECNICO FROM ISIS2304B221710.REQUERIMIENTOESPECTACULO WHERE ID_ESPECTACULO = " +id;
+			PreparedStatement segPrep = conn.prepareStatement(req);
+			ResultSet s = segPrep.executeQuery();
+			
+			ArrayList<Integer> x = new ArrayList<>();
+			while(s.next()) {
+				int yes = Integer.parseInt(s.getString("ID_REQUERIMIENTO_TECNICO"));
+				x.add(yes);
+			}
+			
+			Integer[] requerimientos = x.toArray(new Integer[x.size()]);
+			
 			String nombre = rs.getString("NOMBRE");
 			int duracion = Integer.parseInt(rs.getString("DURACION"));
 			String idioma = rs.getString("IDIOMA");
 			double costo = rs.getDouble("COSTO");
 			String descripcion = rs.getString("DESCRIPCION");
 			String publicoObjetivo = rs.getString("PUBLICO_OBJETIVO");
-			String genero = rs.getString("GENERO");
-
-					
-			espectaculos.add(new Espectaculo(id, nombre, duracion, idioma, costo, descripcion, publicoObjetivo, genero));
+			String genero = rs.getString("GENERO");		    
+			espectaculos.add(new Espectaculo(id, nombre, duracion, idioma, costo, descripcion, publicoObjetivo, genero,requerimientos));
 		}
 		return espectaculos;
 	}
@@ -90,7 +104,6 @@ public class DAOTablaEspectaculos {
 	 * @throws Exception Si hay un error al convertir de dato a espectaculo
 	 */
 	public void addEspectaculo(Espectaculo espec) throws SQLException, Exception {
-		
 		String sql = "INSERT INTO ISIS2304B221710.ESPECTACULOS VALUES (?,?,?,?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
@@ -101,13 +114,20 @@ public class DAOTablaEspectaculos {
 		prepStmt.setDouble(5, espec.getCosto());
 		prepStmt.setString(6, espec.getDescripcion());
 		prepStmt.setString(7, espec.getPublicoObjetivo());
-		prepStmt.setString(8, espec.getGenero());
-
+		prepStmt.setString(8, espec.getGenero());		
+				
 		System.out.println("SQL stmt:" + sql);
 
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-
+		
+		for(Integer x : espec.getRequerimientos()) {
+			String sql2 = "INSERT INTO ISIS2304B221710.REQUERIMIENTOESPECTACULO VALUES (?,?)";
+			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+			prepStmt2.setInt(1, espec.getId());
+			prepStmt2.setInt(2, x);
+			prepStmt2.executeQuery();
+		}
 	}
 	
 	/**

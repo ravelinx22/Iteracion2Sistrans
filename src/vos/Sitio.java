@@ -73,15 +73,21 @@ public class Sitio {
 	/**
 	 * Disponibilidad de sitio para el sabado
 	 */
-	@JsonProperty(value="disponible_sabado")
-	private boolean disponible_sabado;
+	@JsonProperty(value="disponible_sabados")
+	private boolean disponible_sabados;
 
 	/**
 	 * Disponibilidad de sitio para el domingo
 	 */
-	@JsonProperty(value="disponible_domingo")
-	private boolean disponible_domingo;
+	@JsonProperty(value="disponible_domingos")
+	private boolean disponible_domingos;
 
+	/**
+	 * Requerimientos del espectaculo
+	 */
+	@JsonProperty(value="requerimientos")
+	private Integer[] requerimientos;
+	
 	/**
 	 * Constructor de la clase sitio.
 	 * @param id - Id del sitio. 
@@ -95,10 +101,11 @@ public class Sitio {
 	 * @param disponibleMiercoles - Disponibilidad del sitio para el miercoles
 	 * @param disponibleJueves - Disponibilidad del sitio para el jueves
 	 * @param disponibleViernes - Disponibilidad del sitio para el viernes
-	 * @param disponibleSabado - Disponibilidad del sitio para el sabado
-	 * @param disponibleDomingo - Disponibilidad del sitio para el domingo
+	 * @param disponibleSabados - Disponibilidad del sitio para el sabado
+	 * @param disponibleDomingos - Disponibilidad del sitio para el domingo
+	 * @param requerimientos - Requerimientos del sitio
 	 */
-	public Sitio(@JsonProperty(value="id") int id ,@JsonProperty(value="nombre") String nombre,@JsonProperty(value="capacidad") int capacidad,@JsonProperty(value="apto_discapacitados") boolean aptoDiscapacitados,@JsonProperty(value="tipo_silleteria") String tipoSilleteria,@JsonProperty(value="tiene_cobertura") boolean tieneCobertura,@JsonProperty(value="disponible_lunes") boolean disponibleLunes,@JsonProperty(value="disponible_martes") boolean disponibleMartes,@JsonProperty(value="disponible_miercoles") boolean disponibleMiercoles,@JsonProperty(value="disponible_jueves") boolean disponibleJueves,@JsonProperty(value="disponible_viernes") boolean disponibleViernes,@JsonProperty(value="disponible_sabado") boolean disponibleSabado,@JsonProperty(value="disponible_domingo") boolean disponibleDomingo) {
+	public Sitio(@JsonProperty(value="id") int id ,@JsonProperty(value="nombre") String nombre,@JsonProperty(value="capacidad") int capacidad,@JsonProperty(value="apto_discapacitados") boolean aptoDiscapacitados,@JsonProperty(value="tipo_silleteria") String tipoSilleteria,@JsonProperty(value="tiene_cobertura") boolean tieneCobertura,@JsonProperty(value="disponible_lunes") boolean disponibleLunes,@JsonProperty(value="disponible_martes") boolean disponibleMartes,@JsonProperty(value="disponible_miercoles") boolean disponibleMiercoles,@JsonProperty(value="disponible_jueves") boolean disponibleJueves,@JsonProperty(value="disponible_viernes") boolean disponibleViernes,@JsonProperty(value="disponible_sabado") boolean disponibleSabados,@JsonProperty(value="disponible_domingo") boolean disponibleDomingos, @JsonProperty(value="requerimientos") Integer[] requerimientos) {
 		this.id = id;
 		this.nombre = nombre;
 		this.capacidad = capacidad;
@@ -110,8 +117,9 @@ public class Sitio {
 		this.disponible_miercoles = disponibleMiercoles;
 		this.disponible_jueves = disponibleJueves;
 		this.disponible_viernes = disponibleViernes;
-		this.disponible_sabado = disponibleSabado;
-		this.disponible_domingo = disponibleDomingo;
+		this.disponible_sabados = disponibleSabados;
+		this.disponible_domingos = disponibleDomingos;
+		this.requerimientos = requerimientos;
 	}
 
 	/**
@@ -295,7 +303,7 @@ public class Sitio {
 	 * @return Disponibilidad del sitio los sabados
 	 */
 	public boolean isDisponibleSabado() {
-		return disponible_sabado;
+		return disponible_sabados;
 	}
 
 	/**
@@ -303,7 +311,7 @@ public class Sitio {
 	 * @param disponibleSabado Nueva disponibilidad del sitio los sabados
 	 */
 	public void setDisponibleSabado(boolean disponibleSabado) {
-		this.disponible_sabado = disponibleSabado;
+		this.disponible_sabados = disponibleSabado;
 	}
 
 	/**
@@ -311,7 +319,7 @@ public class Sitio {
 	 * @return Disponibilidad del sitio los domingos.
 	 */
 	public boolean isDisponibleDomingo() {
-		return disponible_domingo;
+		return disponible_domingos;
 	}
 
 	/**
@@ -319,6 +327,22 @@ public class Sitio {
 	 * @param disponibleDomingo Nueva disponibilidad del sitio los domingos
 	 */
 	public void setDisponibleDomingo(boolean disponibleDomingo) {
-		this.disponible_domingo = disponibleDomingo;
+		this.disponible_domingos = disponibleDomingo;
+	}
+	
+	/**
+	 * Da los requerimientos del sitio
+	 * @return Requerimientos del sitio
+	 */
+	public Integer[] getRequerimientos() {
+		return this.requerimientos;
+	}
+	
+	/**
+	 * Modifica los requerimientos del sitio.
+	 * @param requerimientos - Nuevos requerimientos 
+	 */
+	public void setRequerimiento(Integer[] requerimientos) {
+		this.requerimientos= requerimientos;
 	}
 }

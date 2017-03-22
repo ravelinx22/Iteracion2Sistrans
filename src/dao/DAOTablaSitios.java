@@ -68,19 +68,32 @@ public class DAOTablaSitios {
 
 		while (rs.next()) {
 			int id = Integer.parseInt(rs.getString("ID"));
+			
+			String req = "SELECT ID_REQUERIMIENTO_TECNICO FROM ISIS2304B221710.REQUERIMIENTOSITIO WHERE ID_SITIO = " +id;
+			PreparedStatement segPrep = conn.prepareStatement(req);
+			ResultSet s = segPrep.executeQuery();
+			
+			ArrayList<Integer> x = new ArrayList<>();
+			while(s.next()) {
+				int yes = Integer.parseInt(s.getString("ID_REQUERIMIENTO_TECNICO"));
+				x.add(yes);
+			}
+			
+			Integer[] requerimientos = x.toArray(new Integer[x.size()]);
+			
 			String nombre = rs.getString("NOMBRE");
 			int capacidad = Integer.parseInt(rs.getString("CAPACIDAD"));
-			boolean aptoDiscapacitados = Boolean.parseBoolean(rs.getString(""));
-			String tipoSilleteria = rs.getString("TIPO_SILLA");
+			boolean aptoDiscapacitados = Boolean.parseBoolean(rs.getString("APTO_DISCAPACITADOS"));
+			String tipoSilleteria = rs.getString("TIPO_SILLETERIA");
 			boolean tieneCobertura = Boolean.parseBoolean(rs.getString("TIENE_COBERTURA"));
 			boolean disponibleLunes = Boolean.parseBoolean(rs.getString("DISPONIBLE_LUNES"));
 			boolean disponibleMartes = Boolean.parseBoolean(rs.getString("DISPONIBLE_MARTES"));
 			boolean disponibleMiercoles = Boolean.parseBoolean(rs.getString("DISPONIBLE_MIERCOLES"));
 			boolean disponibleJueves = Boolean.parseBoolean(rs.getString("DISPONIBLE_JUEVES"));
 			boolean disponibleViernes = Boolean.parseBoolean(rs.getString("DISPONIBLE_VIERNES"));
-			boolean disponibleSabado = Boolean.parseBoolean(rs.getString("DISPONIBLE_SABADO"));
-			boolean disponibleDomingo = Boolean.parseBoolean(rs.getString("DISPONIBLE_DOMINGO"));					
-			sitios.add(new Sitio(id, nombre, capacidad, aptoDiscapacitados, tipoSilleteria, tieneCobertura, disponibleLunes, disponibleMartes, disponibleMiercoles, disponibleJueves, disponibleViernes, disponibleSabado, disponibleDomingo));
+			boolean disponibleSabado = Boolean.parseBoolean(rs.getString("DISPONIBLE_SABADOS"));
+			boolean disponibleDomingo = Boolean.parseBoolean(rs.getString("DISPONIBLE_DOMINGOS"));					
+			sitios.add(new Sitio(id, nombre, capacidad, aptoDiscapacitados, tipoSilleteria, tieneCobertura, disponibleLunes, disponibleMartes, disponibleMiercoles, disponibleJueves, disponibleViernes, disponibleSabado, disponibleDomingo, requerimientos));
 		}
 		return sitios;
 	}
@@ -115,6 +128,13 @@ public class DAOTablaSitios {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 
+		for(Integer x : sitio.getRequerimientos()) {
+			String sql2 = "INSERT INTO ISIS2304B221710.REQUERIMIENTOSITIO VALUES (?,?)";
+			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+			prepStmt2.setInt(1, sitio.getId());
+			prepStmt2.setInt(2, x);
+			prepStmt2.executeQuery();
+		}
 	}
 	
 	/**

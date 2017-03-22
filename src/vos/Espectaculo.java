@@ -1,5 +1,8 @@
 package vos;
 
+import java.sql.Array;
+import java.util.List;
+
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Espectaculo {
@@ -53,6 +56,12 @@ public class Espectaculo {
 	private String genero;
 	
 	/**
+	 * Requerimientos del espectaculo
+	 */
+	@JsonProperty(value="requerimientos")
+	private Integer[] requerimientos;
+	
+	/**
 	 * Constructor encargado de crear un nuevo espectaculo
 	 * @param id - Id del espectaculo
 	 * @param nombre - Nombre del espectaculo
@@ -62,8 +71,9 @@ public class Espectaculo {
 	 * @param descripcion - Descripcion del espectaculo
 	 * @param publicoObjetivo - Publico objetivo del espectaculo
 	 * @param genero - Genero del espectaculo
+	 * @param requerimientos - Requerimientos del espectaculo
 	 */
-	public Espectaculo(@JsonProperty(value="id") int id, @JsonProperty(value="nombre") String nombre, @JsonProperty(value="duracion") int duracion, @JsonProperty(value="idioma") String idioma, @JsonProperty(value="costo") double costo, @JsonProperty(value="descripcion") String descripcion, @JsonProperty(value="publico_objetivo") String publicoObjetivo, @JsonProperty(value="genero") String genero) {
+	public Espectaculo(@JsonProperty(value="id") int id, @JsonProperty(value="nombre") String nombre, @JsonProperty(value="duracion") int duracion, @JsonProperty(value="idioma") String idioma, @JsonProperty(value="costo") double costo, @JsonProperty(value="descripcion") String descripcion, @JsonProperty(value="publico_objetivo") String publicoObjetivo, @JsonProperty(value="genero") String genero, @JsonProperty(value="requerimientos") Integer[] requerimientos) {
 		this.id = id;
 		this.nombre = nombre;
 		this.duracion = duracion;
@@ -72,6 +82,7 @@ public class Espectaculo {
 		this.descripcion = descripcion;
 		this.publico_objetivo = publicoObjetivo;
 		this.genero = genero;
+		this.requerimientos = requerimientos;
 	}
 
 	/**
@@ -201,4 +212,20 @@ public class Espectaculo {
 	public void setGenero(String genero) {
 		this.genero = genero;
 	}	
+	
+	/**
+	 * Da los requerimientos del espectaculo
+	 * @return Requerimientos del espectaculo
+	 */
+	public Integer[] getRequerimientos() {
+		return this.requerimientos;
+	}
+	
+	/**
+	 * Modifica los requerimientos del espectaculo.
+	 * @param requerimientos - Nuevos requerimientos 
+	 */
+	public void setRequerimiento(Integer[] requerimientos) {
+		this.requerimientos= requerimientos;
+	}
 }
