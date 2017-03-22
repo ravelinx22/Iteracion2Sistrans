@@ -90,7 +90,7 @@ public class DAOTablaEspectaculos {
 	 * @throws Exception Si hay un error al convertir de dato a espectaculo
 	 */
 	public void addEspectaculo(Espectaculo espec) throws SQLException, Exception {
-
+		
 		String sql = "INSERT INTO ISIS2304B221710.ESPECTACULOS VALUES (?,?,?,?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 

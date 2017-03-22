@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -67,6 +68,32 @@ public class UsuarioServices extends FestivAndesServices {
 	public Response addUsuario(Usuario usuario) {
 		UsuarioMaster tm = new UsuarioMaster(getPath());
 		try {
+			tm.addUsuario(usuario);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(usuario).build();
+	}
+	
+	/**
+	 * Agrega un cliente a la base de datos
+	 * @param id Id del usuario administrador que registra el cliente
+	 * @param usuario Cliente que se va a registrar
+	 * @return Resultado de intentar agregar el usuario.
+	 */
+	@PUT
+	@Path("/{id}/cliente")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addCliente(@PathParam("id") int id, Usuario usuario) {
+		UsuarioMaster tm = new UsuarioMaster(getPath());
+		try {
+			Usuario x = tm.darUsuario(id);
+			
+			if(!x.getRol().equalsIgnoreCase("Administrador"))
+				throw new Exception("Tiene que registrar cliente desde una cuenta administrador");
+			
+			usuario.setRol("Cliente");
 			tm.addUsuario(usuario);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();

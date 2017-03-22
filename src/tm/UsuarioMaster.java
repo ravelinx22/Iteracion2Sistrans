@@ -126,6 +126,39 @@ public class UsuarioMaster {
 	}
 	
 	/**
+	 * Da el usuario que tiene id igual al parametro.
+	 * @param id Id del usuario a buscar.
+	 * @return Da el usuario que tiene id igual al parametro, null de lo contrario.
+	 */
+	public Usuario darUsuario(int id) throws SQLException, Exception {
+		DAOTablaUsuarios daoUsuario = new DAOTablaUsuarios();
+		Usuario us = null;
+		try {
+			this.conn = darConexion();
+			daoUsuario.setConnection(conn);
+			us = daoUsuario.buscarUsuario(id);
+			conn.commit();
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuario.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return us;
+	}
+	
+	/**
 	 * Agrega un usuario a la base de datos
 	 * @param usuario Usuario a agregar
 	 * @throws Exception Si hay problema conectandose con la base de datos.

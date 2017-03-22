@@ -78,6 +78,34 @@ public class DAOTablaUsuarios {
 		}
 		return usuarios;
 	}
+	
+	/**
+	 * Busca un usuario por id.
+	 * @param id Id del usuario a buscar
+	 * @return Usuario que tiene el id igual al parametro, null de lo contrario.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error al convertir de datos a usuario.
+	 */
+	public Usuario buscarUsuario(int id) throws SQLException, Exception {
+		String sql = "SELECT * FROM ISIS2304B221710.USUARIOS WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(!rs.next())
+			return null;
+		
+		String nombre = rs.getString("NOMBRE");
+		int identificacion = Integer.parseInt(rs.getString("IDENTIFICACION"));
+		String correo = rs.getString("CORREO");
+		String rol = rs.getString("ROL");
+		int idPreferencia = Integer.parseInt(rs.getString("ID_PREFERENCIA"));
+		Usuario us = new Usuario(id, nombre, identificacion, correo, rol, idPreferencia);
+		
+		return us;
+	}
 
 	/**
 	 * Agrega un nuevo usuario a la base de datos
@@ -101,7 +129,7 @@ public class DAOTablaUsuarios {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
-
+	
 	/**
 	 * Actualiza un usuario
 	 * @param usuario Usuario que contiene los nuevos datos.
