@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import vos.Espectaculo;
 import vos.RequerimientoTecnico;
+import vos.Usuario;
 
 public class DAOTablaEspectaculos {
 	
@@ -105,8 +106,8 @@ public class DAOTablaEspectaculos {
 	 */
 	public void addEspectaculo(Espectaculo espec) throws SQLException, Exception {
 		String sql = "INSERT INTO ISIS2304B221710.ESPECTACULOS VALUES (?,?,?,?,?,?,?,?)";
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-
+		
+		PreparedStatement prepStmt = conn.prepareStatement(sql);		
 		prepStmt.setInt(1, espec.getId());
 		prepStmt.setString(2, espec.getNombre());
 		prepStmt.setInt(3, espec.getDuracion());

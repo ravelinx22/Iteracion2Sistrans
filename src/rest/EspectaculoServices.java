@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import tm.CompañiaMaster;
 import tm.EspectaculoMaster;
+import tm.UsuarioMaster;
 import vos.Compañia;
 import vos.Espectaculo;
 import vos.ListaEspectaculos;
@@ -61,12 +63,16 @@ public class EspectaculoServices extends FestivAndesServices {
 	 * @return Resultado de intentar agregar el espectaculo
 	 */
 	@PUT
-	@Path("/espectaculo")
+	@Path("/{id}/espectaculo")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEspectaculo(Espectaculo espectaculo) {
+	public Response addEspectaculo(Espectaculo espectaculo, @PathParam("id") int idAdmin) {
 		EspectaculoMaster tm = new EspectaculoMaster(getPath());
+		UsuarioMaster um = new UsuarioMaster(getPath());
 		try {
+			if(!um.darUsuario(idAdmin).getRol().equalsIgnoreCase("Administrador"))
+				throw new Exception("Tiene que crear el espectaculo en una cuenta administrador");
+			
 			tm.addEspectaculo(espectaculo);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
