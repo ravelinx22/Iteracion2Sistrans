@@ -8,8 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 import dao.DAOTablaSitios;
+import dao.DAOTablaUsuarios;
 import vos.ListaSitios;
 import vos.Sitio;
+import vos.Usuario;
 
 public class SitioMaster {
 
@@ -122,6 +124,39 @@ public class SitioMaster {
 		}
 		
 		return new ListaSitios(sitios);
+	}
+	
+	/**
+	 * Da el sitio que tiene id igual al parametro.
+	 * @param id Id del sitio a buscar.
+	 * @return Da el sitio que tiene id igual al parametro, null de lo contrario.
+	 */
+	public Sitio darSitio(int id) throws SQLException, Exception {
+		DAOTablaSitios daoSitio = new DAOTablaSitios();
+		Sitio si = null;
+		try {
+			this.conn = darConexion();
+			daoSitio.setConnection(conn);
+			si = daoSitio.darSitio(id);
+			conn.commit();
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoSitio.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return si;
 	}
 	
 	/**

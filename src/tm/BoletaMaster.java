@@ -7,59 +7,60 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
-import dao.DAOTablaEspectaculos;
-import dao.DAOTablaUsuarios;
-import vos.Espectaculo;
-import vos.ListaEspectaculos;
-import vos.Usuario;
 
+import dao.DAOBoletas;
+import dao.DAOTablaCompañias;
+import vos.Boleta;
+import vos.Compañia;
+import vos.ListaBoletas;
+import vos.ListaCompañias;
 
-public class EspectaculoMaster {
+public class BoletaMaster {
 	/**
 	 * Constante que contiene el path absoluto del archivo que tiene los datos de la conexión
 	 */
 	private static final String CONNECTION_DATA_FILE_NAME_REMOTE = "/conexion.properties";
-
+	
 	/**
 	 * Atributo que contiene el path absoluto del archivo que tiene los datos de la conexión
 	 */
 	private String connectionDataPath;
-
+	
 	/**
 	 * Usuario de la base de datos.	
 	 */
 	private String user;
-
+	
 	/**
 	 * Contraseña del usuario para conectarse a la base de datos.
 	 */
 	private String password;
-
+	
 	/**
 	 * Url para conectarse a la base de datos.
 	 */
 	private String url;
-
+	
 	/**
 	 * Driver que guarda los datos para conectarse a la base de datos.
 	 */
 	private String driver;
-
+	
 	/**
 	 * Conexion a la base de datos.
 	 */
 	private Connection  conn;
-
+	
 	/**
 	 * Método constructor de la clase FestivAndesMaster, esta clase modela y contiene cada una de las 
 	 * transacciones y la logica de negocios que estas conllevan.
 	 * @param contextPath path absoluto en el servidor del contexto del deploy actual.
 	 */
-	public EspectaculoMaster(String contextPath) {
+	public BoletaMaster(String contextPath) {
 		this.connectionDataPath = contextPath + CONNECTION_DATA_FILE_NAME_REMOTE;
 		initConnectionData();
 	}
-
+	
 	/**
 	 * Inicializa los datos para conectarse con la base datos.
 	 */
@@ -79,7 +80,7 @@ public class EspectaculoMaster {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Da la conexion creada con el usuario, clave y url asociados.
 	 * @return Conexion creada con el usuario, clave y url asociados.
@@ -89,55 +90,23 @@ public class EspectaculoMaster {
 		System.out.println("Connecting to: " + url + " With user: " + user);
 		return DriverManager.getConnection(url, user, password);
 	}
-
+	
+	
 	// Transacciones
-
-	/**
-	 * Da los espectaculos en la base de datos
-	 * @return Lista de espectaculos con la base de datos
-	 * @throws Exception Si hay problema conectandose con la base de datos.
-	 */
-	public ListaEspectaculos darEspectaculos() throws Exception {
-		ArrayList<Espectaculo> espectaculos;
-		DAOTablaEspectaculos daoEspectaculos = new DAOTablaEspectaculos();
-
-		try {
-			this.conn = darConexion();
-			daoEspectaculos.setConnection(conn);
-			espectaculos = daoEspectaculos.darEspectaculos();
-		} catch(SQLException e) {
-			e.printStackTrace();
-			throw e;
-		} catch(Exception e) {
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoEspectaculos.cerrarRecursos();
-				if(this.conn != null)
-					this.conn.close();
-			} catch(SQLException e) {
-				e.printStackTrace();
-				throw e;
-			}
-		}
-
-		return new ListaEspectaculos(espectaculos);
-	}
 	
 	/**
-	 * Da el espectaculo que tiene id igual al parametro.
-	 * @param id Id del espectaculo a buscar.
-	 * @return Da el espectaculo que tiene id igual al parametro, null de lo contrario.
+	 * Da las boletas en la base de datos
+	 * @return Lista de compañias con la base de datos
+	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public Espectaculo darEspectaculo(int id) throws SQLException, Exception {
-		DAOTablaEspectaculos daoEspectaculo = new DAOTablaEspectaculos();
-		Espectaculo es = null;
+	public ListaBoletas darBoletas() throws Exception {
+		ArrayList<Boleta> boletas;
+		DAOBoletas daoBoletas = new DAOBoletas();
+		
 		try {
 			this.conn = darConexion();
-			daoEspectaculo.setConnection(conn);
-			es = daoEspectaculo.darEspectaculo(id);
-			conn.commit();
+			daoBoletas.setConnection(conn);
+			boletas = daoBoletas.darBoletas();
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;
@@ -146,7 +115,7 @@ public class EspectaculoMaster {
 			throw e;
 		} finally {
 			try {
-				daoEspectaculo.cerrarRecursos();
+				daoBoletas.cerrarRecursos();
 				if(this.conn != null)
 					this.conn.close();
 			} catch(SQLException e) {
@@ -155,20 +124,20 @@ public class EspectaculoMaster {
 			}
 		}
 		
-		return es;
+		return new ListaBoletas(boletas);
 	}
-
+	
 	/**
-	 * Agrega un espectaculo a la base de datos
-	 * @param espectaculo Espectaculo a agregar
+	 * Agrega una boleta a la base de datos
+	 * @param boleta Boleta a agregar
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public void addEspectaculo(Espectaculo espectaculo) throws Exception {
-		DAOTablaEspectaculos daoEspectaculos = new DAOTablaEspectaculos();
+	public void addBoleta(Boleta boleta) throws Exception {
+		DAOBoletas daoBoletas = new DAOBoletas();
 		try {
 			this.conn = darConexion();
-			daoEspectaculos.setConnection(conn);
-			daoEspectaculos.addEspectaculo(espectaculo);
+			daoBoletas.setConnection(conn);
+			daoBoletas.addBoleta(boleta);
 			conn.commit();
 		} catch(SQLException e) {
 			e.printStackTrace();
@@ -178,7 +147,7 @@ public class EspectaculoMaster {
 			throw e;
 		} finally {
 			try {
-				daoEspectaculos.cerrarRecursos();
+				daoBoletas.cerrarRecursos();
 				if(this.conn != null)
 					this.conn.close();
 			} catch(SQLException e) {
@@ -187,18 +156,18 @@ public class EspectaculoMaster {
 			}
 		}
 	}
-
+	
 	/**
-	 * Actualiza el espectaculo de la base de datos.
-	 * @param espectaculo Espectaculo con los nuevos datos
+	 * Actualiza la boleta de la base de datos.
+	 * @param boleta Boleta con los nuevos datos
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public void updateEspectaculo(Espectaculo espectaculo) throws Exception {
-		DAOTablaEspectaculos daoEspectaculos = new DAOTablaEspectaculos();
+	public void updateBoleta(Boleta boleta) throws Exception {
+		DAOBoletas daoBoletas = new DAOBoletas();
 		try {
 			this.conn = darConexion();
-			daoEspectaculos.setConnection(conn);
-			daoEspectaculos.updateEspectaculo(espectaculo);
+			daoBoletas.setConnection(conn);
+			daoBoletas.updateBoleta(boleta);
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;
@@ -207,7 +176,7 @@ public class EspectaculoMaster {
 			throw e;
 		} finally {
 			try {
-				daoEspectaculos.cerrarRecursos();
+				daoBoletas.cerrarRecursos();
 				if(this.conn != null)
 					this.conn.close();
 			} catch(SQLException e) {
@@ -216,18 +185,18 @@ public class EspectaculoMaster {
 			}
 		}
 	}
-
+	
 	/**
-	 * Elimina el espectaculo de la base de datos.
-	 * @param espectaculo Espectaculo a eliminar
+	 * Elimina la boleta de la base de datos.
+	 * @param boleta Boleta a eliminar
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public void deleteEspectaculo(Espectaculo espectaculo) throws Exception {
-		DAOTablaEspectaculos daoEspectaculos = new DAOTablaEspectaculos();
+	public void deleteBoleta(Boleta boleta) throws Exception {
+		DAOBoletas daoBoletas = new DAOBoletas();
 		try {
 			this.conn = darConexion();
-			daoEspectaculos.setConnection(conn);
-			daoEspectaculos.deleteEspectaculo(espectaculo);
+			daoBoletas.setConnection(conn);
+			daoBoletas.deleteBoleta(boleta);
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;
@@ -236,7 +205,7 @@ public class EspectaculoMaster {
 			throw e;
 		} finally {
 			try {
-				daoEspectaculos.cerrarRecursos();
+				daoBoletas.cerrarRecursos();
 				if(this.conn != null)
 					this.conn.close();
 			} catch(SQLException e) {

@@ -136,7 +136,7 @@ public class UsuarioMaster {
 		try {
 			this.conn = darConexion();
 			daoUsuario.setConnection(conn);
-			us = daoUsuario.buscarUsuario(id);
+			us = daoUsuario.darUsuario(id);
 			conn.commit();
 		} catch(SQLException e) {
 			e.printStackTrace();

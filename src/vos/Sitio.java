@@ -345,4 +345,22 @@ public class Sitio {
 	public void setRequerimiento(Integer[] requerimientos) {
 		this.requerimientos= requerimientos;
 	}
+	
+	/**
+	 * Verifica si el sitio cumple con los requerimientos que entran por parametro.
+	 * @param requerimientosEspec Requerimientos que se quieren cumplir
+	 * @return true si cumple todos los requisitos, false de lo contrario.
+	 */
+	public boolean cumpleRequerimientos(Integer[] requerimientosEspec) {
+		int count = 0;
+		
+		for(Integer x : requerimientosEspec) {
+			for(Integer y : this.requerimientos) {
+				if(x == y)
+					count++;
+			}
+		}
+		
+		return count == requerimientosEspec.length;
+	}
 }

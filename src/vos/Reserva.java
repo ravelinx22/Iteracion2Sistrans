@@ -32,13 +32,19 @@ public class Reserva {
 	private int id_sitio;
 	
 	/**
+	 * Duracion de la reserva
+	 */
+	@JsonProperty(value="duracion")
+	private int duracion;
+	
+	/**
 	 * Constructor de la clase reserva.
 	 * @param id - Id de la reserva
 	 * @param fecha - Fecha de la reserva.
 	 * @param horaReserva - Hora de la reserva-
 	 * @param idSitio - Id del sitio al que se le realiza la reserva.
 	 */
-	public Reserva(@JsonProperty(value="id") int id, @JsonProperty(value="fecha") Date fecha, @JsonProperty(value="hora_reserva") int horaReserva, @JsonProperty(value="id_sitio") int idSitio) {
+	public Reserva(@JsonProperty(value="id") int id, @JsonProperty(value="fecha") Date fecha, @JsonProperty(value="hora_reserva") int horaReserva, @JsonProperty(value="id_sitio") int idSitio, @JsonProperty(value="duracion") int duracion) {
 		this.id = id;
 		this.fecha = fecha;
 		this.hora_reserva = horaReserva;
@@ -107,5 +113,21 @@ public class Reserva {
 	 */
 	public void setIdSitio(int idSitio) {
 		this.id_sitio = idSitio;
+	}
+	
+	/**
+	 * Da la duracion de la reserva
+	 * @return Duracion de la reserva
+	 */
+	public int getDuracion() {
+		return duracion;
+	}
+	
+	/**
+	 * Modifica la duracion de la reserva
+	 * @param duracion Nueva duracion
+	 */
+	public void setDuracion(int duracion) {
+		this.duracion = duracion;
 	}
 }

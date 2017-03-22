@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import vos.Reserva;
+import vos.Usuario;
 
 public class DAOTablaReserva {
 	/**
@@ -69,13 +70,41 @@ public class DAOTablaReserva {
 		while (rs.next()) {
 			int id = Integer.parseInt(rs.getString("ID"));
 			//TODO: Arreglar esta fecha
-			Date fecha =  new Date(222);
+			Date fecha =  rs.getDate("FECHA");
 			int horaReserva = Integer.parseInt(rs.getString("HORA_RESERVA"));
 			int idSitio = Integer.parseInt(rs.getString("ID_SITIO"));
+			int duracion = Integer.parseInt(rs.getString("DURACION"));
 					
-			reservas.add(new Reserva(id, fecha, horaReserva, idSitio));
+			reservas.add(new Reserva(id, fecha, horaReserva, idSitio, duracion));
 		}
 		return reservas;
+	}
+	
+	/**
+	 * Busca una reserva por id.
+	 * @param id Id de la reserva a buscar
+	 * @return Reserva que tiene el id igual al parametro, null de lo contrario.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error al convertir de datos a reserva.
+	 */
+	public Reserva darReserva(int id) throws SQLException, Exception {
+		String sql = "SELECT * FROM ISIS2304B221710.RESERVAS WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(!rs.next())
+			return null;
+		
+		Date fecha = rs.getDate("FECHA");
+		int horaReserva = Integer.parseInt(rs.getString("HORA_RESERVA"));
+		int idSitio = Integer.parseInt(rs.getString("ID_SITIO"));
+		int duracion = Integer.parseInt(rs.getString("DURACION"));
+		Reserva res = new Reserva(id, fecha, horaReserva, idSitio, duracion);
+		
+		return res;
 	}
 
 	/**
@@ -86,13 +115,17 @@ public class DAOTablaReserva {
 	 */
 	public void addReserva(Reserva reserva) throws SQLException, Exception {
 
-		String sql = "INSERT INTO ISIS2304B221710.RESERVAS VALUES (?,?,?,?)";
+		if(!sePuedeReservar(reserva.getIdSitio(), reserva.getFecha(), reserva.getHoraReserva()))
+			throw new Exception("El horario no esta disponible, intente otro dia o a otra hora");
+		
+		String sql = "INSERT INTO ISIS2304B221710.RESERVAS VALUES (?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		
 		prepStmt.setInt(1, reserva.getId());
 		prepStmt.setDate(2, reserva.getFecha());
 		prepStmt.setInt(3, reserva.getHoraReserva());
 		prepStmt.setInt(4, reserva.getIdSitio());
+		prepStmt.setInt(5, reserva.getDuracion());
 
 		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);
@@ -108,12 +141,13 @@ public class DAOTablaReserva {
 	 */
 	public void updateReserva(Reserva reserva) throws SQLException, Exception {
 
-		String sql = "UPDATE ISIS2304B221710.RESERVAS SET fecha = ?, hora_reserva = ?, id_sitio = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.RESERVAS SET fecha = ?, hora_reserva = ?, id_sitio = ?, duracion = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setDate(1, reserva.getFecha());
 		prepStmt.setInt(2, reserva.getHoraReserva());
 		prepStmt.setInt(3, reserva.getIdSitio());
-		prepStmt.setInt(4, reserva.getId());
+		prepStmt.setInt(5, reserva.getDuracion());
+		prepStmt.setInt(5, reserva.getId());
 
 		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);
@@ -136,5 +170,25 @@ public class DAOTablaReserva {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
+	}
+	
+	/**
+	 * Verifica si se puede reservar en un sitio especifico a una hora especifica
+	 * @param idSitio Id del sitio al que se quiere reservar
+	 * @param fecha Fecha del sitio al que se quiere reservas
+	 * @param horaInicio Hora de inicio de la funcion
+	 * @return True si se puede reservar, false de lo contrario
+	 * @throws SQLException Si hay error conectandose con la base de datos
+	 * @throws Exception Si hay error al convertir de dato a reserva.
+	 */
+	public boolean sePuedeReservar(int idSitio, Date fecha, int horaInicio) throws SQLException, Exception {
+		for(Reserva x : darReservas()) {
+			int horaFinalReserva = x.getHoraReserva()+x.getDuracion();
+			
+			if(x.getIdSitio() == idSitio && fecha.toString().equalsIgnoreCase(x.getFecha().toString()) && horaInicio >= x.getHoraReserva() && horaInicio <= horaFinalReserva) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

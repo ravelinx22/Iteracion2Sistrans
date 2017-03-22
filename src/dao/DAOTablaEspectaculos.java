@@ -97,6 +97,48 @@ public class DAOTablaEspectaculos {
 		}
 		return espectaculos;
 	}
+	
+	/**
+	 * Busca un espectaculo por id.
+	 * @param id Id del espectaculo a buscar
+	 * @return Espectaculo que tiene el id igual al parametro, null de lo contrario.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error al convertir de datos a espectaculo.
+	 */
+	public Espectaculo darEspectaculo(int id) throws SQLException, Exception {
+		String sql = "SELECT * FROM ISIS2304B221710.ESPECTACULOS WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(!rs.next())
+			return null;
+		
+		String req = "SELECT ID_REQUERIMIENTO_TECNICO FROM ISIS2304B221710.REQUERIMIENTOESPECTACULO WHERE ID_ESPECTACULO = " +id;
+		PreparedStatement segPrep = conn.prepareStatement(req);
+		ResultSet s = segPrep.executeQuery();
+		
+		ArrayList<Integer> x = new ArrayList<>();
+		while(s.next()) {
+			int yes = Integer.parseInt(s.getString("ID_REQUERIMIENTO_TECNICO"));
+			x.add(yes);
+		}
+		
+		Integer[] requerimientos = x.toArray(new Integer[x.size()]);
+		
+		String nombre = rs.getString("NOMBRE");
+		int duracion = Integer.parseInt(rs.getString("DURACION"));
+		String idioma = rs.getString("IDIOMA");
+		double costo = rs.getDouble("COSTO");
+		String descripcion = rs.getString("DESCRIPCION");
+		String publicoObjetivo = rs.getString("PUBLICO_OBJETIVO");
+		String genero = rs.getString("GENERO");	
+		Espectaculo es = new Espectaculo(id, nombre, duracion, idioma, costo, descripcion, publicoObjetivo, genero, requerimientos);
+		
+		return es;
+	}
 
 	/**
 	 * Agrega un espectaculo a la base de datos.

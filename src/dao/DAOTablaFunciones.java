@@ -71,7 +71,7 @@ public class DAOTablaFunciones {
 			int id = Integer.parseInt(rs.getString("ID"));
 			//TODO: Arreglar fecha
 			Date fecha = new Date(222);
-			int horaInicio = Integer.parseInt(rs.getString("HORA_INICO"));
+			int horaInicio = Integer.parseInt(rs.getString("HORA_INICIO"));
 			int boletasDisponibles = Integer.parseInt(rs.getString("BOLETAS_DISPONIBLES"));
 			int boletasTotales = Integer.parseInt(rs.getString("BOLETAS_TOTALES"));
 			int idReserva = Integer.parseInt(rs.getString("ID_RESERVA"));
@@ -92,6 +92,14 @@ public class DAOTablaFunciones {
 
 		String sql = "INSERT INTO ISIS2304B221710.FUNCIONES VALUES (?,?,?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		
+		DAOTablaSitios daoSitio = new DAOTablaSitios();
+		DAOTablaReserva daoReserva = new DAOTablaReserva();
+		DAOTablaEspectaculos daoEspectaculo = new DAOTablaEspectaculos();
+		
+		//TODO: Agregar
+		if(!daoSitio.darSitio(daoReserva.darReserva(funcion.getIdReserva()).getIdSitio()).cumpleRequerimientos(daoEspectaculo.darEspectaculo(funcion.getIdEspectaculo()).getRequerimientos()))
+			throw new Exception("El sitio no cumple con los requerimientos de la funcion");
 		
 		prepStmt.setInt(1, funcion.getId());
 		prepStmt.setDate(2, funcion.getFecha());

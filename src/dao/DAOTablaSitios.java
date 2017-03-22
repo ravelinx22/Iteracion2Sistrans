@@ -1,11 +1,13 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import vos.Sitio;
+import vos.Usuario;
 
 public class DAOTablaSitios {
 	
@@ -96,6 +98,53 @@ public class DAOTablaSitios {
 			sitios.add(new Sitio(id, nombre, capacidad, aptoDiscapacitados, tipoSilleteria, tieneCobertura, disponibleLunes, disponibleMartes, disponibleMiercoles, disponibleJueves, disponibleViernes, disponibleSabado, disponibleDomingo, requerimientos));
 		}
 		return sitios;
+	}
+	
+	/**
+	 * Busca un sitio por id.
+	 * @param id Id del sitio a buscar
+	 * @return Sitio que tiene el id igual al parametro, null de lo contrario.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error al convertir de datos a sitio.
+	 */
+	public Sitio darSitio(int id) throws SQLException, Exception {
+		String sql = "SELECT * FROM ISIS2304B221710.SITIOS WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(!rs.next())
+			return null;
+		
+		String req = "SELECT ID_REQUERIMIENTO_TECNICO FROM ISIS2304B221710.REQUERIMIENTOSITIO WHERE ID_SITIO = " +id;
+		PreparedStatement segPrep = conn.prepareStatement(req);
+		ResultSet s = segPrep.executeQuery();
+		
+		ArrayList<Integer> x = new ArrayList<>();
+		while(s.next()) {
+			int yes = Integer.parseInt(s.getString("ID_REQUERIMIENTO_TECNICO"));
+			x.add(yes);
+		}
+		
+		Integer[] requerimientos = x.toArray(new Integer[x.size()]);
+		
+		String nombre = rs.getString("NOMBRE");
+		int capacidad = Integer.parseInt(rs.getString("CAPACIDAD"));
+		boolean aptoDiscapacitados = Boolean.parseBoolean(rs.getString("APTO_DISCAPACITADOS"));
+		String tipoSilleteria = rs.getString("TIPO_SILLETERIA");
+		boolean tieneCobertura = Boolean.parseBoolean(rs.getString("TIENE_COBERTURA"));
+		boolean disponibleLunes = Boolean.parseBoolean(rs.getString("DISPONIBLE_LUNES"));
+		boolean disponibleMartes = Boolean.parseBoolean(rs.getString("DISPONIBLE_MARTES"));
+		boolean disponibleMiercoles = Boolean.parseBoolean(rs.getString("DISPONIBLE_MIERCOLES"));
+		boolean disponibleJueves = Boolean.parseBoolean(rs.getString("DISPONIBLE_JUEVES"));
+		boolean disponibleViernes = Boolean.parseBoolean(rs.getString("DISPONIBLE_VIERNES"));
+		boolean disponibleSabado = Boolean.parseBoolean(rs.getString("DISPONIBLE_SABADOS"));
+		boolean disponibleDomingo = Boolean.parseBoolean(rs.getString("DISPONIBLE_DOMINGOS"));					
+		Sitio es = new Sitio(id, nombre, capacidad, aptoDiscapacitados, tipoSilleteria, tieneCobertura, disponibleLunes, disponibleMartes, disponibleMiercoles, disponibleJueves, disponibleViernes, disponibleSabado, disponibleDomingo, requerimientos);
+		
+		return es;
 	}
 
 	/**

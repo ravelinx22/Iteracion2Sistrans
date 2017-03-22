@@ -1,4 +1,4 @@
-package dao;
+ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -73,8 +73,7 @@ public class DAOTablaUsuarios {
 			String correo = rs.getString("CORREO");
 			String rol = rs.getString("ROL");
 			int idPreferencia = Integer.parseInt(rs.getString("ID_PREFERENCIA"));
-			usuarios.add(new Usuario(id, nombre, identificacion, correo, rol, idPreferencia)
-					);
+			usuarios.add(new Usuario(id, nombre, identificacion, correo, rol, idPreferencia));
 		}
 		return usuarios;
 	}
@@ -86,7 +85,7 @@ public class DAOTablaUsuarios {
 	 * @throws SQLException Si hay error conectandose con la base de datos.
 	 * @throws Exception Si hay error al convertir de datos a usuario.
 	 */
-	public Usuario buscarUsuario(int id) throws SQLException, Exception {
+	public Usuario darUsuario(int id) throws SQLException, Exception {
 		String sql = "SELECT * FROM ISIS2304B221710.USUARIOS WHERE ID = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setInt(1, id);
