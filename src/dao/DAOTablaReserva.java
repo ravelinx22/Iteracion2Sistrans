@@ -69,7 +69,6 @@ public class DAOTablaReserva {
 
 		while (rs.next()) {
 			int id = Integer.parseInt(rs.getString("ID"));
-			//TODO: Arreglar esta fecha
 			Date fecha =  rs.getDate("FECHA");
 			int horaReserva = Integer.parseInt(rs.getString("HORA_RESERVA"));
 			int idSitio = Integer.parseInt(rs.getString("ID_SITIO"));

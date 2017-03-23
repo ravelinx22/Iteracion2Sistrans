@@ -69,8 +69,7 @@ public class DAOTablaFunciones {
 
 		while (rs.next()) {
 			int id = Integer.parseInt(rs.getString("ID"));
-			//TODO: Arreglar fecha
-			Date fecha = new Date(222);
+			Date fecha = rs.getDate("FECHA");
 			int horaInicio = Integer.parseInt(rs.getString("HORA_INICIO"));
 			int boletasDisponibles = Integer.parseInt(rs.getString("BOLETAS_DISPONIBLES"));
 			int boletasTotales = Integer.parseInt(rs.getString("BOLETAS_TOTALES"));
@@ -101,7 +100,7 @@ public class DAOTablaFunciones {
 		
 		DAOTablaEspectaculos daoEspectaculo = new DAOTablaEspectaculos();
 		daoEspectaculo.setConnection(conn);
-		//TODO: Agregar
+
 		if(!daoSitio.darSitio(daoReserva.darReserva(funcion.getIdReserva()).getIdSitio()).cumpleRequerimientos(daoEspectaculo.darEspectaculo(funcion.getIdEspectaculo()).getRequerimientos()))
 			throw new Exception("El sitio no cumple con los requerimientos de la funcion");
 		

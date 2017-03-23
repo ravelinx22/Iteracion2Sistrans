@@ -41,48 +41,6 @@ public class Sitio {
 	private boolean tiene_cobertura;
 
 	/**
-	 * Disponibilidad de sitio para el lunes
-	 */
-	@JsonProperty(value="disponible_lunes")
-	private boolean disponible_lunes;
-
-	/**
-	 * Disponibilidad de sitio para el martes
-	 */
-	@JsonProperty(value="disponible_martes")
-	private boolean disponible_martes;
-
-	/**
-	 * Disponibilidad de sitio para el miercoles
-	 */
-	@JsonProperty(value="disponible_miercoles")
-	private boolean disponible_miercoles;
-
-	/**
-	 * Disponibilidad de sitio para el jueves
-	 */
-	@JsonProperty(value="disponible_jueves")
-	private boolean disponible_jueves;
-
-	/**
-	 * Disponibilidad de sitio para el viernes
-	 */
-	@JsonProperty(value="disponible_viernes")
-	private boolean disponible_viernes;
-
-	/**
-	 * Disponibilidad de sitio para el sabado
-	 */
-	@JsonProperty(value="disponible_sabados")
-	private boolean disponible_sabados;
-
-	/**
-	 * Disponibilidad de sitio para el domingo
-	 */
-	@JsonProperty(value="disponible_domingos")
-	private boolean disponible_domingos;
-
-	/**
 	 * Requerimientos del espectaculo
 	 */
 	@JsonProperty(value="requerimientos")
@@ -96,29 +54,15 @@ public class Sitio {
 	 * @param aptoDiscapacitados - Representa si el sitio es apto para discapacitados
 	 * @param tipoSilleteria  - Tipo de silleteria del sitio
 	 * @param tieneCobertura -  Tipo de cobertura del sitio
-	 * @param disponibleLunes - Disponibilidad del sitio para el lunes
-	 * @param disponibleMartes - Disponibilidad del sitio para el martes
-	 * @param disponibleMiercoles - Disponibilidad del sitio para el miercoles
-	 * @param disponibleJueves - Disponibilidad del sitio para el jueves
-	 * @param disponibleViernes - Disponibilidad del sitio para el viernes
-	 * @param disponibleSabados - Disponibilidad del sitio para el sabado
-	 * @param disponibleDomingos - Disponibilidad del sitio para el domingo
 	 * @param requerimientos - Requerimientos del sitio
 	 */
-	public Sitio(@JsonProperty(value="id") int id ,@JsonProperty(value="nombre") String nombre,@JsonProperty(value="capacidad") int capacidad,@JsonProperty(value="apto_discapacitados") boolean aptoDiscapacitados,@JsonProperty(value="tipo_silleteria") String tipoSilleteria,@JsonProperty(value="tiene_cobertura") boolean tieneCobertura,@JsonProperty(value="disponible_lunes") boolean disponibleLunes,@JsonProperty(value="disponible_martes") boolean disponibleMartes,@JsonProperty(value="disponible_miercoles") boolean disponibleMiercoles,@JsonProperty(value="disponible_jueves") boolean disponibleJueves,@JsonProperty(value="disponible_viernes") boolean disponibleViernes,@JsonProperty(value="disponible_sabado") boolean disponibleSabados,@JsonProperty(value="disponible_domingo") boolean disponibleDomingos, @JsonProperty(value="requerimientos") Integer[] requerimientos) {
+	public Sitio(@JsonProperty(value="id") int id ,@JsonProperty(value="nombre") String nombre,@JsonProperty(value="capacidad") int capacidad,@JsonProperty(value="apto_discapacitados") boolean aptoDiscapacitados,@JsonProperty(value="tipo_silleteria") String tipoSilleteria,@JsonProperty(value="tiene_cobertura") boolean tieneCobertura, @JsonProperty(value="requerimientos") Integer[] requerimientos) {
 		this.id = id;
 		this.nombre = nombre;
 		this.capacidad = capacidad;
 		this.apto_discapacitados = aptoDiscapacitados;
 		this.tipo_silleteria = tipoSilleteria;
 		this.tiene_cobertura = tieneCobertura;
-		this.disponible_lunes = disponibleLunes;
-		this.disponible_martes = disponibleMartes;
-		this.disponible_miercoles = disponibleMiercoles;
-		this.disponible_jueves = disponibleJueves;
-		this.disponible_viernes = disponibleViernes;
-		this.disponible_sabados = disponibleSabados;
-		this.disponible_domingos = disponibleDomingos;
 		this.requerimientos = requerimientos;
 	}
 
@@ -216,118 +160,6 @@ public class Sitio {
 	 */
 	public void setTieneCobertura(boolean tieneCobertura) {
 		this.tiene_cobertura = tieneCobertura;
-	}
-
-	/**
-	 * Verifica si el sitio esta disponible los lunes.
-	 * @return Disponibilidad del sitio los lunes
-	 */
-	public boolean isDisponibleLunes() {
-		return disponible_lunes;
-	}
-
-	/**
-	 * Modifica la disponibilidad del sitio los lunes.
-	 * @param disponibleLunes Nueva disponibilidad del sitio los lunes
-	 */
-	public void setDisponibleLunes(boolean disponibleLunes) {
-		this.disponible_lunes = disponibleLunes;
-	}
-
-	/**
-	 * Verifica si el sitio esta disponible los martes.
-	 * @return Disponibilidad del sitio los martes.
-	 */
-	public boolean isDisponibleMartes() {
-		return disponible_martes;
-	}
-
-	/**
-	 * Modifica la disponibilidad del sitio los martes.
-	 * @param disponibleMartes Nueva disponibilidad del sitio los martes
-	 */
-	public void setDisponibleMartes(boolean disponibleMartes) {
-		this.disponible_martes = disponibleMartes;
-	}
-
-	/**
-	 * Verifica si el sitio esta disponible los miercoles.
-	 * @return Disponibilidad del sitio los miercoles
-	 */
-	public boolean isDisponibleMiercoles() {
-		return disponible_miercoles;
-	}
-
-	/**
-	 * Modifica la disponibilidad del sitio los jueves.
-	 * @param disponible_jueves Nueva disponibilidad del sitio los jueves
-	 */
-	public void setDisponibleMiercoles(boolean disponibleMiercoles) {
-		this.disponible_miercoles = disponibleMiercoles;
-	}
-
-	/**
-	 * Verifica si el sitio esta disponible los jueves.
-	 * @return Disponibilidad del sitio los jueves
-	 */
-	public boolean isDisponibleJueves() {
-		return disponible_jueves;
-	}
-
-	/**
-	 * Modifica la disponibilidad del sitio los jueves.
-	 * @param disponibleJueves Nueva disponibilidad del sitio los jueves
-	 */
-	public void setDisponibleJueves(boolean disponibleJueves) {
-		this.disponible_jueves = disponibleJueves;
-	}
-
-	/**
-	 * Verifica si el sitio esta disponible los viernes.
-	 * @return Disponibilidad del sitio los viernes
-	 */
-	public boolean isDisponibleViernes() {
-		return disponible_viernes;
-	}
-
-	/**
-	 * Modifica la disponibilidad del sitio los viernes.
-	 * @param disponibleViernes Nueva disponibilidad del sitio los viernes
-	 */
-	public void setDisponibleViernes(boolean disponibleViernes) {
-		this.disponible_viernes = disponibleViernes;
-	}
-
-	/**
-	 * Verifica si el sitio esta disponible los sabados.
-	 * @return Disponibilidad del sitio los sabados
-	 */
-	public boolean isDisponibleSabado() {
-		return disponible_sabados;
-	}
-
-	/**
-	 * Modifica la disponibilidad del sitio los sabados.
-	 * @param disponibleSabado Nueva disponibilidad del sitio los sabados
-	 */
-	public void setDisponibleSabado(boolean disponibleSabado) {
-		this.disponible_sabados = disponibleSabado;
-	}
-
-	/**
-	 * Verifica si el sitio esta disponible los domingos.
-	 * @return Disponibilidad del sitio los domingos.
-	 */
-	public boolean isDisponibleDomingo() {
-		return disponible_domingos;
-	}
-
-	/**
-	 * Modifica la disponibilidad del sitio los domingos.
-	 * @param disponibleDomingo Nueva disponibilidad del sitio los domingos
-	 */
-	public void setDisponibleDomingo(boolean disponibleDomingo) {
-		this.disponible_domingos = disponibleDomingo;
 	}
 	
 	/**

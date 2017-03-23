@@ -87,15 +87,8 @@ public class DAOTablaSitios {
 			int capacidad = Integer.parseInt(rs.getString("CAPACIDAD"));
 			boolean aptoDiscapacitados = Boolean.parseBoolean(rs.getString("APTO_DISCAPACITADOS"));
 			String tipoSilleteria = rs.getString("TIPO_SILLETERIA");
-			boolean tieneCobertura = Boolean.parseBoolean(rs.getString("TIENE_COBERTURA"));
-			boolean disponibleLunes = Boolean.parseBoolean(rs.getString("DISPONIBLE_LUNES"));
-			boolean disponibleMartes = Boolean.parseBoolean(rs.getString("DISPONIBLE_MARTES"));
-			boolean disponibleMiercoles = Boolean.parseBoolean(rs.getString("DISPONIBLE_MIERCOLES"));
-			boolean disponibleJueves = Boolean.parseBoolean(rs.getString("DISPONIBLE_JUEVES"));
-			boolean disponibleViernes = Boolean.parseBoolean(rs.getString("DISPONIBLE_VIERNES"));
-			boolean disponibleSabado = Boolean.parseBoolean(rs.getString("DISPONIBLE_SABADOS"));
-			boolean disponibleDomingo = Boolean.parseBoolean(rs.getString("DISPONIBLE_DOMINGOS"));					
-			sitios.add(new Sitio(id, nombre, capacidad, aptoDiscapacitados, tipoSilleteria, tieneCobertura, disponibleLunes, disponibleMartes, disponibleMiercoles, disponibleJueves, disponibleViernes, disponibleSabado, disponibleDomingo, requerimientos));
+			boolean tieneCobertura = Boolean.parseBoolean(rs.getString("TIENE_COBERTURA"));				
+			sitios.add(new Sitio(id, nombre, capacidad, aptoDiscapacitados, tipoSilleteria, tieneCobertura, requerimientos));
 		}
 		return sitios;
 	}
@@ -134,15 +127,8 @@ public class DAOTablaSitios {
 		int capacidad = Integer.parseInt(rs.getString("CAPACIDAD"));
 		boolean aptoDiscapacitados = Boolean.parseBoolean(rs.getString("APTO_DISCAPACITADOS"));
 		String tipoSilleteria = rs.getString("TIPO_SILLETERIA");
-		boolean tieneCobertura = Boolean.parseBoolean(rs.getString("TIENE_COBERTURA"));
-		boolean disponibleLunes = Boolean.parseBoolean(rs.getString("DISPONIBLE_LUNES"));
-		boolean disponibleMartes = Boolean.parseBoolean(rs.getString("DISPONIBLE_MARTES"));
-		boolean disponibleMiercoles = Boolean.parseBoolean(rs.getString("DISPONIBLE_MIERCOLES"));
-		boolean disponibleJueves = Boolean.parseBoolean(rs.getString("DISPONIBLE_JUEVES"));
-		boolean disponibleViernes = Boolean.parseBoolean(rs.getString("DISPONIBLE_VIERNES"));
-		boolean disponibleSabado = Boolean.parseBoolean(rs.getString("DISPONIBLE_SABADOS"));
-		boolean disponibleDomingo = Boolean.parseBoolean(rs.getString("DISPONIBLE_DOMINGOS"));					
-		Sitio es = new Sitio(id, nombre, capacidad, aptoDiscapacitados, tipoSilleteria, tieneCobertura, disponibleLunes, disponibleMartes, disponibleMiercoles, disponibleJueves, disponibleViernes, disponibleSabado, disponibleDomingo, requerimientos);
+		boolean tieneCobertura = Boolean.parseBoolean(rs.getString("TIENE_COBERTURA"));			
+		Sitio es = new Sitio(id, nombre, capacidad, aptoDiscapacitados, tipoSilleteria, tieneCobertura, requerimientos);
 		
 		return es;
 	}
@@ -155,7 +141,7 @@ public class DAOTablaSitios {
 	 */
 	public void addSitio(Sitio sitio) throws SQLException, Exception {
 
-		String sql = "INSERT INTO ISIS2304B221710.SITIOS VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.SITIOS VALUES (?,?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setInt(1, sitio.getId());
@@ -164,13 +150,7 @@ public class DAOTablaSitios {
 		prepStmt.setBoolean(4, sitio.esAptoDiscapacitados());
 		prepStmt.setString(5, sitio.getTipoSilleteria());
 		prepStmt.setBoolean(6, sitio.tieneCobertura());
-		prepStmt.setBoolean(7, sitio.isDisponibleLunes());
-		prepStmt.setBoolean(8, sitio.isDisponibleMartes());
-		prepStmt.setBoolean(9, sitio.isDisponibleMiercoles());
-		prepStmt.setBoolean(10, sitio.isDisponibleJueves());
-		prepStmt.setBoolean(11, sitio.isDisponibleViernes());
-		prepStmt.setBoolean(12, sitio.isDisponibleSabado());
-		prepStmt.setBoolean(13, sitio.isDisponibleDomingo());
+
 
 		System.out.println("SQL stmt:" + sql);
 
@@ -194,7 +174,7 @@ public class DAOTablaSitios {
 	 */
 	public void updateSitio(Sitio sitio) throws SQLException, Exception {
 
-		String sql = "UPDATE ISIS2304B221710.SITIOS SET nombre = ?, capacidad = ?, apto_discapacitados = ?, tipo_silleteria = ?, tiene_cobertura = ?, disponible_lunes = ?, disponible_martes = ?, disponible_miercoles = ?, disponible_jueves = ?, disponible_viernes = ?, disponible_sabados = ?, disponible_domingos = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.SITIOS SET nombre = ?, capacidad = ?, apto_discapacitados = ?, tipo_silleteria = ?, tiene_cobertura = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setString(1, sitio.getNombre());
@@ -202,14 +182,7 @@ public class DAOTablaSitios {
 		prepStmt.setBoolean(3, sitio.esAptoDiscapacitados());
 		prepStmt.setString(4, sitio.getTipoSilleteria());
 		prepStmt.setBoolean(5, sitio.tieneCobertura());
-		prepStmt.setBoolean(6, sitio.isDisponibleLunes());
-		prepStmt.setBoolean(7, sitio.isDisponibleMartes());
-		prepStmt.setBoolean(8, sitio.isDisponibleMiercoles());
-		prepStmt.setBoolean(9, sitio.isDisponibleJueves());
-		prepStmt.setBoolean(10, sitio.isDisponibleViernes());
-		prepStmt.setBoolean(11, sitio.isDisponibleSabado());
-		prepStmt.setBoolean(12, sitio.isDisponibleDomingo());
-		prepStmt.setInt(13, sitio.getId());
+		prepStmt.setInt(6, sitio.getId());
 
 		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);
