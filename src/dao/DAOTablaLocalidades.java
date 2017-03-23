@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import vos.Localidad;
+import vos.Usuario;
 
 public class DAOTablaLocalidades {
 	/**
@@ -74,6 +75,34 @@ public class DAOTablaLocalidades {
 			localidades.add(new Localidad(id, capacidad, nombre,  idSitio));
 		}
 		return localidades;
+	}
+	
+	/**
+	 * Busca una localidad por id.
+	 * @param id Id de la localidad a buscar
+	 * @return Localidad que tiene el id igual al parametro, null de lo contrario.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error al convertir de datos a localidades.
+	 */
+	public Localidad darLocalidad(int id) throws SQLException, Exception {
+		String sql = "SELECT * FROM ISIS2304B221710.LOCALIDADES WHERE ID = ?";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(!rs.next())
+			return null;
+		
+		String nombre = rs.getString("NOMBRE");
+		int capacidad = Integer.parseInt(rs.getString("CAPACIDAD"));
+		int idSitio = Integer.parseInt(rs.getString("ID_SITIO"));
+				
+		Localidad loc = new Localidad(id, capacidad, nombre,  idSitio);
+		
+		return loc;
 	}
 
 	/**

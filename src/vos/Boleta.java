@@ -7,8 +7,8 @@ public class Boleta {
 	@JsonProperty(value="id")
 	private int id;
 	
-	@JsonProperty(value="id_fundacion")
-	private int id_fundacion;
+	@JsonProperty(value="id_funacion")
+	private int id_funcion;
 	
 	@JsonProperty(value="id_usuario")
 	private int id_usuario;
@@ -21,10 +21,10 @@ public class Boleta {
 
 	
 	
-	public Boleta(@JsonProperty(value="id") int id,@JsonProperty(value="id_fundacion") int id_fundacion,@JsonProperty(value="id_usuario") int id_usuario,@JsonProperty(value="id_localidad") int id_localidad,@JsonProperty(value="id_silla") int id_silla) {
+	public Boleta(@JsonProperty(value="id") int id,@JsonProperty(value="id_funcion") int id_funcion,@JsonProperty(value="id_usuario") int id_usuario,@JsonProperty(value="id_localidad") int id_localidad,@JsonProperty(value="id_silla") int id_silla) {
 		super();
 		this.id = id;
-		this.id_fundacion = id_fundacion;
+		this.id_funcion = id_funcion;
 		this.id_usuario = id_usuario;
 		this.id_localidad = id_localidad;
 		this.id_silla = id_silla;
@@ -38,12 +38,12 @@ public class Boleta {
 		this.id = id;
 	}
 
-	public int getId_fundacion() {
-		return id_fundacion;
+	public int getId_funcion() {
+		return id_funcion;
 	}
 
-	public void setId_fundacion(int id_fundacion) {
-		this.id_fundacion = id_fundacion;
+	public void setId_funcion(int id_fundacion) {
+		this.id_funcion = id_fundacion;
 	}
 
 	public int getId_usuario() {

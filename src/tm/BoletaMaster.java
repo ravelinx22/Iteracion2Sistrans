@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import dao.DAOBoletas;
+import dao.DAOTablaBoletas;
 import dao.DAOTablaCompañias;
 import vos.Boleta;
 import vos.Compañia;
@@ -101,7 +101,7 @@ public class BoletaMaster {
 	 */
 	public ListaBoletas darBoletas() throws Exception {
 		ArrayList<Boleta> boletas;
-		DAOBoletas daoBoletas = new DAOBoletas();
+		DAOTablaBoletas daoBoletas = new DAOTablaBoletas();
 		
 		try {
 			this.conn = darConexion();
@@ -133,7 +133,7 @@ public class BoletaMaster {
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
 	public void addBoleta(Boleta boleta) throws Exception {
-		DAOBoletas daoBoletas = new DAOBoletas();
+		DAOTablaBoletas daoBoletas = new DAOTablaBoletas();
 		try {
 			this.conn = darConexion();
 			daoBoletas.setConnection(conn);
@@ -163,7 +163,7 @@ public class BoletaMaster {
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
 	public void updateBoleta(Boleta boleta) throws Exception {
-		DAOBoletas daoBoletas = new DAOBoletas();
+		DAOTablaBoletas daoBoletas = new DAOTablaBoletas();
 		try {
 			this.conn = darConexion();
 			daoBoletas.setConnection(conn);
@@ -192,7 +192,7 @@ public class BoletaMaster {
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
 	public void deleteBoleta(Boleta boleta) throws Exception {
-		DAOBoletas daoBoletas = new DAOBoletas();
+		DAOTablaBoletas daoBoletas = new DAOTablaBoletas();
 		try {
 			this.conn = darConexion();
 			daoBoletas.setConnection(conn);

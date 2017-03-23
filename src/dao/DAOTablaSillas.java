@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import vos.Silla;
+import vos.Usuario;
 
 public class DAOTablaSillas {
 	/**
@@ -69,12 +70,40 @@ public class DAOTablaSillas {
 			int id = Integer.parseInt(rs.getString("ID"));
 			int numeroSilla = Integer.parseInt(rs.getString("NUMERO_SILLA"));
 			int numeroFila = Integer.parseInt(rs.getString("NUMERO_FILA"));
-			boolean ocupado = Boolean.parseBoolean(rs.getString("OCUPADO"));
+			boolean ocupado = rs.getBoolean("OCUPADO");
 			int idLocalidad = Integer.parseInt(rs.getString("ID_LOCALIDAD"));
 
 			sillas.add(new Silla(id, numeroSilla, numeroFila, ocupado, idLocalidad));
 		}
 		return sillas;
+	}
+	
+	/**
+	 * Busca una silla por id.
+	 * @param id Id de la silla a buscar
+	 * @return Silla que tiene el id igual al parametro, null de lo contrario.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error al convertir de datos a silla.
+	 */
+	public Silla darSilla(int id) throws SQLException, Exception {
+		String sql = "SELECT * FROM ISIS2304B221710.SILLAS WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(!rs.next())
+			return null;
+		
+		int numeroSilla = Integer.parseInt(rs.getString("NUMERO_SILLA"));
+		int numeroFila = Integer.parseInt(rs.getString("NUMERO_FILA"));
+		boolean ocupado = rs.getBoolean("OCUPADO");
+		int idLocalidad = Integer.parseInt(rs.getString("ID_LOCALIDAD"));
+
+		Silla si = new Silla(id, numeroSilla, numeroFila, ocupado, idLocalidad);
+		
+		return si;
 	}
 
 	/**
@@ -137,6 +166,25 @@ public class DAOTablaSillas {
 		System.out.println("SQL stmt:" + sql);
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	
+	/**
+	 * Ocupa la silla con id especifico
+	 * @param id_silla Id de la silla
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error conviertiendo de dato a silla.
+	 */
+	public void ocuparSilla(int id_silla) throws SQLException, Exception {
+		String sql = "UPDATE ISIS2304B221710.SILLAS SET ocupado = ? WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setBoolean(1, true);
+		prepStmt.setInt(2, id_silla);
+
+		System.out.println("SQL stmt:" + sql);
+
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
