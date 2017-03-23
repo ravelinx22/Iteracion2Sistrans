@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import dao.DAOTablaSitios;
 import dao.DAOTablaUsuarios;
@@ -245,5 +248,41 @@ public class SitioMaster {
 				throw e;
 			}
 		}
+	}
+	
+	public ArrayList<Map<String, String>> darInfoSitios(int id) throws Exception {
+		DAOTablaSitios daoSitios = new DAOTablaSitios();
+		ArrayList<Map<String, String>> objects = new ArrayList<>();
+		try {
+			this.conn = darConexion();
+			daoSitios.setConnection(conn);
+			ResultSet rs = daoSitios.darInfoSitio(id);
+			while(rs.next()) {
+				Map<String, String> info = new HashMap<>();
+				for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+					String columna = rs.getMetaData().getColumnLabel(i);
+					String dato = rs.getString(columna);
+					info.put(columna, dato);
+				}
+				objects.add(info);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoSitios.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return objects;
 	}
 }

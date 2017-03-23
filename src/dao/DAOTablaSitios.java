@@ -59,7 +59,7 @@ public class DAOTablaSitios {
 	 * @throws SQLException Si hay error conectandose con la base de datos 
 	 * @throws Exception Si hay error convirtiendo los datos a lista de sitios
 	 */
-	public ArrayList<Sitio> darSitios() throws SQLException, Exception {
+	public ArrayList<Sitio> darSitios() throws SQLException, Exception {		
 		ArrayList<Sitio> sitios = new ArrayList<Sitio>();
 
 		String sql = "SELECT * FROM ISIS2304B221710.SITIOS";
@@ -232,5 +232,19 @@ public class DAOTablaSitios {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
+	}
+	
+	/**
+	 * Da la informacion de los sitios
+	 */
+	public ResultSet darInfoSitio(int id) throws SQLException, Exception {
+		String sql = "SELECT * FROM ISIS2304B221710.SITIOS x INNER  JOIN ISIS2304B221710.LOCALIDADES y ON x.ID = y.ID_SITIO WHERE x.id = ?";
+			
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id);
+		recursos.add(prepStmt);
+		ResultSet x = prepStmt.executeQuery();
+		
+		return x;
 	}
 }
