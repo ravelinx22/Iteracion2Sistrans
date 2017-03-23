@@ -91,19 +91,19 @@ public class DAOTablaFunciones {
 
 		String sql = "INSERT INTO ISIS2304B221710.FUNCIONES VALUES (?,?,?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		
+
 		DAOTablaSitios daoSitio = new DAOTablaSitios();
 		daoSitio.setConnection(conn);
-		
+
 		DAOTablaReserva daoReserva = new DAOTablaReserva();
 		daoReserva.setConnection(conn);
-		
+
 		DAOTablaEspectaculos daoEspectaculo = new DAOTablaEspectaculos();
 		daoEspectaculo.setConnection(conn);
 
 		if(!daoSitio.darSitio(daoReserva.darReserva(funcion.getIdReserva()).getIdSitio()).cumpleRequerimientos(daoEspectaculo.darEspectaculo(funcion.getIdEspectaculo()).getRequerimientos()))
 			throw new Exception("El sitio no cumple con los requerimientos de la funcion");
-		
+
 		prepStmt.setInt(1, funcion.getId());
 		prepStmt.setDate(2, funcion.getFecha());
 		prepStmt.setInt(3, funcion.getHoraInicio());
@@ -152,6 +152,23 @@ public class DAOTablaFunciones {
 
 		String sql = "DELETE FROM ISIS2304B221710.FUNCIONES";
 		sql += " WHERE id = " + funcion.getId();
+
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+
+	//TODO RFC3
+	public void generaReporte(int pid) throws SQLException, Exception 
+	{
+
+		String sql = "SELECT reservaISIS2304B221710.LOCALIDAD.nombre as nombre, (COUNT(reservaISIS2304B221710.LOCALIDAD.id))* reservaISIS2304B221710.LOCALIDAD.precio  FROM ((ISIS2304B221710.FUNCIONES FULL OUTER JOIN  ISIS2304B221710.RESERVA on ISIS2304B221710.FUNCIONES.reserva_id = reservaISIS2304B221710.RESERVA.id) FULL OUTER JOIN "
+				+ "reservaISIS2304B221710.RESERVA.SITIO on "
+				+ "reservaISIS2304B221710.RESERVA.sitio_id = reservaISIS2304B221710.SITIO.id) FULL OUTER JOIN "
+				+ "reservaISIS2304B221710.LOCALIDAD on reservaISIS2304B221710.SITIO.id = reservaISIS2304B221710.LOCALIDAD.sitio_id  ";
+		sql += " WHERE ISIS2304B221710.FUNCIONES.id = "  + pid + " GROUP BY ( reservaISIS2304B221710.LOCALIDAD.nombre) ";
 
 		System.out.println("SQL stmt:" + sql);
 

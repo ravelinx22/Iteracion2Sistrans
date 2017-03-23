@@ -1,10 +1,14 @@
- package dao;
+package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+import vos.Funcion;
 import vos.Usuario;
 
 public class DAOTablaUsuarios {
@@ -77,7 +81,7 @@ public class DAOTablaUsuarios {
 		}
 		return usuarios;
 	}
-	
+
 	/**
 	 * Busca un usuario por id.
 	 * @param id Id del usuario a buscar
@@ -92,17 +96,17 @@ public class DAOTablaUsuarios {
 
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-		
+
 		if(!rs.next())
 			return null;
-		
+
 		String nombre = rs.getString("NOMBRE");
 		int identificacion = Integer.parseInt(rs.getString("IDENTIFICACION"));
 		String correo = rs.getString("CORREO");
 		String rol = rs.getString("ROL");
 		int idPreferencia = Integer.parseInt(rs.getString("ID_PREFERENCIA"));
 		Usuario us = new Usuario(id, nombre, identificacion, correo, rol, idPreferencia);
-		
+
 		return us;
 	}
 
@@ -128,7 +132,7 @@ public class DAOTablaUsuarios {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
-	
+
 	/**
 	 * Actualiza un usuario
 	 * @param usuario Usuario que contiene los nuevos datos.
@@ -169,4 +173,71 @@ public class DAOTablaUsuarios {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
+
+	//TODO RF7
+	public void cambiarPreferencia(int idnuevaPreferencia, int id)  throws SQLException , Exception
+	{
+		String sql = "UPDATE ISIS2304B221710.USUARIOS SET id_preferencia = ? WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, idnuevaPreferencia);
+		prepStmt.setInt(2, id);
+
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+
+	}
+	// TODO RF9
+	public void registrarEspectaculoTerminado(Usuario usuario, int idEspectaculo) throws SQLException , Exception
+	{
+		if(usuario.getRol().equals("festivAndes"))
+		{
+			String sql = "UPDATE ISIS2304B221710.ESPECTACULO  SET nombre = ?, duracion = ?, idioma = ?, costo = ?, descripcion = ? , publico_objetivo = ?, genero = ? WHERE id = ?";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			prepStmt.setString(1, "TERMINADO");
+			prepStmt.setInt(2,0);
+			prepStmt.setString(3, "TERMINADO");
+			prepStmt.setDouble(4, 0);
+			prepStmt.setString(5, "TERMINADO");
+			prepStmt.setString(6, "TERMINADO");
+			prepStmt.setString(7, "TERMINADO");
+			prepStmt.setInt(8, idEspectaculo);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+		}
+	}
+	//TODO rfc1 corregir;
+	public ArrayList<Funcion> consultarEspectaculos(Usuario usuario , int pfechaInicial, int pFechaFinal, String parametroParaOrdenar) throws SQLException , Exception
+	{
+
+
+
+		ArrayList<Funcion> funciones = new ArrayList<Funcion>();
+
+
+		String sql = "SELECT FROM ISIS2304B221710.ESPECTACULO FULL OUTER JOIN ISIS2304B221710.FUNCION ON ISIS2304B221710.ESPECTACULO.id = ISIS2304B221710.FUNCION.espectaculo_id ";
+		sql += "WHERE fecha > ? AND WHERE fecha < ? ORDER BY ?" ;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, pfechaInicial);
+		prepStmt.setInt(2, pFechaFinal);
+		prepStmt.setString(3, parametroParaOrdenar);
+		System.out.println("SQL stmt:" + sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		while (rs.next()) {
+			int id = Integer.parseInt(rs.getString("ID"));
+			int fecha = Integer.parseInt(rs.getString("FECHA"));
+			int horaInicio = Integer.parseInt(rs.getString("HORAINICIO"));
+			int boletasDisponibles = Integer.parseInt(rs.getString("BOLETASDISPONIBLES"));
+			int boletasTotales = Integer.parseInt(rs.getString("BOLETASTOTALES"));
+			int idReserva = Integer.parseInt(rs.getString("RESERVA_ID"));
+			int idEspectaculo = Integer.parseInt(rs.getString("ESPECTACULO_ID"));
+			SimpleDateFormat originalFormat = new SimpleDateFormat("yyyyMMdd");
+			Date date = (Date) originalFormat.parse(fecha + "");
+			funciones.add(new Funcion(id, date, horaInicio, boletasDisponibles, boletasTotales, idReserva, idEspectaculo));
+
+		}
+
+		return funciones;
+	}
 }
+
