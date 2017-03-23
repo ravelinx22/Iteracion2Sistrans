@@ -71,8 +71,8 @@ public class DAOTablaLocalidades {
 			String nombre = rs.getString("NOMBRE");
 			int capacidad = Integer.parseInt(rs.getString("CAPACIDAD"));
 			int idSitio = Integer.parseInt(rs.getString("ID_SITIO"));
-					
-			localidades.add(new Localidad(id, capacidad, nombre,  idSitio));
+			double costo = Double.parseDouble(rs.getString("COSTO"));
+			localidades.add(new Localidad(id, capacidad, nombre,  idSitio, costo));
 		}
 		return localidades;
 	}
@@ -99,8 +99,9 @@ public class DAOTablaLocalidades {
 		String nombre = rs.getString("NOMBRE");
 		int capacidad = Integer.parseInt(rs.getString("CAPACIDAD"));
 		int idSitio = Integer.parseInt(rs.getString("ID_SITIO"));
-				
-		Localidad loc = new Localidad(id, capacidad, nombre,  idSitio);
+		double costo = Double.parseDouble(rs.getString("COSTO"));		
+		
+		Localidad loc = new Localidad(id, capacidad, nombre,  idSitio,costo);
 		
 		return loc;
 	}
@@ -113,12 +114,13 @@ public class DAOTablaLocalidades {
 	 */
 	public void addLocalidad(Localidad localidad) throws SQLException, Exception {
 
-		String sql = "INSERT INTO ISIS2304B221710.LOCALIDADES VALUES (?,?,?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.LOCALIDADES VALUES (?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setInt(1, localidad.getId());
 		prepStmt.setString(2, localidad.getNombre());
 		prepStmt.setInt(3, localidad.getCapacidad());
 		prepStmt.setInt(4, localidad.getIdSitio());
+		prepStmt.setDouble(5, localidad.getCosto());
 		
 		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);
@@ -134,13 +136,15 @@ public class DAOTablaLocalidades {
 	 */
 	public void updateLocalidad(Localidad localidad) throws SQLException, Exception {
 
-		String sql = "UPDATE ISIS2304B221710.LOCALIDADES SET nombre = ?, capacidad = ?, id_sitio = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.LOCALIDADES SET nombre = ?, capacidad = ?, id_sitio = ?, costo = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setString(1, localidad.getNombre());
 		prepStmt.setInt(2, localidad.getCapacidad());
 		prepStmt.setInt(3, localidad.getIdSitio());
-		prepStmt.setInt(4, localidad.getId());
+		prepStmt.setDouble(4,  localidad.getCosto());
+
+		prepStmt.setInt(5, localidad.getId());
 
 		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);

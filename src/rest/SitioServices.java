@@ -1,6 +1,8 @@
 package rest;
 
 import java.sql.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -53,7 +55,7 @@ public class SitioServices extends FestivAndesServices {
 		} catch(Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		
+
 		return Response.status(200).entity(sitios).build();
 	}
 	
@@ -93,6 +95,19 @@ public class SitioServices extends FestivAndesServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(sitio).build();
+	}
+	
+	@GET
+	@Path("/posi")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response posi() {
+		Map<String, Integer> a = new HashMap<>();
+		try {
+			a.put("posi", 2);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(a).build();
 	}
 	
 	/**

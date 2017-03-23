@@ -94,9 +94,13 @@ public class DAOTablaFunciones {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		
 		DAOTablaSitios daoSitio = new DAOTablaSitios();
-		DAOTablaReserva daoReserva = new DAOTablaReserva();
-		DAOTablaEspectaculos daoEspectaculo = new DAOTablaEspectaculos();
+		daoSitio.setConnection(conn);
 		
+		DAOTablaReserva daoReserva = new DAOTablaReserva();
+		daoReserva.setConnection(conn);
+		
+		DAOTablaEspectaculos daoEspectaculo = new DAOTablaEspectaculos();
+		daoEspectaculo.setConnection(conn);
 		//TODO: Agregar
 		if(!daoSitio.darSitio(daoReserva.darReserva(funcion.getIdReserva()).getIdSitio()).cumpleRequerimientos(daoEspectaculo.darEspectaculo(funcion.getIdEspectaculo()).getRequerimientos()))
 			throw new Exception("El sitio no cumple con los requerimientos de la funcion");

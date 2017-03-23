@@ -27,6 +27,12 @@ public class Localidad {
 	 */
 	@JsonProperty(value="id_sitio")
 	private int id_sitio;
+	
+	/**
+	 * Costo de la localidad
+	 */
+	@JsonProperty(value="costo")
+	private double costo;
 
 	/**
 	 * Constructor de la clase localidad.
@@ -34,13 +40,15 @@ public class Localidad {
 	 * @param capacidad - Capacidad de la localidad.
 	 * @param nombre - Nombre de la localidad
 	 * @param id_sitio - Id del sitio al que pertenece la localidad.
+	 * @param costo - Costo de la localidad
 	 */
-	public Localidad(@JsonProperty(value="id") int id,@JsonProperty(value="capacidad") int capacidad,@JsonProperty(value="nombre") String nombre, @JsonProperty(value="id_sitio") int idSitio) {
+	public Localidad(@JsonProperty(value="id") int id,@JsonProperty(value="capacidad") int capacidad,@JsonProperty(value="nombre") String nombre, @JsonProperty(value="id_sitio") int idSitio, @JsonProperty(value="costo") double costo) {
 		super();
 		this.id = id;
 		this.capacidad = capacidad;
 		this.nombre = nombre;
 		this.id_sitio = idSitio;
+		this.costo = costo;
 	}
 
 	/**
@@ -105,5 +113,21 @@ public class Localidad {
 	 */
 	public void setIdSitio(int idSitio) {
 		this.id_sitio = idSitio;
+	}
+	
+	/**
+	 * Da el costo de la localidad
+	 * @return Costo de la localidad
+	 */
+	public double getCosto() {
+		return this.costo;
+	}
+	
+	/**
+	 * Modifica el costo de la localidad
+	 * @param costo Nuevo costo.
+	 */
+	public void setCosto(double costo) {
+		this.costo = costo;
 	}
 }

@@ -1,7 +1,6 @@
 package vos;
 
-import java.sql.Array;
-import java.util.List;
+
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -30,12 +29,6 @@ public class Espectaculo {
 	 */
 	@JsonProperty(value="idioma")
 	private String idioma;
-	
-	/**
-	 * Costo del espectaculo
-	 */
-	@JsonProperty(value="costo")
-	private double costo;
 	
 	/**
 	 * Descripcion del espectaculo
@@ -73,12 +66,11 @@ public class Espectaculo {
 	 * @param genero - Genero del espectaculo
 	 * @param requerimientos - Requerimientos del espectaculo
 	 */
-	public Espectaculo(@JsonProperty(value="id") int id, @JsonProperty(value="nombre") String nombre, @JsonProperty(value="duracion") int duracion, @JsonProperty(value="idioma") String idioma, @JsonProperty(value="costo") double costo, @JsonProperty(value="descripcion") String descripcion, @JsonProperty(value="publico_objetivo") String publicoObjetivo, @JsonProperty(value="genero") String genero, @JsonProperty(value="requerimientos") Integer[] requerimientos) {
+	public Espectaculo(@JsonProperty(value="id") int id, @JsonProperty(value="nombre") String nombre, @JsonProperty(value="duracion") int duracion, @JsonProperty(value="idioma") String idioma, @JsonProperty(value="descripcion") String descripcion, @JsonProperty(value="publico_objetivo") String publicoObjetivo, @JsonProperty(value="genero") String genero, @JsonProperty(value="requerimientos") Integer[] requerimientos) {
 		this.id = id;
 		this.nombre = nombre;
 		this.duracion = duracion;
 		this.idioma = idioma;
-		this.costo = costo;
 		this.descripcion = descripcion;
 		this.publico_objetivo = publicoObjetivo;
 		this.genero = genero;
@@ -147,22 +139,6 @@ public class Espectaculo {
 	 */
 	public void setIdioma(String idioma) {
 		this.idioma = idioma;
-	}
-
-	/**
-	 * Da el costo del espectaculo
-	 * @return Costo del espectaculo
-	 */
-	public double getCosto() {
-		return costo;
-	}
-
-	/**
-	 * Modifica el costo del espectaculo
-	 * @param costo Nuevo costo del espectaculo
-	 */
-	public void setCosto(double costo) {
-		this.costo = costo;
 	}
 
 	/**
