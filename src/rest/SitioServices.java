@@ -110,7 +110,58 @@ public class SitioServices extends FestivAndesServices {
 		ArrayList<Map<String, String>> objects;
 
 		try {
-			objects = tm.darInfoSitios(id);
+			objects = tm.darInfoSitios(id, null, null, null);
+			
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(objects).build();
+	}
+	
+	@GET
+	@Path("/{id}/darInfo/{agrupamiento}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darInfo(@PathParam("id") int id, @PathParam("agrupamiento") String agrupamiento) {
+
+		SitioMaster tm = new SitioMaster(getPath());
+		ArrayList<Map<String, String>> objects;
+
+		try {
+			objects = tm.darInfoSitios(id, agrupamiento, null, null);
+			
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(objects).build();
+	}
+	
+	@GET
+	@Path("/{id}/darInfo/{orden}/{ordenadoPor}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darInfo(@PathParam("id") int id, @PathParam("orden") String orden, @PathParam("ordenadoPor") String ordenadoPor) {
+
+		SitioMaster tm = new SitioMaster(getPath());
+		ArrayList<Map<String, String>> objects;
+
+		try {
+			objects = tm.darInfoSitios(id, null, orden, ordenadoPor);
+			
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(objects).build();
+	}
+	
+	@GET
+	@Path("/{id}/darInfo/{agrupamiento}/{orden}/{ordenadoPor}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darInfo(@PathParam("id") int id, @PathParam("agrupamiento") String agrupamiento,  @PathParam("orden") String orden, @PathParam("ordenadoPor") String ordenadoPor) {
+
+		SitioMaster tm = new SitioMaster(getPath());
+		ArrayList<Map<String, String>> objects;
+
+		try {
+			objects = tm.darInfoSitios(id, agrupamiento, orden, ordenadoPor);
 			
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();

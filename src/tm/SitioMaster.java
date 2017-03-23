@@ -250,13 +250,13 @@ public class SitioMaster {
 		}
 	}
 	
-	public ArrayList<Map<String, String>> darInfoSitios(int id) throws Exception {
+	public ArrayList<Map<String, String>> darInfoSitios(int id, String agrupamiento, String orden, String ordenarPor) throws Exception {
 		DAOTablaSitios daoSitios = new DAOTablaSitios();
 		ArrayList<Map<String, String>> objects = new ArrayList<>();
 		try {
 			this.conn = darConexion();
 			daoSitios.setConnection(conn);
-			ResultSet rs = daoSitios.darInfoSitio(id);
+			ResultSet rs = daoSitios.darInfoSitio(id, agrupamiento, orden, ordenarPor);
 			while(rs.next()) {
 				Map<String, String> info = new HashMap<>();
 				for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {

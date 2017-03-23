@@ -210,9 +210,18 @@ public class DAOTablaSitios {
 	/**
 	 * Da la informacion de los sitios
 	 */
-	public ResultSet darInfoSitio(int id) throws SQLException, Exception {
-		String sql = "SELECT * FROM ISIS2304B221710.SITIOS x INNER  JOIN ISIS2304B221710.LOCALIDADES y ON x.ID = y.ID_SITIO WHERE x.id = ?";
+	public ResultSet darInfoSitio(int id, String agrupamiento, String orden, String ordenarPor) throws SQLException, Exception {
+		String tabla = "(SELECT x.id AS ID, x.nombre AS NOMBRE_SITIO, x.capacidad AS CAPACIDAD_SITIO , x.apto_discapacitados AS APTO_DISCAPACITADOS, x.tipo_silleteria AS TIPO_SILLETERIA, x.tiene_cobertura AS TIENE_COBERTURA , y.id AS ID_LOCALIDAD, y.nombre AS NOMBRE_LOCALIDAD, y.capacidad AS CAPACIDAD_LOCALIDAD, y.costo AS COSTO_LOCALIDAD FROM ISIS2304B221710.SITIOS x INNER  JOIN ISIS2304B221710.LOCALIDADES y ON x.ID = y.ID_SITIO WHERE x.id = ?) ";
+		String sql = "SELECT * FROM " +tabla;
 			
+		if(agrupamiento != null) {
+			sql = "SELECT " +agrupamiento +" FROM" +tabla +" GROUP BY " +agrupamiento +" ";
+		}
+		
+		if(orden != null && ordenarPor != null) {
+			sql += "ORDER BY " +ordenarPor +" " +orden;
+		}
+		
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setInt(1, id);
 		recursos.add(prepStmt);
