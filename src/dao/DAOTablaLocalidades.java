@@ -50,7 +50,7 @@ public class DAOTablaLocalidades {
 	}
 
 	// Transacciones
-	
+
 	/**
 	 * Da la lista con las localidades en la base de datos
 	 * @return Lista con las localidades registradas. 
@@ -65,7 +65,7 @@ public class DAOTablaLocalidades {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-
+		
 		while (rs.next()) {
 			int id = Integer.parseInt(rs.getString("ID"));
 			String nombre = rs.getString("NOMBRE");
@@ -76,7 +76,7 @@ public class DAOTablaLocalidades {
 		}
 		return localidades;
 	}
-	
+
 	/**
 	 * Busca una localidad por id.
 	 * @param id Id de la localidad a buscar
@@ -92,17 +92,17 @@ public class DAOTablaLocalidades {
 
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-		
+
 		if(!rs.next())
 			return null;
-		
+
 		String nombre = rs.getString("NOMBRE");
 		int capacidad = Integer.parseInt(rs.getString("CAPACIDAD"));
 		int idSitio = Integer.parseInt(rs.getString("ID_SITIO"));
 		double costo = Double.parseDouble(rs.getString("COSTO"));		
-		
+
 		Localidad loc = new Localidad(id, capacidad, nombre,  idSitio,costo);
-		
+
 		return loc;
 	}
 
@@ -121,13 +121,13 @@ public class DAOTablaLocalidades {
 		prepStmt.setInt(3, localidad.getCapacidad());
 		prepStmt.setInt(4, localidad.getIdSitio());
 		prepStmt.setDouble(5, localidad.getCosto());
-		
+
 		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 
 	}
-	
+
 	/**
 	 * Actualiza una localidad de la base de datos
 	 * @param localidad Localidad con los nuevos datos.
@@ -168,11 +168,13 @@ public class DAOTablaLocalidades {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
-	
+
 	/**
 	 * Da la ultima fila usada.
 	 * @param id_localidad Id de la localidad
 	 * @return Numero de la ultima fila
+	 * @throws SQLException Si hay un error conectandose con la base de datos.
+	 * @throws Exception Si hay un error al convertir de dato a localidad.
 	 */
 	public int getLastRow(int id_localidad) throws SQLException, Exception {
 		String sql = "SELECT max(NUMERO_FILA) AS FILA FROM SILLAS WHERE ID_LOCALIDAD = " +id_localidad;
@@ -182,12 +184,35 @@ public class DAOTablaLocalidades {
 
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-		
+
 		if(!rs.next())
 			return 0;
-		
+
 		String x = rs.getString("FILA");
 		int fila = (x == null) ? 0 : Integer.parseInt(x);
 		return fila;
+	}
+
+	/**
+	 * Da la primera silla disponible que encuentra en el id  de la localidad.
+	 * @param id_localidad Id de la localidad donde se busca la silla
+	 * @return Id de la silla que se encontro disponible
+	 * @throws SQLException Si hay un error conectandose con la base de datos.
+	 * @throws Exception Si hay un error al convertir de dato a localidad.
+	 */
+	public int darSillaDisponible(int id_localidad, int id_funcion) throws SQLException, Exception {
+		String sql = "SELECT MIN(y.ID) AS ID FROM (SELECT x.ID_FUNCION, x.ID_SILLA, y.ID_LOCALIDAD  FROM (SELECT * FROM BOLETAS WHERE ID_FUNCION = ?) x INNER JOIN SILLAS y ON x.ID_SILLA = y.ID WHERE y.ID_LOCALIDAD = ?) x RIGHT JOIN SILLAS y ON x.ID_LOCALIDAD = y.ID_LOCALIDAD AND x.ID_SILLA = y.ID WHERE y.ID_LOCALIDAD = ? AND x.ID_FUNCION IS NULL";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id_funcion);
+		prepStmt.setInt(2, id_localidad);
+		prepStmt.setInt(3, id_localidad);
+		System.out.println("SQL stmt:" + sql);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		if(!rs.next() || rs.getString("ID") == null)
+			throw new Exception("No hay sillas disponibles en la localidad con id " +id_localidad);
+			
+	    return Integer.parseInt(rs.getString("ID"));
 	}
 }

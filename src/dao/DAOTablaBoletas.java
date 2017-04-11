@@ -61,7 +61,7 @@ public class DAOTablaBoletas {
 		ArrayList<Boleta> boletas = new ArrayList<Boleta>();
 
 		String sql = "SELECT * FROM ISIS2304B221710.BOLETAS";		
-		
+
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
@@ -94,7 +94,7 @@ public class DAOTablaBoletas {
 		if(!sePuedeComprarEnLocalidadYFuncion(boleta.getId_funcion(), sill.darSilla(boleta.getId_silla()).getIdLocalidad()))
 			throw new Exception("No hay mas boletas disponibles");
 
-		if(sillaOcupada(boleta.getId_silla()))
+		if(sillaOcupada(boleta.getId_silla(), boleta.getId_funcion()))
 			throw new Exception("La silla ya esta ocupada");
 
 
@@ -198,18 +198,21 @@ public class DAOTablaBoletas {
 	/**
 	 * Verifica si una silla esta ocupada
 	 * @param id_silla Id de la silla a verificar
+	 * @param id_funcion Id de la funcion a verificar
 	 * @return True si esta ocupada, false de lo contrario
 	 * @throws SQLException Si hay error conectandose con la base de datos.
 	 * @throws Exception Si hay error convirtiendo los datos
 	 */
-	public boolean sillaOcupada(int id_silla) throws SQLException, Exception {
+	public boolean sillaOcupada(int id_silla, int id_funcion) throws SQLException, Exception {
 		DAOTablaSillas sm = new DAOTablaSillas();
 		sm.setConnection(this.conn);
 		if(sm.darSilla(id_silla) == null)
 			throw new Exception("La silla no existe");
 
-		String sql = "SELECT * FROM ISIS2304B221710.BOLETAS WHERE ID_SILLA =" +id_silla;
+		String sql = "SELECT * FROM ISIS2304B221710.BOLETAS WHERE ID_SILLA = ? AND ID_FUNCION = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id_silla);
+		prepStmt.setInt(2, id_funcion);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 
@@ -300,10 +303,10 @@ public class DAOTablaBoletas {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-		
+
 		if(!rs.next())
 			return 0;
-		
+
 		double costo = rs.getDouble("COSTO");
 		return costo;
 	}
@@ -318,16 +321,35 @@ public class DAOTablaBoletas {
 	public double darGananciasEspectaculo(int id_espectaculo) throws SQLException, Exception {
 		DAOTablaEspectaculos espec = new DAOTablaEspectaculos();
 		espec.setConnection(this.conn);
-		
+
 		if(espec.darEspectaculo(id_espectaculo) == null)
 			throw new Exception("No existe el espectaculo");
-		
+
 		double ganancias = 0.0;
-		
+
 		for(Funcion x : espec.darFunciones(id_espectaculo)) {
 			ganancias += darGananciasFuncion(x.getId());
 		}
-		
+
 		return ganancias;
+	}
+
+	/**
+	 * Da el ultimo id de boleta usado
+	 * @return Ultimo id de boleta usado.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error convirtiendo los datos
+	 */
+	public int getLastId() throws SQLException, Exception {
+		String sql = "SELECT max(ID) AS MAX FROM BOLETAS";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		if(!rs.next())
+			return 0;
+		
+		int maximo = Integer.parseInt(rs.getString("MAX"));
+		return maximo;
 	}
 }
