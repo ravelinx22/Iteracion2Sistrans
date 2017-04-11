@@ -5,8 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import tm.SillaMaster;
 import vos.Boleta;
 
 public class DAOTablaBoletas {
@@ -72,8 +70,10 @@ public class DAOTablaBoletas {
 			int id_fundacion = Integer.parseInt(rs.getString("ID_FUNCION"));
 			int id_usuario = Integer.parseInt(rs.getString("ID_USUARIO"));
 			int id_silla = Integer.parseInt(rs.getString("ID_SILLA"));
+			double costo = rs.getDouble("COSTO");
+			boolean abono = rs.getBoolean("ABONO");
 
-			boletas.add(new Boleta(id, id_fundacion, id_usuario, id_silla));
+			boletas.add(new Boleta(id, id_fundacion, id_usuario, id_silla, costo, abono));
 		}
 		return boletas;
 	}
@@ -93,12 +93,14 @@ public class DAOTablaBoletas {
 		if(sillaOcupada(boleta.getId_silla()))
 			throw new Exception("La silla ya esta ocupada");
 
-		String sql = "INSERT INTO ISIS2304B221710.BOLETAS VALUES (?,?,?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.BOLETAS VALUES (?,?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setInt(1, boleta.getId());
 		prepStmt.setInt(2, boleta.getId_funcion());
 		prepStmt.setInt(3, boleta.getId_usuario());
 		prepStmt.setInt(4, boleta.getId_silla());
+		prepStmt.setDouble(5, boleta.getCosto());
+		prepStmt.setBoolean(6, boleta.getAbono());
 
 		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);
@@ -113,13 +115,15 @@ public class DAOTablaBoletas {
 	 */
 	public void updateBoleta(Boleta boleta) throws SQLException, Exception {
 
-		String sql = "UPDATE ISIS2304B221710.COMPAÑIAS SET id_funcion = ?,id_usuario = ?, id_silla = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.COMPAÑIAS SET id_funcion = ?,id_usuario = ?, id_silla = ?, costo = ?, abono = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setInt(1, boleta.getId_funcion());
 		prepStmt.setInt(2, boleta.getId_usuario());
 		prepStmt.setInt(3, boleta.getId_silla());
-		prepStmt.setInt(4, boleta.getId());
+		prepStmt.setDouble(4, boleta.getCosto());
+		prepStmt.setBoolean(5, boleta.getAbono());
+		prepStmt.setInt(6, boleta.getId());
 
 		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);

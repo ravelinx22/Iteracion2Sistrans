@@ -29,20 +29,68 @@ public class Boleta {
 	private int id_silla;
 	
 	/**
+	 * Costo de la boleta 
+	 */
+	@JsonProperty(value="costo")
+	private double costo;
+	
+	/**
+	 * Estado de la compra de la boleta
+	 */
+	@JsonProperty(value="abono")
+	private boolean abono;
+	
+	/**
 	 * Construye una nueva boleta
 	 * @param id Id de la boleta
 	 * @param id_funcion Id de la funcion de la boleta
 	 * @param id_usuario Id del usuario de la boleta
 	 * @param id_silla Id de la silla de la boleta
+	 * @param costo Costo de la boleta
+	 * @param abono Estado de la compra de la boleta
 	 */
-	public Boleta(@JsonProperty(value="id") int id,@JsonProperty(value="id_funcion") int id_funcion,@JsonProperty(value="id_usuario") int id_usuario,@JsonProperty(value="id_silla") int id_silla) {
+	public Boleta(@JsonProperty(value="id") int id,@JsonProperty(value="id_funcion") int id_funcion,@JsonProperty(value="id_usuario") int id_usuario,@JsonProperty(value="id_silla") int id_silla, @JsonProperty(value="costo") double costo, @JsonProperty(value="abono") boolean abono) {
 		super();
 		this.id = id;
 		this.id_funcion = id_funcion;
 		this.id_usuario = id_usuario;
 		this.id_silla = id_silla;
+		this.costo = costo;
+		this.abono = abono;
 	}
 
+	/**
+	 * Da el costo de la boleta
+	 * @return Costo de la boleta
+	 */
+	public double getCosto() {
+		return costo;
+	}
+	
+	/**
+	 * Cambia el costo de la boleta
+	 * @param costo Nuevo costo de la boleta
+	 */
+	public void setCosto(double costo) {
+		this.costo = costo;
+	}
+	
+	/**
+	 * Da si la boleta hace parte de un abono.
+	 * @return True si la boleta hace parte de un abono, false de lo contrario.
+	 */
+	public boolean getAbono() {
+		return abono;
+	}
+	
+	/**
+	 * Cambia el estado de abono de la boleta
+	 * @param abono Cambia el estado del abono de la boleta.
+	 */
+	public void setAbono(boolean abono) {
+		this.abono = abono;
+	}
+	
 	/**
 	 * Id de la boleta
 	 * @return Id de la boleta
