@@ -3,13 +3,16 @@ package tm;
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import dao.DAOTablaAbonos;
 import dao.DAOTablaBoletas;
 import dao.DAOTablaCompañias;
+import vos.Abono;
 import vos.Boleta;
 import vos.Compañia;
 import vos.ListaBoletas;
@@ -191,12 +194,12 @@ public class BoletaMaster {
 	 * @param boleta Boleta a eliminar
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public void deleteBoleta(Boleta boleta) throws Exception {
+	public void deleteBoleta(Boleta boleta, Date fecha) throws Exception {
 		DAOTablaBoletas daoBoletas = new DAOTablaBoletas();
 		try {
 			this.conn = darConexion();
 			daoBoletas.setConnection(conn);
-			daoBoletas.deleteBoleta(boleta);
+			daoBoletas.deleteBoleta(boleta, fecha);
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;
@@ -213,5 +216,38 @@ public class BoletaMaster {
 				throw e;
 			}
 		}
+	}
+	
+	/**
+	 * Dar la boleta con id
+	 * @param id Id de la boleta
+	 * @return Boleta con el id que entra por parametro
+	 * @throws Exception Si hay problema conectandose con la base de datos.
+	 */
+	public Boleta darBoleta(int id) throws Exception {
+		DAOTablaBoletas daoBoletas = new DAOTablaBoletas();
+		Boleta boleta;
+		try {
+			this.conn = darConexion();
+			daoBoletas.setConnection(conn);
+			boleta = daoBoletas.darBoleta(id);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoBoletas.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return boleta;
 	}
 }

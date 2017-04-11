@@ -1,5 +1,7 @@
 package vos;
 
+import java.util.HashMap;
+
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Boleta {
@@ -153,5 +155,18 @@ public class Boleta {
 	 */
 	public void setId_silla(int id_silla) {
 		this.id_silla = id_silla;
+	}
+	
+	/**
+	 * Factura de la boleta 
+	 * @return Mapa con la factura de la boleta
+	 */
+	public HashMap<String, Object> darFactura() {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("Id usuario", id_usuario);
+		map.put("Id funcion", id_funcion);
+		map.put("Id silla", id_silla);
+		map.put("Valor", costo);
+		return map;
 	}
 }

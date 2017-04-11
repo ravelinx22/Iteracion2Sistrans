@@ -1,12 +1,14 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import vos.Boleta;
 import vos.Funcion;
+import vos.Usuario;
 
 public class DAOTablaBoletas {
 	/**
@@ -78,6 +80,34 @@ public class DAOTablaBoletas {
 		}
 		return boletas;
 	}
+	
+	/**
+	 * Busca una boleta por id.
+	 * @param id Id de la boleta a buscar
+	 * @return Boleta que tiene el id igual al parametro, null de lo contrario.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error al convertir de datos a usuario.
+	 */
+	public Boleta darBoleta(int id) throws SQLException, Exception {
+		String sql = "SELECT * FROM ISIS2304B221710.BOLETAS WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		if(!rs.next())
+			return null;
+
+		int id_funcion = Integer.parseInt(rs.getString("ID_FUNCION"));
+		int id_usuario = Integer.parseInt(rs.getString("ID_USUARIO"));
+		int id_silla = Integer.parseInt(rs.getString("ID_SILLA"));
+		double costo = rs.getDouble("COSTO");
+		boolean abono = rs.getBoolean("ABONO");
+		Boleta bol = new Boleta(id, id_funcion, id_usuario, id_silla, costo, abono);
+
+		return bol;
+	}
 
 	/**
 	 * Agrega una boleta a la base de datos
@@ -144,8 +174,11 @@ public class DAOTablaBoletas {
 	 * @throws SQLException Si hay un error conectandose a la base de datos.
 	 * @throws Exception Si hay un error convirtiendo de dato a compañia
 	 */
-	public void deleteBoleta(Boleta boleta) throws SQLException, Exception {
+	public void deleteBoleta(Boleta boleta, Date fechaEliminacion) throws SQLException, Exception {
 
+		if(!sePuedeBorrarBoleta(boleta, fechaEliminacion))
+			throw new Exception("Solo se puede eliminar una boleta con anticipacion de 5 dias para la funcion");
+		
 		String sql = "DELETE FROM ISIS2304B221710.BOLETAS";
 		sql += " WHERE id = " + boleta.getId();
 
@@ -351,5 +384,24 @@ public class DAOTablaBoletas {
 		
 		int maximo = Integer.parseInt(rs.getString("MAX"));
 		return maximo;
+	}
+	
+	/**
+	 * Verifica si se puede borrar una boleta
+	 * @param id Id de la boleta a verificar
+	 * @return True si se puede borrar, false de lo contrario
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error convirtiendo los datos
+	 */
+	public boolean sePuedeBorrarBoleta(Boleta boleta, Date fechaEliminacion) throws SQLException, Exception {
+		DAOTablaFunciones daoFuncion = new DAOTablaFunciones();
+		daoFuncion.setConnection(this.conn);
+		Date funcion = daoFuncion.darFuncion(boleta.getId_funcion()).getFecha();
+		
+		int days1 = (int) (funcion.getTime() / (1000*60*60*24));
+		int days2 = (int) (fechaEliminacion.getTime() / (1000*60*60*24));
+
+		
+		return (days1-days2)>= 5;
 	}
 }

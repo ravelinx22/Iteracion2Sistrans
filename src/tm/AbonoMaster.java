@@ -124,6 +124,39 @@ public class AbonoMaster {
 	}
 	
 	/**
+	 * Dar el abono con id
+	 * @param id Id del abono
+	 * @return Abono con el id que entra por parametro
+	 * @throws Exception Si hay problema conectandose con la base de datos.
+	 */
+	public Abono darAbono(int id) throws Exception {
+		DAOTablaAbonos daoAbonos = new DAOTablaAbonos();
+		Abono abono;
+		try {
+			this.conn = darConexion();
+			daoAbonos.setConnection(conn);
+			abono = daoAbonos.darAbono(id);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoAbonos.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return abono;
+	}
+	
+	/**
 	 * Agrega un abono a la base de datos
 	 * @param abono Abono a agregar
 	 * @throws Exception Si hay problema conectandose con la base de datos.
