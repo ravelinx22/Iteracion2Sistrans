@@ -168,4 +168,26 @@ public class DAOTablaLocalidades {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
+	
+	/**
+	 * Da la ultima fila usada.
+	 * @param id_localidad Id de la localidad
+	 * @return Numero de la ultima fila
+	 */
+	public int getLastRow(int id_localidad) throws SQLException, Exception {
+		String sql = "SELECT max(NUMERO_FILA) AS FILA FROM SILLAS WHERE ID_LOCALIDAD = " +id_localidad;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		System.out.println("SQL stmt:" + sql);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(!rs.next())
+			return 0;
+		
+		String x = rs.getString("FILA");
+		int fila = (x == null) ? 0 : Integer.parseInt(x);
+		return fila;
+	}
 }

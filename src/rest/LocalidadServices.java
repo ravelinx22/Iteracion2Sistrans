@@ -14,9 +14,11 @@ import javax.ws.rs.core.Response;
 
 import tm.CompañiaMaster;
 import tm.LocalidadMaster;
+import tm.SillaMaster;
 import vos.Compañia;
 import vos.ListaLocalidades;
 import vos.Localidad;
+import vos.Silla;
 
 @Path("localidades")
 public class LocalidadServices extends FestivAndesServices {
@@ -64,10 +66,18 @@ public class LocalidadServices extends FestivAndesServices {
 	@Path("/localidad")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addCompañia(Localidad localidad) {
+	public Response addLocalidad(Localidad localidad) {
 		LocalidadMaster tm = new LocalidadMaster(getPath());
+		SillaMaster sm = new SillaMaster(getPath());
 		try {
 			tm.addLocalidad(localidad);
+			int last = sm.getLastId();
+			int lastFila = tm.getLastRow(localidad.getId());
+			
+			for(int i = 1; i <= localidad.getCapacidad(); i++) {
+				Silla s = new Silla(++last, i,lastFila+1, localidad.getId());
+				sm.addSilla(s);
+			}
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

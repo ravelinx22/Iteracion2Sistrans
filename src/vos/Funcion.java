@@ -25,12 +25,6 @@ public class Funcion {
 	 */
 	@JsonProperty(value="hora_inicio")
 	private int hora_inicio;
-	
-	/**
-	 * Boletas disponibles para la funcion
-	 */
-	@JsonProperty(value="boletas_disponible")
-	private int boletas_disponibles;
 
 	/**
 	 * Id de la reserva del sitio en donde se va a realizar la funcion
@@ -50,6 +44,11 @@ public class Funcion {
 	@JsonProperty(value="id_espectaculo")
 	private int id_espectaculo;
 
+	/**
+	 * Id del festival al que pertence la funcion
+	 */
+	@JsonProperty(value="id_festival")
+	private int id_festival;
 	
 	/**
 	 * Constructor de la clase funcion
@@ -59,16 +58,32 @@ public class Funcion {
 	 * @param boletasDisponibles - Boletas disponibles actualmente para la funcion
 	 * @param idReserva - Id de la reserva del sitio en donde se va a realizar la funcion
 	 */
-	public Funcion(@JsonProperty(value="id") int id, @JsonProperty(value="fecha") Date fecha, @JsonProperty(value="hora_inicio") int horaInicio, @JsonProperty(value="boletas_disponibles") int boletasDisponibles,@JsonProperty(value="boletas_totales") int boletasTotales, @JsonProperty(value="id_reserva") int idReserva, @JsonProperty(value="id_espectaculo") int idEspectaculo) {
+	public Funcion(@JsonProperty(value="id") int id, @JsonProperty(value="fecha") Date fecha, @JsonProperty(value="hora_inicio") int horaInicio, @JsonProperty(value="boletas_totales") int boletasTotales, @JsonProperty(value="id_reserva") int idReserva, @JsonProperty(value="id_espectaculo") int idEspectaculo, @JsonProperty(value="id_festival") int id_festival) {
 		this.id = id;
 		this.fecha = fecha;
 		this.hora_inicio = horaInicio;
-		this.boletas_disponibles = boletasDisponibles;
 		this.boletas_totales = boletasTotales;
 		this.id_reserva = idReserva;
 		this.id_espectaculo = idEspectaculo;
+		this.id_festival = id_festival;
 	}
 
+	/**
+	 * Da el id del festival
+	 * @return Id del festival
+	 */
+	public int getIdFestival() {
+		return id_festival;
+	}
+	
+	/**
+	 * Cambia el id del festival
+	 * @param id_festival Nuevo id del festival
+	 */
+	public void setIdFestival(int id_festival) {
+		this.id_festival = id_festival;
+	}
+	
 	/**
 	 * Da el id de la funcion.
 	 * @return El id de la funcion.
@@ -115,22 +130,6 @@ public class Funcion {
 	 */
 	public void setHoraInicio(int horaInicio) {
 		this.hora_inicio = horaInicio;
-	}
-
-	/**
-	 * Da la cantidad de boletas disponibles para la funcion.
-	 * @return La cantidad de boletas disponibles la funcion.
-	 */
-	public int getBoletasDisponibles() {
-		return boletas_disponibles;
-	}
-
-	/**
-	 * Modifica la cantidad de boletas disponibles para la funcion.
-	 * @param boletasDisponibles Nueva cantidad de boletas disponibles.
-	 */
-	public void setBoletasDisponibles(int boletasDisponibles) {
-		this.boletas_disponibles = boletasDisponibles;
 	}
 	
 	/**

@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import vos.Localidad;
 import vos.Sitio;
 import vos.Usuario;
 
@@ -228,5 +230,36 @@ public class DAOTablaSitios {
 		ResultSet x = prepStmt.executeQuery();
 		
 		return x;
+	}
+	
+	/**
+	 * Da las localidades de un sitio en especifico.
+	 * @param id_sitio Id del sitio 
+	 * @return Lista con las localidades de un sitio.
+	 * @throws SQLException Si hay error conectandose con la base de datos. 
+	 * @throws Exception Si hay error convirtiendo a localidad los datos.
+	 */
+	public ArrayList<Localidad> darLocalidades(int id_sitio) throws SQLException, Exception {
+		ArrayList<Localidad> localidades = new ArrayList<>();
+		String sql = "SELECT y.* FROM SITIOS x INNER JOIN LOCALIDADES y ON x.ID = y.ID_SITIO WHERE y.ID_SITIO=?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id_sitio);
+		
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(!rs.next())
+			return null;
+		
+		while(rs.next()) {
+			int id = Integer.parseInt(rs.getString("ID"));
+			String nombre = rs.getString("NOMBRE");
+			int capacidad = Integer.parseInt(rs.getString("CAPACIDAD"));
+			int idSitio = Integer.parseInt(rs.getString("ID_SITIO"));
+			double costo = Double.parseDouble(rs.getString("COSTO"));
+			localidades.add(new Localidad(id, capacidad, nombre,  idSitio, costo));
+		}
+		
+		return localidades;
 	}
 }

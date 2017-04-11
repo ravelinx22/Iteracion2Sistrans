@@ -70,10 +70,9 @@ public class DAOTablaSillas {
 			int id = Integer.parseInt(rs.getString("ID"));
 			int numeroSilla = Integer.parseInt(rs.getString("NUMERO_SILLA"));
 			int numeroFila = Integer.parseInt(rs.getString("NUMERO_FILA"));
-			boolean ocupado = rs.getBoolean("OCUPADO");
 			int idLocalidad = Integer.parseInt(rs.getString("ID_LOCALIDAD"));
 
-			sillas.add(new Silla(id, numeroSilla, numeroFila, ocupado, idLocalidad));
+			sillas.add(new Silla(id, numeroSilla, numeroFila, idLocalidad));
 		}
 		return sillas;
 	}
@@ -98,10 +97,9 @@ public class DAOTablaSillas {
 		
 		int numeroSilla = Integer.parseInt(rs.getString("NUMERO_SILLA"));
 		int numeroFila = Integer.parseInt(rs.getString("NUMERO_FILA"));
-		boolean ocupado = rs.getBoolean("OCUPADO");
 		int idLocalidad = Integer.parseInt(rs.getString("ID_LOCALIDAD"));
 
-		Silla si = new Silla(id, numeroSilla, numeroFila, ocupado, idLocalidad);
+		Silla si = new Silla(id, numeroSilla, numeroFila, idLocalidad);
 		
 		return si;
 	}
@@ -114,14 +112,13 @@ public class DAOTablaSillas {
 	 */
 	public void addSilla(Silla silla) throws SQLException, Exception {
 
-		String sql = "INSERT INTO ISIS2304B221710.SILLAS VALUES (?,?,?,?,?)";
+		String sql = "INSERT INTO ISIS2304B221710.SILLAS VALUES (?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setInt(1, silla.getId());
 		prepStmt.setInt(2, silla.getNumeroSilla());
 		prepStmt.setInt(3, silla.getNumeroFila());
-		prepStmt.setBoolean(4, silla.estaOcupado());
-		prepStmt.setInt(5, silla.getIdLocalidad());
+		prepStmt.setInt(4, silla.getIdLocalidad());
 
 		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);
@@ -137,14 +134,13 @@ public class DAOTablaSillas {
 	 */
 	public void updateSilla(Silla silla) throws SQLException, Exception {
 
-		String sql = "UPDATE ISIS2304B221710.SILLAS SET numero_silla = ?, numero_fila = ?, ocupado = ?, id_localidad = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.SILLAS SET numero_silla = ?, numero_fila = ?, id_localidad = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setInt(1, silla.getNumeroSilla());
 		prepStmt.setInt(2, silla.getNumeroFila());
-		prepStmt.setBoolean(3, silla.estaOcupado());
-		prepStmt.setInt(4, silla.getIdLocalidad());
-		prepStmt.setInt(5, silla.getId());
+		prepStmt.setInt(3, silla.getIdLocalidad());
+		prepStmt.setInt(4, silla.getId());
 
 		System.out.println("SQL stmt:" + sql);
 
@@ -171,21 +167,25 @@ public class DAOTablaSillas {
 	}
 	
 	/**
-	 * Ocupa la silla con id especifico
-	 * @param id_silla Id de la silla
+	 * Da el ultimo id registrado
+	 * @return Ultimo id registrado
 	 * @throws SQLException Si hay error conectandose con la base de datos.
 	 * @throws Exception Si hay error conviertiendo de dato a silla.
 	 */
-	public void ocuparSilla(int id_silla) throws SQLException, Exception {
-		String sql = "UPDATE ISIS2304B221710.SILLAS SET ocupado = ? WHERE id = ?";
+	public int getLastId( ) throws SQLException, Exception {
+		String sql = "SELECT max(ID) AS MAX FROM ISIS2304B221710.SILLAS";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
-
-		prepStmt.setBoolean(1, true);
-		prepStmt.setInt(2, id_silla);
 
 		System.out.println("SQL stmt:" + sql);
 
 		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(!rs.next())
+			return 0;
+		
+		String x = rs.getString("MAX");
+		int max = (x == null) ? 0 : Integer.parseInt(x);
+		return max;
 	}
 }

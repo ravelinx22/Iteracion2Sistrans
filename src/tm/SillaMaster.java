@@ -211,4 +211,32 @@ public class SillaMaster {
 			}
 		}
 	}
+	
+	/**
+	 * Da el id registrado.
+	 * @throws Exception Si hay problema conectandose con la base de datos.
+	 */
+	public int getLastId() throws Exception {
+		DAOTablaSillas daoSillas = new DAOTablaSillas();
+		try {
+			this.conn = darConexion();
+			daoSillas.setConnection(conn);
+			return daoSillas.getLastId();
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoSillas.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+	}
 }

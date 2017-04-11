@@ -227,14 +227,13 @@ public class DAOTablaUsuarios {
 			int id = Integer.parseInt(rs.getString("ID"));
 			int fecha = Integer.parseInt(rs.getString("FECHA"));
 			int horaInicio = Integer.parseInt(rs.getString("HORAINICIO"));
-			int boletasDisponibles = Integer.parseInt(rs.getString("BOLETASDISPONIBLES"));
 			int boletasTotales = Integer.parseInt(rs.getString("BOLETASTOTALES"));
 			int idReserva = Integer.parseInt(rs.getString("RESERVA_ID"));
 			int idEspectaculo = Integer.parseInt(rs.getString("ESPECTACULO_ID"));
+			int idFestival = Integer.parseInt(rs.getString("FESTIVAL_ID"));
 			SimpleDateFormat originalFormat = new SimpleDateFormat("yyyyMMdd");
 			Date date = (Date) originalFormat.parse(fecha + "");
-			funciones.add(new Funcion(id, date, horaInicio, boletasDisponibles, boletasTotales, idReserva, idEspectaculo));
-
+			funciones.add(new Funcion(id, date, horaInicio, boletasTotales, idReserva, idEspectaculo, idFestival));
 		}
 
 		return funciones;

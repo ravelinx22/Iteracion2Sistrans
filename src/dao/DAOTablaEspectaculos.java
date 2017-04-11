@@ -2,12 +2,14 @@ package dao;
 
 import java.sql.Array;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 import vos.Espectaculo;
+import vos.Funcion;
 import vos.RequerimientoTecnico;
 import vos.Usuario;
 
@@ -66,7 +68,6 @@ public class DAOTablaEspectaculos {
 
 		String sql = "SELECT * FROM ISIS2304B221710.ESPECTACULOS";
 		
-
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
@@ -194,12 +195,42 @@ public class DAOTablaEspectaculos {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
+	
+	/**
+	 * Da una lista de funciones del espectaculo
+	 * @param id_espectaculo Id del espectaculo
+	 * @return Lista con las funciones del espectaculo
+	 * @throws SQLException Si hay un error al conectarse con la base de datos.
+	 * @throws Exception Si hay un error al convertir de dato a espectaculo.
+	 */
+	public ArrayList<Funcion> darFunciones(int id_espectaculo) throws SQLException, Exception {
+		ArrayList<Funcion> funciones = new ArrayList<>();
+		String sql = "SELECT * FROM FUNCIONES WHERE ID_ESPECTACULO=" +id_espectaculo;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while(rs.next()) {
+			int id = Integer.parseInt(rs.getString("ID"));
+			Date fecha = rs.getDate("FECHA");
+			int horaInicio = Integer.parseInt(rs.getString("HORA_INICIO"));
+			int boletasTotales = Integer.parseInt(rs.getString("BOLETAS_TOTALES"));
+			int idReserva = Integer.parseInt(rs.getString("ID_RESERVA"));
+			int idEspectaculo = Integer.parseInt(rs.getString("ID_ESPECTACULO"));
+			int idFestival = Integer.parseInt(rs.getString("ID_FESTIVAL"));
+
+			funciones.add(new Funcion(id, fecha, horaInicio, boletasTotales, idReserva, idEspectaculo, idFestival));
+		}
+		
+		return funciones;
+	}
 
 	/**
 	 * Elimina un espectaculo de la base de datos.
 	 * @param espec Espectaculo a eliminar de la base de datos.
 	 * @throws SQLException Si hay un error conectandose con la base de datos
-	 * @throws Exception Si hau un error al convertir de dato a espectaculo.
+	 * @throws Exception Si hay un error al convertir de dato a espectaculo.
 	 */
 	public void deleteEspectaculo(Espectaculo espec) throws SQLException, Exception {
 
@@ -211,5 +242,23 @@ public class DAOTablaEspectaculos {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
+	}
+	
+	/**
+	 * Da las ganancias del espectaculo
+	 * @return Ganancias del espectaculo
+	 * @throws SQLException Si hay un error conectandose con la base de datos
+	 * @throws Exception Si hay un error al convertir de dato a espectaculo.
+	 */
+	public double darGananciasEspectaculo(int id_espectaculo) throws SQLException, Exception {
+		DAOTablaFunciones fm = new DAOTablaFunciones();
+		fm.setConnection(this.conn);
+		double gan = 0.0;
+		
+		for(Funcion x : darFunciones(id_espectaculo)) {
+			gan += fm.darGananciasFuncion(x.getId());
+		}
+		
+		return gan;
 	}
 }

@@ -23,12 +23,6 @@ public class Silla {
 	private int numero_fila;
 	
 	/**
-	 * Estado de la silla
-	 */
-	@JsonProperty(value="ocupado")
-	private boolean ocupado;
-	
-	/**
 	 * Id de la localidad a la que pertenece la silla
 	 */
 	@JsonProperty(value="id_localidad")
@@ -42,12 +36,11 @@ public class Silla {
 	 * @param ocupado - Estado de la silla
 	 * @param idLocalidad - Id de la localidad donde esta la silla,
 	 */
-	public Silla(@JsonProperty(value="id") int id,@JsonProperty(value="numero_silla") int numeroSilla,@JsonProperty(value="numero_fila") int numeroFila,@JsonProperty(value="ocupado") boolean ocupado,@JsonProperty(value="id_localidad") int idLocalidad) {
+	public Silla(@JsonProperty(value="id") int id,@JsonProperty(value="numero_silla") int numeroSilla,@JsonProperty(value="numero_fila") int numeroFila,@JsonProperty(value="id_localidad") int idLocalidad) {
 		super();
 		this.id = id;
 		this.numero_silla = numeroSilla;
 		this.numero_fila = numeroFila;
-		this.ocupado = ocupado;
 		this.id_localidad = idLocalidad;
 	}
 
@@ -97,22 +90,6 @@ public class Silla {
 	 */
 	public void setNumeroFila(int numeroFila) {
 		this.numero_fila = numeroFila;
-	}
-
-	/**
-	 * Da el estado de la silla.
-	 * @return Estado de la silla.
-	 */
-	public boolean estaOcupado() {
-		return ocupado;
-	}
-
-	/**
-	 * Modifica el estado de la silla.
-	 * @param ocupado El nuevo estado de la silla.
-	 */
-	public void setOcupado(boolean ocupado) {
-		this.ocupado = ocupado;
 	}
 
 	/**

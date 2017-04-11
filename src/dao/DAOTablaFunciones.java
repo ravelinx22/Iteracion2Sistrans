@@ -7,6 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import vos.Funcion;
+import vos.Localidad;
+import vos.Reserva;
+import vos.Silla;
 
 public class DAOTablaFunciones {
 
@@ -63,6 +66,8 @@ public class DAOTablaFunciones {
 
 		String sql = "SELECT * FROM ISIS2304B221710.FUNCIONES";
 
+        double x = darGananciasFuncion(1);
+		
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
@@ -71,14 +76,44 @@ public class DAOTablaFunciones {
 			int id = Integer.parseInt(rs.getString("ID"));
 			Date fecha = rs.getDate("FECHA");
 			int horaInicio = Integer.parseInt(rs.getString("HORA_INICIO"));
-			int boletasDisponibles = Integer.parseInt(rs.getString("BOLETAS_DISPONIBLES"));
 			int boletasTotales = Integer.parseInt(rs.getString("BOLETAS_TOTALES"));
 			int idReserva = Integer.parseInt(rs.getString("ID_RESERVA"));
 			int idEspectaculo = Integer.parseInt(rs.getString("ID_ESPECTACULO"));
+			int idFestival = Integer.parseInt(rs.getString("ID_FESTIVAL"));
 
-			funciones.add(new Funcion(id, fecha, horaInicio, boletasDisponibles, boletasTotales, idReserva, idEspectaculo));
+			funciones.add(new Funcion(id, fecha, horaInicio, boletasTotales, idReserva, idEspectaculo, idFestival));
 		}
 		return funciones;
+	}
+	
+	/**
+	 * Busca una funcion por id.
+	 * @param id Id de la funcion a buscar
+	 * @return Funcion que tiene el id igual al parametro, null de lo contrario.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error al convertir de datos a silla.
+	 */
+	public Funcion darFuncion(int id) throws SQLException, Exception {
+		String sql = "SELECT * FROM ISIS2304B221710.FUNCIONES WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(!rs.next())
+			return null;
+		
+		Date fecha = rs.getDate("FECHA");
+		int horaInicio = Integer.parseInt(rs.getString("HORA_INICIO"));
+		int boletasTotales = Integer.parseInt(rs.getString("BOLETAS_TOTALES"));
+		int idReserva = Integer.parseInt(rs.getString("ID_RESERVA"));
+		int idEspectaculo = Integer.parseInt(rs.getString("ID_ESPECTACULO"));
+		int idFestival = Integer.parseInt(rs.getString("ID_FESTIVAL"));
+
+		Funcion fnc = new Funcion(id, fecha, horaInicio, boletasTotales, idReserva, idEspectaculo, idFestival);
+		
+		return fnc;
 	}
 
 	/**
@@ -107,10 +142,10 @@ public class DAOTablaFunciones {
 		prepStmt.setInt(1, funcion.getId());
 		prepStmt.setDate(2, funcion.getFecha());
 		prepStmt.setInt(3, funcion.getHoraInicio());
-		prepStmt.setInt(4, funcion.getBoletasDisponibles());
-		prepStmt.setInt(5, funcion.getBoletasTotales());
-		prepStmt.setInt(6, funcion.getIdReserva());
-		prepStmt.setInt(7, funcion.getIdEspectaculo());
+		prepStmt.setInt(4, funcion.getBoletasTotales());
+		prepStmt.setInt(5, funcion.getIdReserva());
+		prepStmt.setInt(6, funcion.getIdEspectaculo());
+		prepStmt.setInt(7, funcion.getIdFestival());
 		System.out.println("SQL stmt:" + sql);
 
 		recursos.add(prepStmt);
@@ -126,15 +161,15 @@ public class DAOTablaFunciones {
 	 */
 	public void updateFuncion(Funcion funcion) throws SQLException, Exception {
 
-		String sql = "UPDATE ISIS2304B221710.FUNCIONES SET fecha = ?, hora_inicio = ?, boletas_disponibles = ?, boletas_totales = ?, id_reserva = ?, id_espectaculo = ? WHERE id = ?";
+		String sql = "UPDATE ISIS2304B221710.FUNCIONES SET fecha = ?, hora_inicio = ?, boletas_totales = ?, id_reserva = ?, id_espectaculo = ?, id_festival = ? WHERE id = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setDate(1, funcion.getFecha());
 		prepStmt.setInt(2, funcion.getHoraInicio());
-		prepStmt.setInt(3, funcion.getBoletasDisponibles());
-		prepStmt.setInt(4, funcion.getBoletasTotales());
-		prepStmt.setInt(5, funcion.getIdReserva());
-		prepStmt.setInt(6, funcion.getIdEspectaculo());
+		prepStmt.setInt(3, funcion.getBoletasTotales());
+		prepStmt.setInt(4, funcion.getIdReserva());
+		prepStmt.setInt(5, funcion.getIdEspectaculo());
+		prepStmt.setInt(6, funcion.getIdFestival());
 		prepStmt.setInt(7, funcion.getId());
 
 		System.out.println("SQL stmt:" + sql);
@@ -149,7 +184,6 @@ public class DAOTablaFunciones {
 	 * @throws Exception Si hay un error al convertir un dato a funcion.
 	 */
 	public void deleteFuncion(Funcion funcion) throws SQLException, Exception {
-
 		String sql = "DELETE FROM ISIS2304B221710.FUNCIONES";
 		sql += " WHERE id = " + funcion.getId();
 
@@ -158,6 +192,35 @@ public class DAOTablaFunciones {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
+	}
+	
+	/**
+	 * Da las ganancias de la funcion especifica
+	 * @param id_funcion Id de la funcion
+	 * @return Ganancias de la funcion
+	 * @throws SQLException Si hay un error al conectarse con la base de datos.
+	 * @throws Exception Si hay un error al convertir un dato a funcion.
+	 */
+	public double darGananciasFuncion(int id_funcion) throws SQLException, Exception {
+		Funcion loc = darFuncion(id_funcion);
+		
+		if(loc == null)
+			throw new Exception("No existe la funcion");
+		
+		DAOTablaSitios sitio = new DAOTablaSitios();
+		DAOTablaReserva reserv = new DAOTablaReserva();
+		DAOTablaBoletas boletas = new DAOTablaBoletas();
+		boletas.setConnection(this.conn);
+		reserv.setConnection(this.conn);
+		sitio.setConnection(this.conn);
+		Reserva res = reserv.darReserva(loc.getIdReserva()); 
+		double gan = 0.0;
+		
+		for(Localidad x : sitio.darLocalidades(res.getIdSitio())) {
+			gan += x.getCosto()*boletas.boletasCompradasFuncionYLocalidad(id_funcion, x.getId());
+		}
+		
+		return gan;
 	}
 
 	//TODO RFC3

@@ -7,13 +7,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
-import dao.DAOTablaLocalidades;
-import dao.DAOTablaSillas;
-import vos.ListaLocalidades;
-import vos.Localidad;
+import dao.DAOTablaFestivales;
+import vos.Festival;
+import vos.ListaFestivales;
 
-public class LocalidadMaster {
-
+public class FestivalMaster {
 	/**
 	 * Constante que contiene el path absoluto del archivo que tiene los datos de la conexión
 	 */
@@ -54,7 +52,7 @@ public class LocalidadMaster {
 	 * transacciones y la logica de negocios que estas conllevan.
 	 * @param contextPath path absoluto en el servidor del contexto del deploy actual.
 	 */
-	public LocalidadMaster(String contextPath) {
+	public FestivalMaster(String contextPath) {
 		this.connectionDataPath = contextPath + CONNECTION_DATA_FILE_NAME_REMOTE;
 		initConnectionData();
 	}
@@ -93,18 +91,18 @@ public class LocalidadMaster {
 	// Transacciones
 	
 	/**
-	 * Da las localidades en la base de datos
-	 * @return Lista de localidades con la base de datos
+	 * Da los festivales en la base de datos
+	 * @return Lista de festivales con la base de datos
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public ListaLocalidades darLocalidades() throws Exception {
-		ArrayList<Localidad> localidades;
-		DAOTablaLocalidades daoLocalidades = new DAOTablaLocalidades();
+	public ListaFestivales darFestivales() throws Exception {
+		ArrayList<Festival> festivales;
+		DAOTablaFestivales daoFestivales = new DAOTablaFestivales();
 		
 		try {
 			this.conn = darConexion();
-			daoLocalidades.setConnection(conn);
-			localidades = daoLocalidades.darLocalidades();
+			daoFestivales.setConnection(conn);
+			festivales = daoFestivales.darFestivales();
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;
@@ -113,7 +111,7 @@ public class LocalidadMaster {
 			throw e;
 		} finally {
 			try {
-				daoLocalidades.cerrarRecursos();
+				daoFestivales.cerrarRecursos();
 				if(this.conn != null)
 					this.conn.close();
 			} catch(SQLException e) {
@@ -122,20 +120,20 @@ public class LocalidadMaster {
 			}
 		}
 		
-		return new ListaLocalidades(localidades);
+		return new ListaFestivales(festivales);
 	}
 	
 	/**
-	 * Agrega una localidad a la base de datos
-	 * @param localidad Localidad a agregar
+	 * Agrega un festival a la base de datos
+	 * @param festival Festival a agregar
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public void addLocalidad(Localidad localidad) throws Exception {
-		DAOTablaLocalidades daoLocalidades = new DAOTablaLocalidades();
+	public void addFestival(Festival festival) throws Exception {
+		DAOTablaFestivales daoFestivales = new DAOTablaFestivales();
 		try {
 			this.conn = darConexion();
-			daoLocalidades.setConnection(conn);
-			daoLocalidades.addLocalidad(localidad);
+			daoFestivales.setConnection(conn);
+			daoFestivales.addFestival(festival);
 			conn.commit();
 		} catch(SQLException e) {
 			e.printStackTrace();
@@ -145,7 +143,7 @@ public class LocalidadMaster {
 			throw e;
 		} finally {
 			try {
-				daoLocalidades.cerrarRecursos();
+				daoFestivales.cerrarRecursos();
 				if(this.conn != null)
 					this.conn.close();
 			} catch(SQLException e) {
@@ -156,16 +154,16 @@ public class LocalidadMaster {
 	}
 	
 	/**
-	 * Actualiza la localidad de la base de datos.
-	 * @param localidad Localidad con los nuevos datos
+	 * Actualiza el festival de la base de datos.
+	 * @param festival Festival con los nuevos datos
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public void updateLocalidad(Localidad localidad) throws Exception {
-		DAOTablaLocalidades daoLocalidades = new DAOTablaLocalidades();
+	public void updateFestival(Festival festival) throws Exception {
+		DAOTablaFestivales daoFestivales = new DAOTablaFestivales();
 		try {
 			this.conn = darConexion();
-			daoLocalidades.setConnection(conn);
-			daoLocalidades.updateLocalidad(localidad);
+			daoFestivales.setConnection(conn);
+			daoFestivales.updateFestival(festival);
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;
@@ -174,7 +172,7 @@ public class LocalidadMaster {
 			throw e;
 		} finally {
 			try {
-				daoLocalidades.cerrarRecursos();
+				daoFestivales.cerrarRecursos();
 				if(this.conn != null)
 					this.conn.close();
 			} catch(SQLException e) {
@@ -185,16 +183,16 @@ public class LocalidadMaster {
 	}
 	
 	/**
-	 * Elimina la localidad de la base de datos.
-	 * @param localidad Localidad a eliminar
+	 * Elimina el festival de la base de datos.
+	 * @param festival Festival a eliminar
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public void deleteLocalidad(Localidad localidad) throws Exception {
-		DAOTablaLocalidades daoLocalidades = new DAOTablaLocalidades();
+	public void deleteFestival(Festival festival) throws Exception {
+		DAOTablaFestivales daoFestivales = new DAOTablaFestivales();
 		try {
 			this.conn = darConexion();
-			daoLocalidades.setConnection(conn);
-			daoLocalidades.deleteLocalidad(localidad);
+			daoFestivales.setConnection(conn);
+			daoFestivales.deleteFestival(festival);
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;
@@ -203,36 +201,7 @@ public class LocalidadMaster {
 			throw e;
 		} finally {
 			try {
-				daoLocalidades.cerrarRecursos();
-				if(this.conn != null)
-					this.conn.close();
-			} catch(SQLException e) {
-				e.printStackTrace();
-				throw e;
-			}
-		}
-	}
-	
-	/**
-	 * Da la ultima fila usada.
-	 * @param id_localidad Id de la localidad
-	 * @return Numero de la ultima fila
-	 */
-	public int getLastRow(int id_localidad) throws Exception {
-		DAOTablaLocalidades daoLocalidades = new DAOTablaLocalidades();
-		try {
-			this.conn = darConexion();
-			daoLocalidades.setConnection(conn);
-			return daoLocalidades.getLastRow(id_localidad);
-		} catch(SQLException e) {
-			e.printStackTrace();
-			throw e;
-		} catch(Exception e) {
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoLocalidades.cerrarRecursos();
+				daoFestivales.cerrarRecursos();
 				if(this.conn != null)
 					this.conn.close();
 			} catch(SQLException e) {
