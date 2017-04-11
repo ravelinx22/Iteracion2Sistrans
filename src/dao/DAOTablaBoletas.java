@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import vos.Boleta;
+import vos.Funcion;
 
 public class DAOTablaBoletas {
 	/**
@@ -58,7 +59,7 @@ public class DAOTablaBoletas {
 	 */
 	public ArrayList<Boleta> darBoletas() throws SQLException, Exception {
 		ArrayList<Boleta> boletas = new ArrayList<Boleta>();
-		
+
 		String sql = "SELECT * FROM ISIS2304B221710.BOLETAS";		
 		
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -85,13 +86,20 @@ public class DAOTablaBoletas {
 	 * @throws Exception Si hay error convirtiendo de dato a boleta
 	 */
 	public void addBoleta(Boleta boleta) throws SQLException, Exception {
-		DAOTablaSillas x = new DAOTablaSillas();
-		
-		if(!sePuedeComprarEnLocalidadYFuncion(boleta.getId_funcion(), x.darSilla(boleta.getId_silla()).getIdLocalidad()))
+		DAOTablaSillas sill = new DAOTablaSillas();
+		sill.setConnection(this.conn);
+		DAOTablaLocalidades local = new DAOTablaLocalidades();
+		local.setConnection(this.conn);
+
+		if(!sePuedeComprarEnLocalidadYFuncion(boleta.getId_funcion(), sill.darSilla(boleta.getId_silla()).getIdLocalidad()))
 			throw new Exception("No hay mas boletas disponibles");
 
 		if(sillaOcupada(boleta.getId_silla()))
 			throw new Exception("La silla ya esta ocupada");
+
+
+		double costoBase = local.darLocalidad(sill.darSilla(boleta.getId_silla()).getIdLocalidad()).getCosto();
+		double costo = (boleta.getAbono()) ? costoBase*0.8 : costoBase;
 
 		String sql = "INSERT INTO ISIS2304B221710.BOLETAS VALUES (?,?,?,?,?,?)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -99,7 +107,7 @@ public class DAOTablaBoletas {
 		prepStmt.setInt(2, boleta.getId_funcion());
 		prepStmt.setInt(3, boleta.getId_usuario());
 		prepStmt.setInt(4, boleta.getId_silla());
-		prepStmt.setDouble(5, boleta.getCosto());
+		prepStmt.setDouble(5, costo);
 		prepStmt.setBoolean(6, boleta.getAbono());
 
 		System.out.println("SQL stmt:" + sql);
@@ -157,7 +165,7 @@ public class DAOTablaBoletas {
 	 * @throws Exception Si hay error conviertiendo los datos
 	 */
 	public int boletasEnLocalidadYFuncion(int id_funcion, int id_localidad) throws SQLException, Exception {
-		String sql = "SELECT COUNT(*) AS TOTAL FROM ISIS2304B221710.BOLETAS WHERE ID_FUNCION = ? AND ID_LOCALIDAD = ?";
+		String sql = "SELECT count(*) AS TOTAL FROM ISIS2304B221710.BOLETAS x INNER JOIN ISIS2304B221710.SILLAS y ON x.ID_SILLA = y.ID WHERE x.ID_FUNCION = ? AND y.ID_LOCALIDAD = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 
 		prepStmt.setInt(1, id_funcion);
@@ -186,7 +194,7 @@ public class DAOTablaBoletas {
 
 		return capacidad_total > boletasEnLocalidadYFuncion(id_funcion, id_localidad);
 	}
-	
+
 	/**
 	 * Verifica si una silla esta ocupada
 	 * @param id_silla Id de la silla a verificar
@@ -199,18 +207,18 @@ public class DAOTablaBoletas {
 		sm.setConnection(this.conn);
 		if(sm.darSilla(id_silla) == null)
 			throw new Exception("La silla no existe");
-		
-		String sql = "SELECT * FROM BOLETAS WHERE ID_SILLA =" +id_silla;
+
+		String sql = "SELECT * FROM ISIS2304B221710.BOLETAS WHERE ID_SILLA =" +id_silla;
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-		
+
 		if(!rs.next())
 			return false;
-			
+
 		return true;
 	}
-	
+
 	/**
 	 * Da el numero de boletas compradas para una funcion 
 	 * @param id_funcion Id de la funcion que se va verificar el numero de boletas
@@ -221,23 +229,23 @@ public class DAOTablaBoletas {
 	public int boletasCompradasFuncion(int id_funcion) throws SQLException, Exception {
 		DAOTablaFunciones fm = new DAOTablaFunciones();
 		fm.setConnection(this.conn);
-		
+
 		if(fm.darFuncion(id_funcion) == null)
 			throw new Exception("La funcion no existe");
-		
-		String sql = "SELECT count(*) AS BOLETAS FROM BOLETAS WHERE ID_FUNCION =" +id_funcion;
+
+		String sql = "SELECT count(*) AS BOLETAS FROM ISIS2304B221710.BOLETAS WHERE ID_FUNCION =" +id_funcion;
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-		
+
 		if(!rs.next())
 			return 0;
-			
+
 		int boletas = Integer.parseInt(rs.getString("BOLETAS"));
-		
+
 		return boletas;
 	}
-	
+
 	/**
 	 * Da el numero de boletas compradas en una funcion y localidad dada.
 	 * @param id_funcion Id de la funcion
@@ -251,26 +259,75 @@ public class DAOTablaBoletas {
 		DAOTablaLocalidades lm = new DAOTablaLocalidades();
 		fm.setConnection(this.conn);
 		lm.setConnection(this.conn);
-		
+
 		if(fm.darFuncion(id_funcion) == null)
 			throw new Exception("La funcion no existe");
-		
+
 		if(lm.darLocalidad(id_localidad) == null)
 			throw new Exception("La localidad no existe");
-		
-		String sql = "SELECT count(*) AS BOLETAS FROM BOLETAS x INNER JOIN SILLAS y ON x.ID_SILLA = y.ID WHERE y.ID_LOCALIDAD = ? AND x.ID_FUNCION = ?";
+
+		String sql = "SELECT count(*) AS BOLETAS FROM ISIS2304B221710.BOLETAS x INNER JOIN ISIS2304B221710.SILLAS y ON x.ID_SILLA = y.ID WHERE y.ID_LOCALIDAD = ? AND x.ID_FUNCION = ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setInt(1, id_localidad);
 		prepStmt.setInt(2, id_funcion);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		if(!rs.next())
+			return 0;
+
+		int boletas = 0;
+		boletas = Integer.parseInt(rs.getString("BOLETAS"));
+
+		return boletas;
+	}
+
+	/**
+	 * Da las ganancias de una funcion
+	 * @param id_funcion Id de la funcion.
+	 * @return Ganancias de una funcion.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error convirtiendo los datos
+	 */
+	public double darGananciasFuncion(int id_funcion) throws SQLException, Exception {
+		DAOTablaFunciones fm = new DAOTablaFunciones();
+		fm.setConnection(this.conn);
+
+		if(fm.darFuncion(id_funcion) == null)
+			throw new Exception("La funcion no existe");
+
+		String sql = "SELECT SUM(COSTO) AS COSTO FROM ISIS2304B221710.BOLETAS WHERE ID_FUNCION =" +id_funcion;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 		
 		if(!rs.next())
 			return 0;
 		
-		int boletas = 0;
-		boletas = Integer.parseInt(rs.getString("BOLETAS"));
+		double costo = rs.getDouble("COSTO");
+		return costo;
+	}
 
-		return boletas;
+	/**
+	 * Da las ganancias de un espectaculo 
+	 * @param id_espectaculo Id del espectaculo
+	 * @return Ganacias del espectaculo
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error convirtiendo los datos
+	 */
+	public double darGananciasEspectaculo(int id_espectaculo) throws SQLException, Exception {
+		DAOTablaEspectaculos espec = new DAOTablaEspectaculos();
+		espec.setConnection(this.conn);
+		
+		if(espec.darEspectaculo(id_espectaculo) == null)
+			throw new Exception("No existe el espectaculo");
+		
+		double ganancias = 0.0;
+		
+		for(Funcion x : espec.darFunciones(id_espectaculo)) {
+			ganancias += darGananciasFuncion(x.getId());
+		}
+		
+		return ganancias;
 	}
 }

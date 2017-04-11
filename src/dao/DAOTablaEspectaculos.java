@@ -243,22 +243,4 @@ public class DAOTablaEspectaculos {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
-	
-	/**
-	 * Da las ganancias del espectaculo
-	 * @return Ganancias del espectaculo
-	 * @throws SQLException Si hay un error conectandose con la base de datos
-	 * @throws Exception Si hay un error al convertir de dato a espectaculo.
-	 */
-	public double darGananciasEspectaculo(int id_espectaculo) throws SQLException, Exception {
-		DAOTablaFunciones fm = new DAOTablaFunciones();
-		fm.setConnection(this.conn);
-		double gan = 0.0;
-		
-		for(Funcion x : darFunciones(id_espectaculo)) {
-			gan += fm.darGananciasFuncion(x.getId());
-		}
-		
-		return gan;
-	}
 }

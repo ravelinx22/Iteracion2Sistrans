@@ -65,8 +65,6 @@ public class DAOTablaFunciones {
 		ArrayList<Funcion> funciones = new ArrayList<Funcion>();
 
 		String sql = "SELECT * FROM ISIS2304B221710.FUNCIONES";
-
-        double x = darGananciasFuncion(1);
 		
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -194,34 +192,6 @@ public class DAOTablaFunciones {
 		prepStmt.executeQuery();
 	}
 	
-	/**
-	 * Da las ganancias de la funcion especifica
-	 * @param id_funcion Id de la funcion
-	 * @return Ganancias de la funcion
-	 * @throws SQLException Si hay un error al conectarse con la base de datos.
-	 * @throws Exception Si hay un error al convertir un dato a funcion.
-	 */
-	public double darGananciasFuncion(int id_funcion) throws SQLException, Exception {
-		Funcion loc = darFuncion(id_funcion);
-		
-		if(loc == null)
-			throw new Exception("No existe la funcion");
-		
-		DAOTablaSitios sitio = new DAOTablaSitios();
-		DAOTablaReserva reserv = new DAOTablaReserva();
-		DAOTablaBoletas boletas = new DAOTablaBoletas();
-		boletas.setConnection(this.conn);
-		reserv.setConnection(this.conn);
-		sitio.setConnection(this.conn);
-		Reserva res = reserv.darReserva(loc.getIdReserva()); 
-		double gan = 0.0;
-		
-		for(Localidad x : sitio.darLocalidades(res.getIdSitio())) {
-			gan += x.getCosto()*boletas.boletasCompradasFuncionYLocalidad(id_funcion, x.getId());
-		}
-		
-		return gan;
-	}
 
 	//TODO RFC3
 	public void generaReporte(int pid) throws SQLException, Exception 
