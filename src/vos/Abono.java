@@ -1,6 +1,7 @@
 package vos;
 
 import java.sql.Date;
+import java.util.HashMap;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -154,5 +155,40 @@ public class Abono {
 	 */
 	public void setLista_localidades(Integer[] lista_localidades) {
 		this.lista_localidades = lista_localidades;
+	}
+	
+	/**
+	 * Genera factura del abono
+	 * @return Mapa con la informacion del abono
+	 */
+	public HashMap<String, Object> darFactura() {
+		HashMap<String, Object> ob = new HashMap<>();
+		ob.put("Id", id);
+		ob.put("Id usuario", id_usuario);
+		ob.put("Funciones que se compraron", arrToString(lista_funciones));
+		ob.put("Lista de localidades que se compraron", arrToString(lista_localidades));
+		ob.put("Id festival", id_festival);
+		ob.put("Fecha de compra", fecha_compra.toString());
+		return ob;
+	}
+	
+	// Helper
+	/**
+	 * Da la representacion de un arreglo de enteros a String
+	 * @param arr Arreglo a representar como String
+	 * @return La representacion de un arreglo de enteros a String
+	 */
+	public String arrToString(Integer[] arr) {
+		String x = "[";
+
+		for(int i = 0; i < arr.length; i++) {
+			if(i== arr.length-1) {
+				x += "y]";
+			} else {
+				x += "y,";
+			}
+		}
+		
+		return x;
 	}
 }

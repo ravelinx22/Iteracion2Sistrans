@@ -3,6 +3,7 @@ package tm;
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -220,12 +221,12 @@ public class AbonoMaster {
 	 * @param abono Abono a eliminar
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
-	public void deleteAbono(Abono abono) throws Exception {
+	public void deleteAbono(Abono abono, Date fechaEliminacion) throws Exception {
 		DAOTablaAbonos daoAbonos = new DAOTablaAbonos();
 		try {
 			this.conn = darConexion();
 			daoAbonos.setConnection(conn);
-			daoAbonos.deleteAbono(abono);
+			daoAbonos.deleteAbono(abono, fechaEliminacion);
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;

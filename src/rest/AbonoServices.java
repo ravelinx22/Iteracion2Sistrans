@@ -1,5 +1,6 @@
 package rest;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -135,16 +136,19 @@ public class AbonoServices extends FestivAndesServices {
 	 * @return Resultado de intentar eliminar un abono
 	 */
 	@DELETE
-	@Path("/abono")
+	@Path("/{id}/fecha/{fecha}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteAbono(Abono abono) {
+	public Response deleteAbono(@PathParam("id") int id, @PathParam("fecha") Date fechaEliminacion) {
 		AbonoMaster tm = new AbonoMaster(getPath());
+		Map<String, Object> registro;
 		try {
-			tm.deleteAbono(abono);
+			Abono abono = tm.darAbono(id);
+			registro = abono.darFactura();
+			tm.deleteAbono(abono, fechaEliminacion);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(abono).build();
+		return Response.status(200).entity(registro).build();
 	}
 }

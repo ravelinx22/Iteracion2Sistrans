@@ -61,7 +61,7 @@ public class DAOTablaAbonos {
 	 */
 	public ArrayList<Abono> darAbonos() throws SQLException, Exception {
 		ArrayList<Abono> abonos = new ArrayList<Abono>();
-
+		
 		// Primera parte
 
 		String sql = "SELECT * FROM ISIS2304B221710.ABONOS";
@@ -124,7 +124,7 @@ public class DAOTablaAbonos {
 			return null;
 
 		// Parte 2
-		String sql2 = "SELECT ID_FUNCION FROM ISIS2304B221710.ABONO_FUNCION WHERE ID = ?";
+		String sql2 = "SELECT ID_FUNCION FROM ISIS2304B221710.ABONO_FUNCION WHERE ID_ABONO = ?";
 		PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
 		prepStmt2.setInt(1, id);
 		recursos.add(prepStmt2);
@@ -137,7 +137,7 @@ public class DAOTablaAbonos {
 		Integer[] funciones = id_funciones.toArray(new Integer[id_funciones.size()]);
 
 		// Parte 3
-		String sql3 = "SELECT ID_LOCALIDAD FROM ISIS2304B221710.ABONO_FUNCION WHERE ID = ?";
+		String sql3 = "SELECT ID_LOCALIDAD FROM ISIS2304B221710.ABONO_FUNCION WHERE ID_ABONO = ?";
 		PreparedStatement prepStmt3 = conn.prepareStatement(sql3);
 		prepStmt3.setInt(1, id);
 		recursos.add(prepStmt3);
@@ -172,7 +172,7 @@ public class DAOTablaAbonos {
 
 		int ultimaBoletaId = db.getLastId();
 
-		if(!comproAbonoATiempo(abono))
+		if(!abonoATiempo(abono))
 			throw new Exception("Tiene que comprar el abono con 3 semanas de anticipacion");
 		
 		if(sePuedeComprarAbono(abono.getLista_localidades(), abono.getLista_funciones())) {
@@ -236,16 +236,36 @@ public class DAOTablaAbonos {
 	 * @throws SQLException Si hay error conectandose con la base de datos.
 	 * @throws Exception Si hay error conviertiendo de dato a abono.
 	 */
-	public void deleteAbono(Abono abono) throws SQLException, Exception {
-
-		String sql = "DELETE FROM ISIS2304B221710.ABONOS";
-		sql += " WHERE id = " + abono.getId();
-
+	public void deleteAbono(Abono abono, Date fechaEliminacion) throws SQLException, Exception {
+		// Verificar fecha eliminacion
+		if(!sePuedeEliminarAbono(abono, fechaEliminacion))
+			throw new Exception("Solo puede cancelar un abono con 3 semanas de anticipacion");
+		
+		DAOTablaBoletas bol = new DAOTablaBoletas();
+		bol.setConnection(this.conn);
+		
+		for(Boleta x : darBoletasAbono(abono)) {
+			bol.deleteBoleta(x, fechaEliminacion);
+		}
+		
+		// Parte 1
+		String sql = "DELETE FROM ISIS2304B221710.ABONO_FUNCION WHERE ID_ABONO = " +abono.getId();
 		System.out.println("SQL stmt:" + sql);
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
+		
+		
+		// Parte 2
+		String sql2 = "DELETE FROM ISIS2304B221710.ABONOS";
+		sql2 += " WHERE id = " + abono.getId();
+
+		System.out.println("SQL stmt:" + sql2);
+
+		PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+		recursos.add(prepStmt2);
+		prepStmt2.executeQuery();
 	}
 
 	/**
@@ -270,14 +290,14 @@ public class DAOTablaAbonos {
 	}
 
 	/**
-	 * Verifica si se compro el abono con 3 semanas de anticipacion.
+	 * Verifica si se compro/cancelo el abono con 3 semanas de anticipacion.
 	 * @param abono Abono que se quiere verificar
 	 * @param festival Festival donde se va a comprar el abono
-	 * @return True si se compra a tiempo, false de lo contrario.
+	 * @return True si se compra/cancela a tiempo, false de lo contrario.
 	 * @throws SQLException Si hay un error conectandose con la base de datos.
 	 * @throws Exception Si hay enrror convirtiendo el dato a abono
 	 */
-	public boolean comproAbonoATiempo(Abono abono) throws SQLException, Exception {
+	public boolean abonoATiempo(Abono abono) throws SQLException, Exception {
 		DAOTablaFestivales festiv = new DAOTablaFestivales();
 		festiv.setConnection(this.conn);
 		Festival festival = festiv.darFestival(abono.getId_festival());
@@ -290,6 +310,59 @@ public class DAOTablaAbonos {
 
 		
 		return (comienzoFestival-compra)>=3;
+	}
+	
+	/**
+	 * Verifica si se cancelo el abono con 3 semanas de anticipacion.
+	 * @param abono Abono que se quiere verificar
+	 * @param festival Festival donde se va a comprar el abono
+	 * @return True si se cancela a tiempo, false de lo contrario.
+	 * @throws SQLException Si hay un error conectandose con la base de datos.
+	 * @throws Exception Si hay enrror convirtiendo el dato a abono
+	 */
+	public boolean sePuedeEliminarAbono(Abono abono, Date fechaEliminacion) throws SQLException, Exception {
+		DAOTablaFestivales festiv = new DAOTablaFestivales();
+		festiv.setConnection(this.conn);
+		Festival festival = festiv.darFestival(abono.getId_festival());
 
+		if(festival == null)
+			throw new Exception("Festival no existe");
+
+		int cancelar = (int) (fechaEliminacion.getTime() / (1000*60*60*24*7));
+		int comienzoFestival = (int) (festival.getFecha_inicio().getTime() / (1000*60*60*24*7));
+
+		
+		return (comienzoFestival-cancelar)>=3;
+	}
+	
+	/**
+	 * Da una lista con las boletas que le perteneces a un abono
+	 * @param abono Abono al que se quiere buscar boletas
+	 * @return Lista con las boletas que le perteneces a un abono
+	 * @throws SQLException Si hay un error conectandose con la base de datos.
+	 * @throws Exception Si hay enrror convirtiendo el dato a lista de boletas
+	 */
+	public ArrayList<Boleta> darBoletasAbono(Abono abono) throws SQLException, Exception {
+		ArrayList<Boleta> boletas = new ArrayList<>();
+		String sql = "SELECT x.ID_USUARIO, x.ID_FESTIVAL, x.FECHA_COMPRA, y.ID_FUNCION, y.ID_SILLA, y.COSTO, y.ID FROM ABONOS x INNER JOIN BOLETAS y ON x.ID_USUARIO = y.ID_USUARIO WHERE y.ABONO = 1 AND x.ID_USUARIO = ?";
+
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, abono.getId_usuario());
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		while(rs.next()) {
+			int id = Integer.parseInt(rs.getString("ID"));
+			int id_funcion = Integer.parseInt(rs.getString("ID_FUNCION"));
+			int id_usuario = Integer.parseInt(rs.getString("ID_USUARIO"));
+			int id_silla = Integer.parseInt(rs.getString("ID_SILLA"));
+			double costo = rs.getDouble("COSTO");
+			Boleta b = new Boleta(id, id_funcion, id_usuario, id_silla, costo, true);
+			boletas.add(b);
+		}
+		
+		return boletas;
 	}
 }
