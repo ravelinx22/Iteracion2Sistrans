@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import vos.Funcion;
 import vos.Usuario;
@@ -237,6 +238,51 @@ public class DAOTablaUsuarios {
 		}
 
 		return funciones;
+	}
+	
+	/**
+	 * Consulta la asistencia de un cliente a funciones
+	 * @param id_usuario Id del usuario
+	 * @return Mapa con los datos de la consulta
+	 * @throws SQLException Si hay error conectandose con la base de datos
+	 * @throws Exception Si hay error conviertiendo los datos a usuario.
+	 */
+	public HashMap<String, Object> consultarAsistenciaCliente(int id_usuario, Date fechaConsulta) throws SQLException, Exception {
+		if(darUsuario(id_usuario) == null)
+			throw new Exception("Usuario no existe");
+		
+		HashMap<String, Object> registro = new HashMap<>();
+		DAOTablaFunciones func = new DAOTablaFunciones();
+		func.setConnection(this.conn);
+		ArrayList<Funcion> yaPasaronOEnCurso = new ArrayList<>();
+		ArrayList<Funcion> previstas = new ArrayList<>();
+ 		
+		ArrayList<Funcion> todasFunciones = func.darFuncionesCliente(id_usuario);
+		
+		for(Funcion x: todasFunciones) {
+			if(x.getFecha().compareTo(fechaConsulta) == 0 || x.getFecha().compareTo(fechaConsulta) < 0)
+				yaPasaronOEnCurso.add(x);
+			else
+				previstas.add(x);
+		}
+		
+		
+		ArrayList<Funcion> funcionesCanceladas = func.darFuncionesCanceladasCliente(id_usuario);
+		
+		// Convertir a array
+		
+		Funcion[] arrCanceladas = funcionesCanceladas.toArray(new Funcion[funcionesCanceladas.size()]);
+		Funcion[] arrPasaron = yaPasaronOEnCurso.toArray(new Funcion[yaPasaronOEnCurso.size()]);
+		Funcion[] arrPrevistas = previstas.toArray(new Funcion[previstas.size()]);
+
+		// Agregar al mapa
+
+		registro.put("Funciones que ya pasaron o en curso", arrPasaron);
+		registro.put("Funciones previstas", arrPrevistas);
+		registro.put("Funciones canceladas", arrCanceladas);
+		
+		
+		return registro;
 	}
 }
 

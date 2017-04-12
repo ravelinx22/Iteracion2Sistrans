@@ -184,6 +184,8 @@ public class DAOTablaBoletas {
 
 		System.out.println("SQL stmt:" + sql);
 
+		agregarBoletaCancelada(boleta.getId(), boleta.getId_usuario());
+		
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
@@ -403,5 +405,23 @@ public class DAOTablaBoletas {
 
 		
 		return (days1-days2)>= 5;
+	}
+	
+	/**
+	 * Agrega boleta a canceladas
+	 * @param id_boleta Id de la boleta cancelada 
+	 * @param id_usuario Id del usuario que lo cancelo
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error convirtiendo los datos
+	 */
+	public void agregarBoletaCancelada(int id_boleta, int id_usuario) throws SQLException, Exception {
+		String sql = "INSERT INTO ISIS2304B221710.BOLETACANCELADA VALUES (?,?)";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id_usuario);
+		prepStmt.setInt(2, id_boleta);
+
+		System.out.println("SQL stmt:" + sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
 	}
 }

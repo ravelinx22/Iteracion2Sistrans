@@ -1,5 +1,8 @@
 package rest;
 
+import java.sql.Date;
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -27,7 +30,7 @@ public class UsuarioServices extends FestivAndesServices {
 	 */
 	@Context
 	private ServletContext context;
-	
+
 	/**
 	 * Método que retorna el path de la carpeta WEB-INF/ConnectionData en el deploy actual dentro del servidor.
 	 * @return path de la carpeta WEB-INF/ConnectionData en el deploy actual.
@@ -35,9 +38,9 @@ public class UsuarioServices extends FestivAndesServices {
 	private String getPath() {
 		return context.getRealPath("WEB-INF/ConnectionData");
 	}
-	
+
 	// Rest
-	
+
 	/**
 	 * Da los usuarios de la base de datos
 	 * @return Usuarios de la base de datos
@@ -52,10 +55,10 @@ public class UsuarioServices extends FestivAndesServices {
 		} catch(Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		
+
 		return Response.status(200).entity(usuarios).build();
 	}
-	
+
 	/**
 	 * Agrega un usuario a la base de datos
 	 * @param Usuario usuario a agregar
@@ -74,7 +77,7 @@ public class UsuarioServices extends FestivAndesServices {
 		}
 		return Response.status(200).entity(usuario).build();
 	}
-	
+
 	/**
 	 * Agrega un cliente a la base de datos
 	 * @param id Id del usuario administrador que registra el cliente
@@ -89,10 +92,10 @@ public class UsuarioServices extends FestivAndesServices {
 		UsuarioMaster tm = new UsuarioMaster(getPath());
 		try {
 			Usuario x = tm.darUsuario(id);
-			
+
 			if(!x.getRol().equalsIgnoreCase("Administrador"))
 				throw new Exception("Tiene que registrar cliente desde una cuenta administrador");
-			
+
 			usuario.setRol("Cliente");
 			tm.addUsuario(usuario);
 		} catch (Exception e) {
@@ -100,7 +103,7 @@ public class UsuarioServices extends FestivAndesServices {
 		}
 		return Response.status(200).entity(usuario).build();
 	}
-	
+
 	/**
 	 * Actualiza un usuario de la base de datos.
 	 * @param usuario Usuario con los nuevos datos.
@@ -119,7 +122,7 @@ public class UsuarioServices extends FestivAndesServices {
 		}
 		return Response.status(200).entity(usuario).build();
 	}
-	
+
 	/**
 	 * Elimina un usuario de la base de datos
 	 * @param usuario Usuario a eliminar de la base de datos.
@@ -138,4 +141,31 @@ public class UsuarioServices extends FestivAndesServices {
 		}
 		return Response.status(200).entity(usuario).build();
 	}
+
+	/**
+	 * Consulta la asistencia del usuario
+	 * @param usuario Usuario a consultar asistencia.
+	 * @return Resultado de intentar consultar registro asistencia de usuario.
+	 */
+	@GET
+	@Path("/{id_admin}/asistencia/{id}/fecha/{fecha}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteUsuario(@PathParam("id_admin") int id_admin, @PathParam("id") int id_usuario, @PathParam("fecha") Date fecha) {
+		UsuarioMaster tm = new UsuarioMaster(getPath());
+		Map<String, Object> registro;
+		try {
+			Usuario x = tm.darUsuario(id_admin);
+
+			if(x == null)
+				throw new Exception("Usuario no existe");
+			else if(!x.getRol().equalsIgnoreCase("Administrador") && id_admin != id_usuario)
+				throw new Exception("Solo puede consultar otro cliente si es administrador");
+
+			registro = tm.consultarAsistencia(id_usuario, fecha);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(registro).build();
+	}
+
 }

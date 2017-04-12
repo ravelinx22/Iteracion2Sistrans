@@ -3,9 +3,11 @@ package tm;
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 
 import dao.DAOTablaUsuarios;
@@ -228,6 +230,37 @@ public class UsuarioMaster {
 			this.conn = darConexion();
 			daoUsuario.setConnection(conn);
 			daoUsuario.deleteUsuario(usuario);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuario.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+	}
+	
+	/**
+	 * Consulta la asistencia de un cliente a funciones
+	 * @param id_usuario Id del usuario
+	 * @return Mapa con los datos de la consulta
+	 * @throws SQLException Si hay error conectandose con la base de datos
+	 * @throws Exception Si hay error conviertiendo los datos a usuario.
+	 */
+	public HashMap<String, Object> consultarAsistencia(int id_usuario, Date fecha) throws Exception {
+		DAOTablaUsuarios daoUsuario = new DAOTablaUsuarios();
+		try {
+			this.conn = darConexion();
+			daoUsuario.setConnection(conn);
+			return daoUsuario.consultarAsistenciaCliente(id_usuario, fecha);
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;

@@ -65,7 +65,7 @@ public class DAOTablaFunciones {
 		ArrayList<Funcion> funciones = new ArrayList<Funcion>();
 
 		String sql = "SELECT * FROM ISIS2304B221710.FUNCIONES";
-		
+
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
@@ -83,7 +83,7 @@ public class DAOTablaFunciones {
 		}
 		return funciones;
 	}
-	
+
 	/**
 	 * Busca una funcion por id.
 	 * @param id Id de la funcion a buscar
@@ -98,10 +98,10 @@ public class DAOTablaFunciones {
 
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-		
+
 		if(!rs.next())
 			return null;
-		
+
 		Date fecha = rs.getDate("FECHA");
 		int horaInicio = Integer.parseInt(rs.getString("HORA_INICIO"));
 		int boletasTotales = Integer.parseInt(rs.getString("BOLETAS_TOTALES"));
@@ -110,7 +110,7 @@ public class DAOTablaFunciones {
 		int idFestival = Integer.parseInt(rs.getString("ID_FESTIVAL"));
 
 		Funcion fnc = new Funcion(id, fecha, horaInicio, boletasTotales, idReserva, idEspectaculo, idFestival);
-		
+
 		return fnc;
 	}
 
@@ -191,7 +191,7 @@ public class DAOTablaFunciones {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
-	
+
 
 	//TODO RFC3
 	public void generaReporte(int pid) throws SQLException, Exception 
@@ -208,5 +208,69 @@ public class DAOTablaFunciones {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
+	}
+
+	/**
+	 * Da las funciones de un cliente
+	 * @param id Id del cliente
+	 * @return Lista con las funciones del cliente
+	 * @throws SQLException Si hay un error al connectarse con la base de datos.
+	 * @throws Exception Si hay un error al convertir un dato a funcion
+	 */
+	public ArrayList<Funcion> darFuncionesCliente(int id_usuario) throws SQLException, Exception {
+		ArrayList<Funcion> funciones = new ArrayList<>();
+
+		String sql = "SELECT y.* FROM (SELECT * FROM BOLETAS WHERE ID_USUARIO = ?) x INNER JOIN FUNCIONES y ON x.ID_FUNCION = y.ID";
+		System.out.println("SQL stmt:" + sql);
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id_usuario);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while(rs.next()) {
+			int id = Integer.parseInt(rs.getString("ID"));
+			Date fecha = rs.getDate("FECHA");
+			int horaInicio = Integer.parseInt(rs.getString("HORA_INICIO"));
+			int boletasTotales = Integer.parseInt(rs.getString("BOLETAS_TOTALES"));
+			int idReserva = Integer.parseInt(rs.getString("ID_RESERVA"));
+			int idEspectaculo = Integer.parseInt(rs.getString("ID_ESPECTACULO"));
+			int idFestival = Integer.parseInt(rs.getString("ID_FESTIVAL"));
+
+			funciones.add(new Funcion(id, fecha, horaInicio, boletasTotales, idReserva, idEspectaculo, idFestival));
+		}
+
+		return funciones;
+	}
+
+	/**
+	 * Da las funciones canceladas de un cliente
+	 * @param id Id del cliente
+	 * @return Lista con las funciones canceladas del cliente
+	 * @throws SQLException
+	 * @throws Exception
+	 */
+	public ArrayList<Funcion> darFuncionesCanceladasCliente(int id_usuario) throws SQLException, Exception {
+		ArrayList<Funcion> funciones = new ArrayList<>();
+
+		String sql = "SELECT y.* FROM (SELECT * FROM BOLETACANCELADA WHERE ID_USUARIO = ?) x INNER JOIN FUNCIONES y ON x.ID_FUNCION = y.ID";
+		System.out.println("SQL stmt:" + sql);
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id_usuario);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while(rs.next()) {
+			int id = Integer.parseInt(rs.getString("ID"));
+			Date fecha = rs.getDate("FECHA");
+			int horaInicio = Integer.parseInt(rs.getString("HORA_INICIO"));
+			int boletasTotales = Integer.parseInt(rs.getString("BOLETAS_TOTALES"));
+			int idReserva = Integer.parseInt(rs.getString("ID_RESERVA"));
+			int idEspectaculo = Integer.parseInt(rs.getString("ID_ESPECTACULO"));
+			int idFestival = Integer.parseInt(rs.getString("ID_FESTIVAL"));
+
+			funciones.add(new Funcion(id, fecha, horaInicio, boletasTotales, idReserva, idEspectaculo, idFestival));
+		}
+
+		return funciones;	
 	}
 }
