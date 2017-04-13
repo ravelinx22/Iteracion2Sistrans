@@ -185,17 +185,17 @@ public class UsuarioServices extends FestivAndesServices {
 	 * @return Resultado de intentar eliminar la funciÛn
 	 */
 	@DELETE
-	@Path("/usuario/cancelarFuncion")
+	@Path("/usuario/cancelarFuncion/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response cancerlarUnaFuncion(Usuario usuario) {
+	public Response cancerlarUnaFuncion(@PathParam("id") int idFuncion) {
 		UsuarioMaster tm = new UsuarioMaster(getPath());
 		try {
-			tm.deleteUsuario(usuario);
+			tm.cancerlarUnaFuncion(idFuncion);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(usuario).build();
+		return Response.status(200).entity(idFuncion).build();
 	}
 
 	/**
@@ -204,19 +204,18 @@ public class UsuarioServices extends FestivAndesServices {
 	 * @return resultado de la busqueda
 	 */
 	@GET
-	@Path("/usuario/consultaEspectaculosResumen")
+	@Path("/usuario/consultaEspectaculosResumen/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response  consultarResumenEspectaculos(Usuario usuario) {
+	public Response  consultarResumenEspectaculos(@PathParam("id") int id) {
 		UsuarioMaster tm = new UsuarioMaster(getPath());
-		ListaUsuarios usuarios;
 		try {
-			usuarios = tm.darUsuarios();
+			tm.consultarResumenEspectaculos(id);
 		} catch(Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 
-		return Response.status(200).entity(usuarios).build();
+		return Response.status(200).entity(id).build();
 	}
 
 }

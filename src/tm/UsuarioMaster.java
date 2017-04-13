@@ -327,7 +327,7 @@ public class UsuarioMaster {
 			}
 		}return x;
 	} 
-	public void ConsultarResumenEspectaculos(int idUsuario) throws SQLException, Exception{
+	public void consultarResumenEspectaculos(int idUsuario) throws SQLException, Exception{
 		DAOTablaUsuarios daoUsuario = new DAOTablaUsuarios();
 		try {
 			this.conn = darConexion();
