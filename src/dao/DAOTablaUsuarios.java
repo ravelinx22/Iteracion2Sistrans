@@ -7,9 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
+import vos.Boleta;
 import vos.Funcion;
+import vos.Silla;
 import vos.Usuario;
 
 public class DAOTablaUsuarios {
@@ -239,7 +242,7 @@ public class DAOTablaUsuarios {
 
 		return funciones;
 	}
-	
+
 	/**
 	 * Consulta la asistencia de un cliente a funciones
 	 * @param id_usuario Id del usuario
@@ -250,27 +253,27 @@ public class DAOTablaUsuarios {
 	public HashMap<String, Object> consultarAsistenciaCliente(int id_usuario, Date fechaConsulta) throws SQLException, Exception {
 		if(darUsuario(id_usuario) == null)
 			throw new Exception("Usuario no existe");
-		
+
 		HashMap<String, Object> registro = new HashMap<>();
 		DAOTablaFunciones func = new DAOTablaFunciones();
 		func.setConnection(this.conn);
 		ArrayList<Funcion> yaPasaronOEnCurso = new ArrayList<>();
 		ArrayList<Funcion> previstas = new ArrayList<>();
- 		
+
 		ArrayList<Funcion> todasFunciones = func.darFuncionesCliente(id_usuario);
-		
+
 		for(Funcion x: todasFunciones) {
 			if(x.getFecha().compareTo(fechaConsulta) == 0 || x.getFecha().compareTo(fechaConsulta) < 0)
 				yaPasaronOEnCurso.add(x);
 			else
 				previstas.add(x);
 		}
-		
-		
+
+
 		ArrayList<Funcion> funcionesCanceladas = func.darFuncionesCanceladasCliente(id_usuario);
-		
+
 		// Convertir a array
-		
+
 		Funcion[] arrCanceladas = funcionesCanceladas.toArray(new Funcion[funcionesCanceladas.size()]);
 		Funcion[] arrPasaron = yaPasaronOEnCurso.toArray(new Funcion[yaPasaronOEnCurso.size()]);
 		Funcion[] arrPrevistas = previstas.toArray(new Funcion[previstas.size()]);
@@ -280,9 +283,122 @@ public class DAOTablaUsuarios {
 		registro.put("Funciones que ya pasaron o en curso", arrPasaron);
 		registro.put("Funciones previstas", arrPrevistas);
 		registro.put("Funciones canceladas", arrCanceladas);
-		
-		
+
+
 		return registro;
+	}
+
+	// TODO RF10
+	/**
+	 * compra varias boletas bajo el nombre de un solo usuario
+	 * @param arr, arreglo de boletas a ingresar
+	 * @return El dinero total a ser reembolsado
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error convirtiendo los datos
+	 */
+
+	public void compraMultipleDeBoletas(ArrayList<Boleta> arr)  throws SQLException , Exception
+	{
+		verificarMismaLocalidad(arr);
+		
+		DAOTablaBoletas bol = new DAOTablaBoletas();
+		bol.setConnection(conn);
+		Boleta agregar = null;
+		for(int i = 0; i <  arr.size(); i++)
+		{
+			agregar = arr.get(i);
+			bol.addBoleta(agregar);
+		}
+
+	}
+	//TODO RF14
+	/**
+	 * Cancela todas las boletas relacionadas con una funciÛn y retorna la cantidad de dinero a ser retornado
+	 * @param idFunciÛn Id de la funciÛn a cancerlar
+	 * @return El dinero total a ser reembolsado
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error convirtiendo los datos
+	 */
+
+	public String cancerlarUnaFuncion(int idFuncion) throws SQLException, Exception
+	{
+		//repuesta
+		String respuesta = "";
+		// saldo que se debe reembolsar
+		double saldoTotal = 0;
+		DAOTablaBoletas bol = new DAOTablaBoletas();
+		bol.setConnection(conn);
+		//se obtienen todas las boletas de la tabla
+		ArrayList<Boleta> arr = bol.darBoletas();
+
+		//objeto que modelar· las boletas a eliminar durante la iteraciÛn
+		Boleta borrar = null;
+		// se crea un date con la fecha actual en milisegundos
+		Date fecha = new Date(System.currentTimeMillis());
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(fecha); // Configuramos la el calendario con la fecha actual
+		calendar.add(Calendar.DAY_OF_YEAR, 5); // se le suman 5 dÌas a la fecha de cancelaciÛn de la resarva ya que el mÈtodo cancela reservas con 5 dÌas de anterioridad y esta vez de necesitan cancelar funciones que incluso estan en desarrollo
+		fecha = (Date) calendar.getTime();
+		for(int i = 0; i < arr.size();  i++)
+		{ borrar = arr.get(i);
+		if(borrar.getId_funcion() == idFuncion)
+		{   saldoTotal += borrar.getCosto();
+		bol.deleteBoleta(borrar, (Date) fecha);
+		}
+		}
+		respuesta = saldoTotal + "";
+		return respuesta;
+	}
+	//RFC8
+	/**
+	 *Retorna el estado de todas las ganancias que se le permitan ver al usuario
+	 * @param idUsuario Id del usuario a Buscar
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error convirtiendo los datos
+	 */
+	public void consultarResumenEspectaculos(int idUsuario) throws SQLException, Exception
+	{ Usuario temp = darUsuario(idUsuario);
+	if(temp.getRol().equals("Administrador"))
+	{
+		String sql = "SELECT ESPECTACULOS.ID AS idESpectaculo, LOCALIDADES.NOMBRE ,COUNT (LOCALIDADES.NOMBRE)*100/ LOCALIDADES.CAPACIDAD as PorcentajeOcupaciÛn , SUM (LOCALIDADES.COSTO) AS GANANCIA_LOCALIDAD   FROM COMPA—IAS FULL OUTER JOIN CONTRIBUIDORES ON COMPA—IAS.ID =CONTRIBUIDORES.ID_COMPA—IA FULL OUTER JOIN ESPECTACULOS ON ESPECTACULOS.ID = CONTRIBUIDORES.ID_ESPECTACULO  FUll OUTER JOIN FUNCIONES ON CONTRIBUIDORES.ID_ESPECTACULO = FUNCIONES.ID_ESPECTACULO FUll OUTER JOIN RESERVAS ON RESERVAS.ID = FUNCIONES.ID_RESERVA FULL OUTER JOIN SITIOS ON RESERVAS.ID_SITIO = SITIOS.ID FULL OUTER JOIN LOCALIDADES ON LOCALIDADES.ID_SITIO = SITIOS.ID FULL OUTER JOIN SILLAS on LOCALIDADES.ID = SILLAS.ID_LOCALIDAD WHERE COMPA—IAS.ID = 2 AND LOCALIDADES.ID = SILLAS.ID_LOCALIDAD group by LOCALIDADES.NOMBRE, ESPECTACULOS.ID, LOCALIDADES.CAPACIDAD; ";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+
+	}
+
+	if(temp.getRol().equals("Cliente"))
+	{
+		String sql = "SELECT ESPECTACULOS.ID AS idESpectaculo, LOCALIDADES.NOMBRE ,COUNT (LOCALIDADES.NOMBRE)*100/ LOCALIDADES.CAPACIDAD as PorcentajeOcupaciÛn , SUM (LOCALIDADES.COSTO) AS GANANCIA_LOCALIDAD   FROM COMPA—IAS FULL OUTER JOIN CONTRIBUIDORES ON COMPA—IAS.ID =CONTRIBUIDORES.ID_COMPA—IA FULL OUTER JOIN ESPECTACULOS ON ESPECTACULOS.ID = CONTRIBUIDORES.ID_ESPECTACULO  FUll OUTER JOIN FUNCIONES ON CONTRIBUIDORES.ID_ESPECTACULO = FUNCIONES.ID_ESPECTACULO FUll OUTER JOIN RESERVAS ON RESERVAS.ID = FUNCIONES.ID_RESERVA FULL OUTER JOIN SITIOS ON RESERVAS.ID_SITIO = SITIOS.ID FULL OUTER JOIN LOCALIDADES ON LOCALIDADES.ID_SITIO = SITIOS.ID FULL OUTER JOIN SILLAS on LOCALIDADES.ID = SILLAS.ID_LOCALIDAD WHERE COMPA—IAS.ID = ? AND LOCALIDADES.ID = SILLAS.ID_LOCALIDAD group by LOCALIDADES.NOMBRE, ESPECTACULOS.ID, LOCALIDADES.CAPACIDAD; ";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+
+		prepStmt.setInt(1, idUsuario);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+
+
+
+	}
+	else throw new Exception();
+	}
+	
+	public void verificarMismaLocalidad(ArrayList<Boleta> boletas) throws SQLException, Exception {
+		if(boletas.isEmpty())
+			throw new Exception("No hay boletas a comprar");
+		
+		DAOTablaSillas sillas = new DAOTablaSillas();
+		sillas.setConnection(this.conn);
+		Silla primera = sillas.darSilla(boletas.get(0).getId());
+		int localidad = primera.getIdLocalidad();
+		
+		for(Boleta x : boletas) {
+			Silla y = sillas.darSilla(x.getId());
+			
+			if(y.getIdLocalidad() != localidad)
+				throw new Exception("No todas las sillas tienen misma localidad");
+		}
 	}
 }
 

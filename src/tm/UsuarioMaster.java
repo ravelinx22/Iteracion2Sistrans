@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import dao.DAOTablaUsuarios;
+import vos.Boleta;
 import vos.ListaUsuarios;
 import vos.Usuario;
 
@@ -20,37 +21,37 @@ public class UsuarioMaster {
 	 * Constante que contiene el path absoluto del archivo que tiene los datos de la conexión
 	 */
 	private static final String CONNECTION_DATA_FILE_NAME_REMOTE = "/conexion.properties";
-	
+
 	/**
 	 * Atributo que contiene el path absoluto del archivo que tiene los datos de la conexión
 	 */
 	private String connectionDataPath;
-	
+
 	/**
 	 * Usuario de la base de datos.	
 	 */
 	private String user;
-	
+
 	/**
 	 * Contraseña del usuario para conectarse a la base de datos.
 	 */
 	private String password;
-	
+
 	/**
 	 * Url para conectarse a la base de datos.
 	 */
 	private String url;
-	
+
 	/**
 	 * Driver que guarda los datos para conectarse a la base de datos.
 	 */
 	private String driver;
-	
+
 	/**
 	 * Conexion a la base de datos.
 	 */
 	private Connection  conn;
-	
+
 	/**
 	 * Método constructor de la clase FestivAndesMaster, esta clase modela y contiene cada una de las 
 	 * transacciones y la logica de negocios que estas conllevan.
@@ -60,7 +61,7 @@ public class UsuarioMaster {
 		this.connectionDataPath = contextPath + CONNECTION_DATA_FILE_NAME_REMOTE;
 		initConnectionData();
 	}
-	
+
 	/**
 	 * Inicializa los datos para conectarse con la base datos.
 	 */
@@ -80,7 +81,7 @@ public class UsuarioMaster {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Da la conexion creada con el usuario, clave y url asociados.
 	 * @return Conexion creada con el usuario, clave y url asociados.
@@ -90,10 +91,10 @@ public class UsuarioMaster {
 		System.out.println("Connecting to: " + url + " With user: " + user);
 		return DriverManager.getConnection(url, user, password);
 	}
-	
-	
+
+
 	// Transacciones
-	
+
 	/**
 	 * Da los usuarios en la base de datos
 	 * @return Lista de usuarios con la base de datos
@@ -102,7 +103,7 @@ public class UsuarioMaster {
 	public ListaUsuarios darUsuarios() throws Exception {
 		ArrayList<Usuario> usuarios;
 		DAOTablaUsuarios daoUsuarios = new DAOTablaUsuarios();
-		
+
 		try {
 			this.conn = darConexion();
 			daoUsuarios.setConnection(conn);
@@ -123,10 +124,10 @@ public class UsuarioMaster {
 				throw e;
 			}
 		}
-		
+
 		return new ListaUsuarios(usuarios);
 	}
-	
+
 	/**
 	 * Da el usuario que tiene id igual al parametro.
 	 * @param id Id del usuario a buscar.
@@ -156,10 +157,10 @@ public class UsuarioMaster {
 				throw e;
 			}
 		}
-		
+
 		return us;
 	}
-	
+
 	/**
 	 * Agrega un usuario a la base de datos
 	 * @param usuario Usuario a agregar
@@ -189,7 +190,7 @@ public class UsuarioMaster {
 			}
 		}
 	}
-	
+
 	/**
 	 * Actualiza el usuario de la base de datos.
 	 * @param usuario Usuario con los nuevos datos
@@ -218,7 +219,7 @@ public class UsuarioMaster {
 			}
 		}
 	}
-	
+
 	/**
 	 * Elimina el usuario de la base de datos.
 	 * @param usuario Usuario a eliminar
@@ -247,7 +248,7 @@ public class UsuarioMaster {
 			}
 		}
 	}
-	
+
 	/**
 	 * Consulta la asistencia de un cliente a funciones
 	 * @param id_usuario Id del usuario
@@ -278,4 +279,76 @@ public class UsuarioMaster {
 			}
 		}
 	}
+
+	public void compraMultipleDeBoletas(ArrayList<Boleta> arr) throws Exception {
+		DAOTablaUsuarios daoUsuario = new DAOTablaUsuarios();
+		try {
+			this.conn = darConexion();
+			daoUsuario.setConnection(conn);
+			daoUsuario.compraMultipleDeBoletas(arr);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuario.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+	}
+	public String cancerlarUnaFuncion(int idFuncion) throws SQLException, Exception {
+		DAOTablaUsuarios daoUsuario = new DAOTablaUsuarios();
+		String x = "";
+		try {
+			this.conn = darConexion();
+			daoUsuario.setConnection(conn);
+			x = daoUsuario.cancerlarUnaFuncion(idFuncion);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuario.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}return x;
+	} 
+	public void ConsultarResumenEspectaculos(int idUsuario) throws SQLException, Exception{
+		DAOTablaUsuarios daoUsuario = new DAOTablaUsuarios();
+		try {
+			this.conn = darConexion();
+			daoUsuario.setConnection(conn);
+			daoUsuario.consultarResumenEspectaculos(idUsuario);;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuario.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+	}	
+
 }

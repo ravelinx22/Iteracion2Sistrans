@@ -1,8 +1,8 @@
 package rest;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Map;
-
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -15,10 +15,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import tm.CompañiaMaster;
 import tm.UsuarioMaster;
-import vos.Compañia;
+import vos.Boleta;
 import vos.ListaUsuarios;
 import vos.Usuario;
 
@@ -166,6 +164,59 @@ public class UsuarioServices extends FestivAndesServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(registro).build();
+	}
+
+	@POST
+	@Path("/variasBoletas")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response  compraMultipleDeBoletas(ArrayList<Boleta> arr)  {
+		UsuarioMaster tm = new UsuarioMaster(getPath());
+		try {
+			tm.compraMultipleDeBoletas(arr);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(arr).build();
+	}
+	/**
+	 * Elimina una funciÛn de la base de datos
+	 * @param usuario Usuario que intenta eliminar la funciÛn eliminar de la base de datos.
+	 * @return Resultado de intentar eliminar la funciÛn
+	 */
+	@DELETE
+	@Path("/usuario/cancelarFuncion")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response cancerlarUnaFuncion(Usuario usuario) {
+		UsuarioMaster tm = new UsuarioMaster(getPath());
+		try {
+			tm.deleteUsuario(usuario);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(usuario).build();
+	}
+
+	/**
+	 * Consulta de la base de datos los resultados de las bases de datos
+	 * @param usuario Usuario que ejecuta la consulta
+	 * @return resultado de la busqueda
+	 */
+	@GET
+	@Path("/usuario/consultaEspectaculosResumen")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response  consultarResumenEspectaculos(Usuario usuario) {
+		UsuarioMaster tm = new UsuarioMaster(getPath());
+		ListaUsuarios usuarios;
+		try {
+			usuarios = tm.darUsuarios();
+		} catch(Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+
+		return Response.status(200).entity(usuarios).build();
 	}
 
 }
