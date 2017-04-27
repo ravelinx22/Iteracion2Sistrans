@@ -1,0 +1,231 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Iteracion3",
+		"_postman_id": "5a4f912c-01c5-ef2c-c0f6-ec7890f56cf7",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Crear Abono Exitoso",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/abonos/abono",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\":1,\n  \"id_usuario\":1,\n  \"lista_funciones\": [1,2],\n  \"lista_localidades\": [1,14],\n  \"id_festival\":1,\n  \"fecha_compra\":\"2015-01-01\"\n}"
+				},
+				"description": "Crear abono"
+			},
+			"response": []
+		},
+		{
+			"name": "Crear Abono Fallido No existe Usuario",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/abonos/abono",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\":1,\n  \"id_usuario\":100,\n  \"lista_funciones\": [1,2],\n  \"lista_localidades\": [1,14],\n  \"id_festival\":1,\n  \"fecha_compra\":\"2015-01-01\"\n}"
+				},
+				"description": "Crear abono fallido"
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar boleta exitoso",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/boletas/2/fecha/2017-01-01",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": "La boleta tiene que existir"
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar boleta fallido 5 dias antes",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/boletas/3/fecha/2018-05-05",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": "La boleta tiene que existir"
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar abono exitoso",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/abonos/1/fecha/2014-01-01",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": "El abono del usuario 1 tiene que existir"
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar abono fallido 3 semanas",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/abonos/1/fecha/2018-01-01",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": "El abono del usuario tiene que ser eliminado 3 semanas antes"
+			},
+			"response": []
+		},
+		{
+			"name": "Asistencia usuario no administrador exitoso",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/usuarios/1/asistencia/1/fecha/2017-02-02",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Asistencia usuario no administrador fallido",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/usuarios/2/asistencia/1/fecha/2017-02-02",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Asistencia usuario  administrador exitoso",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/usuarios/5/asistencia/1/fecha/2017-02-02",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Asistencia usuario  no existe fallido",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/usuarios/100/asistencia/2/fecha/2017-02-02",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Comprar varias boletas",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/usuarios/variasBoletas",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": " [{\n      \"id\": 23,\n      \"id_funcion\": 7,\n      \"id_usuario\": 31,\n      \"id_silla\": 3,\n      \"costo\": 338.40000000000003,\n      \"abono\": false\n    },\n    {\n      \"id\": 24,\n      \"id_funcion\": 7,\n      \"id_usuario\": 1,\n      \"id_silla\": 10,\n      \"costo\": 2797.6000000000004,\n      \"abono\": false\n    }\n]"
+				},
+				"description": "Comprar multiples boletas"
+			},
+			"response": []
+		}
+	]
+}
