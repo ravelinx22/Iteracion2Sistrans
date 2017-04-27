@@ -387,18 +387,34 @@ public class DAOTablaUsuarios {
 	public void verificarMismaLocalidad(ArrayList<Boleta> boletas) throws SQLException, Exception {
 		if(boletas.isEmpty())
 			throw new Exception("No hay boletas a comprar");
-		
+
 		DAOTablaSillas sillas = new DAOTablaSillas();
+		DAOTablaLocalidades local = new DAOTablaLocalidades();
+		local.setConnection(this.conn);
+
 		sillas.setConnection(this.conn);
-		Silla primera = sillas.darSilla(boletas.get(0).getId());
+		Silla primera = sillas.darSilla(boletas.get(0).getId_silla());
 		int localidad = primera.getIdLocalidad();
-		
+		int funcion = boletas.get(0).getId_funcion();
+
 		for(Boleta x : boletas) {
-			Silla y = sillas.darSilla(x.getId());
-			
+			Silla y = sillas.darSilla(x.getId_silla());
+
 			if(y.getIdLocalidad() != localidad)
 				throw new Exception("No todas las sillas tienen misma localidad");
 		}
+
+		// Verificar misma funcion
+
+		for(Boleta x: boletas) {
+			if(x.getId_funcion() != funcion)
+				throw new Exception("No todas las sillas tienen misma funcion");
+		}
+
+		// Verificar que haya sillas
+
+		if(local.darTotalDisponibles(localidad, funcion) < boletas.size())
+			throw new Exception("No hay la cantidad de sillas disponibles para las boletas");
 	}
 }
 

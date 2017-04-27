@@ -215,4 +215,55 @@ public class DAOTablaLocalidades {
 			
 	    return Integer.parseInt(rs.getString("ID"));
 	}
+	
+	/**
+	 * Da el numero de sillas totales en una localidad
+	 * @param localidad_id Id de la localidad
+	 * @return Numero de sillas totales en una localidad
+	 * @throws Exception Si hay error al convertir a int
+	 * @throws SQLException Si hay error al conectarse con la base de datos
+	 */
+	public int darNumeroSillasTotales(int localidad_id) throws Exception, SQLException {
+		String sql = "SELECT count(*) as TOTAL FROM SILLAS WHERE ID_LOCALIDAD = " +localidad_id;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		rs.next();
+		
+		int total = Integer.parseInt(rs.getString("TOTAL"));
+		return total;
+	}
+	
+	/**
+	 * Da el numero de sillas compradas para una funcion en una localidad especifica
+	 * @param localidad_id Id de la localidad
+	 * @param funcion Id de la funcion
+	 * @return El numero de sillas compradas para una funcion en una localidad especifica
+	 * @throws Exception Si hay error al convertir a int
+	 * @throws SQLException Si hay error al conectarse con la base de datos
+	 */
+	public int darNumeroSillasCompradas(int localidad_id, int funcion) throws Exception, SQLException {
+		String sql = "SELECT count(*) AS TOTAL FROM (BOLETAS x INNER JOIN SILLAS y ON x.ID_SILLA = y.ID) WHERE y.ID_LOCALIDAD = ? AND x.ID_FUNCION = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, localidad_id);
+		prepStmt.setInt(2, funcion);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		rs.next();
+		
+		int total = Integer.parseInt(rs.getString("TOTAL"));
+		return total;	
+	}
+	
+	/**
+	 * Da el total de boletas que se pueden comprar en la localidad
+	 * @param id_localidad Id de la localidad
+	 * @param id_funcion Id de la funcion
+	 * @return Total de boletas que se pueden comprar en la localidad
+	 * @throws Exception Si hay error al convertir a int
+	 * @throws SQLException Si hay error al conectarse con la base de datos
+	 */
+	public int darTotalDisponibles(int id_localidad, int id_funcion) throws Exception, SQLException {
+		return darNumeroSillasTotales(id_localidad)-darNumeroSillasCompradas(id_localidad, id_funcion);
+	}
 }
