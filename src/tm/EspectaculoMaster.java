@@ -1,54 +1,12 @@
 package tm;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Properties;
 import dao.DAOTablaEspectaculos;
-import dao.DAOTablaUsuarios;
 import vos.Espectaculo;
 import vos.ListaEspectaculos;
-import vos.Usuario;
 
-
-public class EspectaculoMaster {
-	/**
-	 * Constante que contiene el path absoluto del archivo que tiene los datos de la conexión
-	 */
-	private static final String CONNECTION_DATA_FILE_NAME_REMOTE = "/conexion.properties";
-
-	/**
-	 * Atributo que contiene el path absoluto del archivo que tiene los datos de la conexión
-	 */
-	private String connectionDataPath;
-
-	/**
-	 * Usuario de la base de datos.	
-	 */
-	private String user;
-
-	/**
-	 * Contraseña del usuario para conectarse a la base de datos.
-	 */
-	private String password;
-
-	/**
-	 * Url para conectarse a la base de datos.
-	 */
-	private String url;
-
-	/**
-	 * Driver que guarda los datos para conectarse a la base de datos.
-	 */
-	private String driver;
-
-	/**
-	 * Conexion a la base de datos.
-	 */
-	private Connection  conn;
+public class EspectaculoMaster extends FestivAndesMaster {
 
 	/**
 	 * Método constructor de la clase FestivAndesMaster, esta clase modela y contiene cada una de las 
@@ -56,38 +14,7 @@ public class EspectaculoMaster {
 	 * @param contextPath path absoluto en el servidor del contexto del deploy actual.
 	 */
 	public EspectaculoMaster(String contextPath) {
-		this.connectionDataPath = contextPath + CONNECTION_DATA_FILE_NAME_REMOTE;
-		initConnectionData();
-	}
-
-	/**
-	 * Inicializa los datos para conectarse con la base datos.
-	 */
-	private void initConnectionData() {
-		try {
-			File file = new File(this.connectionDataPath);
-			Properties properties = new Properties();
-			FileInputStream fi = new FileInputStream(file);
-			properties.load(fi);
-			fi.close();
-			this.url = properties.getProperty("url");
-			this.user = properties.getProperty("usuario");
-			this.password = properties.getProperty("clave");
-			this.driver = properties.getProperty("driver");
-			Class.forName(this.driver);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Da la conexion creada con el usuario, clave y url asociados.
-	 * @return Conexion creada con el usuario, clave y url asociados.
-	 * @throws SQLException Si hay un error al conectarse con la base de datos.
-	 */
-	public Connection darConexion() throws SQLException {
-		System.out.println("Connecting to: " + url + " With user: " + user);
-		return DriverManager.getConnection(url, user, password);
+		super(contextPath);
 	}
 
 	// Transacciones
@@ -137,7 +64,6 @@ public class EspectaculoMaster {
 			this.conn = darConexion();
 			daoEspectaculo.setConnection(conn);
 			es = daoEspectaculo.darEspectaculo(id);
-			conn.commit();
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;
@@ -171,9 +97,11 @@ public class EspectaculoMaster {
 			daoEspectaculos.addEspectaculo(espectaculo);
 			conn.commit();
 		} catch(SQLException e) {
+			this.conn.rollback();
 			e.printStackTrace();
 			throw e;
 		} catch(Exception e) {
+			this.conn.rollback();
 			e.printStackTrace();
 			throw e;
 		} finally {
@@ -199,10 +127,13 @@ public class EspectaculoMaster {
 			this.conn = darConexion();
 			daoEspectaculos.setConnection(conn);
 			daoEspectaculos.updateEspectaculo(espectaculo);
+			conn.commit();
 		} catch(SQLException e) {
+			this.conn.rollback();
 			e.printStackTrace();
 			throw e;
 		} catch(Exception e) {
+			this.conn.rollback();
 			e.printStackTrace();
 			throw e;
 		} finally {
@@ -228,10 +159,13 @@ public class EspectaculoMaster {
 			this.conn = darConexion();
 			daoEspectaculos.setConnection(conn);
 			daoEspectaculos.deleteEspectaculo(espectaculo);
+			conn.commit();
 		} catch(SQLException e) {
+			this.conn.rollback();
 			e.printStackTrace();
 			throw e;
 		} catch(Exception e) {
+			this.conn.rollback();
 			e.printStackTrace();
 			throw e;
 		} finally {
