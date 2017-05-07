@@ -416,5 +416,61 @@ public class DAOTablaUsuarios {
 		if(local.darTotalDisponibles(localidad, funcion) < boletas.size())
 			throw new Exception("No hay la cantidad de sillas disponibles para las boletas");
 	}
+	
+	// Iteracion 4
+	
+	public ArrayList<HashMap<String, Object>> darAsistencia(int id_compañia, Date fecha1, Date fecha2) throws Exception {
+		if(fecha1.after(fecha2))
+			throw new Exception("La fecha1 no puede ser despues de la fecha2");
+		
+		ArrayList<HashMap<String, Object>> x = null;
+		
+		String sql = "SELECT * FROM ISIS2304B221710.USUARIOS WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		//prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		
+		return x;
+		
+	}
+	
+	public ArrayList<HashMap<String, Object>> darAsistenciaVersion2(int id_compañia, Date fecha1, Date fecha2) throws Exception {
+		if(fecha1.after(fecha2))
+			throw new Exception("La fecha1 no puede ser despues de la fecha2");
+		
+		ArrayList<HashMap<String, Object>> x = null;
+		
+		String sql = "SELECT * FROM ISIS2304B221710.USUARIOS WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		//prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		
+		return x;
+		
+	}
+	
+	public ArrayList<HashMap<String, Object>> consultarBuenosClientes(int nBoletas) throws Exception {
+		if(nBoletas <= 0)
+			throw new Exception("nBoletas no puede ser tan pequeño");
+		
+		ArrayList<HashMap<String, Object>> x = null;
+		
+		String sql = "SELECT * FROM ISIS2304B221710.USUARIOS WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		//prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		
+		return x;
+		
+	}
 }
 

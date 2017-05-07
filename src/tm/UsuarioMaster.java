@@ -1,10 +1,13 @@
 package tm;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import dao.DAOTablaBoletas;
 import dao.DAOTablaUsuarios;
 import vos.Boleta;
 import vos.ListaUsuarios;
@@ -287,4 +290,87 @@ public class UsuarioMaster extends FestivAndesMaster {
 		}
 	}	
 
+	// Iteracion 4
+	
+	public ArrayList<HashMap<String, Object>> darAsistencia(int id_compañia, Date fecha1, Date fecha2) throws Exception {
+		DAOTablaUsuarios daoUsuarios = new DAOTablaUsuarios();
+		ArrayList<HashMap<String, Object>> mapa = new ArrayList<HashMap<String, Object>>();
+		try {
+			this.conn = darConexion();
+			daoUsuarios.setConnection(conn);
+			mapa = daoUsuarios.darAsistencia(id_compañia, fecha1, fecha2);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuarios.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return mapa;
+	}
+	
+	public ArrayList<HashMap<String, Object>> darAsistenciaVersion2(int id_compañia, Date fecha1, Date fecha2) throws Exception {
+		DAOTablaUsuarios daoUsuarios = new DAOTablaUsuarios();
+		ArrayList<HashMap<String, Object>> mapa = new ArrayList<HashMap<String, Object>>();
+		try {
+			this.conn = darConexion();
+			daoUsuarios.setConnection(conn);
+			mapa = daoUsuarios.darAsistenciaVersion2(id_compañia, fecha1, fecha2);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuarios.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return mapa;
+	}
+	
+	
+	public ArrayList<HashMap<String, Object>> consultarBuenosClientes(int nBoletas) throws Exception {
+		DAOTablaUsuarios daoUsuarios = new DAOTablaUsuarios();
+		ArrayList<HashMap<String, Object>> mapa = new ArrayList<HashMap<String, Object>>();
+		try {
+			this.conn = darConexion();
+			daoUsuarios.setConnection(conn);
+			mapa = daoUsuarios.consultarBuenosClientes(nBoletas);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuarios.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return mapa;
+	}
 }

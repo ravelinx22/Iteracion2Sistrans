@@ -2,8 +2,12 @@ package tm;
 
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import dao.DAOTablaBoletas;
 import vos.Boleta;
 import vos.ListaBoletas;
@@ -181,5 +185,34 @@ public class BoletaMaster extends FestivAndesMaster {
 		}
 		
 		return boleta;
+	}
+	
+	// Iteracion 4
+	
+	public ArrayList<HashMap<String, Object>> consultarCompraBoletas(int id_compañia, Date fecha1, Date fecha2) throws Exception {
+		DAOTablaBoletas daoBoletas = new DAOTablaBoletas();
+		ArrayList<HashMap<String, Object>> mapa = new ArrayList<HashMap<String, Object>>();
+		try {
+			this.conn = darConexion();
+			daoBoletas.setConnection(conn);
+			mapa = daoBoletas.consultarCompraBoletas(id_compañia, fecha1, fecha2);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoBoletas.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return mapa;
 	}
 }

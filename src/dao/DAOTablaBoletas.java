@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import vos.Boleta;
 import vos.Funcion;
 import vos.Usuario;
@@ -423,5 +425,77 @@ public class DAOTablaBoletas {
 		System.out.println("SQL stmt:" + sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
+	}
+	
+	// Iteracion 4
+	
+	public ArrayList<HashMap<String, Object>> consultarCompraBoletas(int id_compañia, Date fecha1, Date fecha2) throws Exception {
+		if(fecha1.after(fecha2))
+			throw new Exception("La fecha1 no puede ser despues de la fecha2");
+		
+		ArrayList<HashMap<String, Object>> x = null;
+		
+		String sql = "SELECT * FROM ISIS2304B221710.USUARIOS WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		//prepStmt.setInt(1, id);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		
+		return x;
+		
+	}
+	
+	/**
+	 * Prueba de memoria principal
+	 */
+	public Usuario memoriaPrincipal() throws Exception {
+		Long inicio = System.currentTimeMillis();
+		
+		String sql = "SELECT * FROM BOLETAS";
+		String sql1 = "SELECT * FROM USUARIOS";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		PreparedStatement prepStmt1 = conn.prepareStatement(sql1);
+		ResultSet rs = prepStmt.executeQuery();
+		ResultSet rs1 = prepStmt1.executeQuery();
+
+		ArrayList<Usuario> usuario = new ArrayList<Usuario>();
+		while(rs.next()) {
+			int id = Integer.parseInt(rs.getString("ID"));
+			int id_f = Integer.parseInt(rs.getString("ID_FUNCION"));
+			int id_u = Integer.parseInt(rs.getString("ID_USUARIO"));
+			int id_s = Integer.parseInt(rs.getString("ID_SILLA"));
+			double costo = rs.getDouble("COSTO");
+			boolean abono = rs.getBoolean("ABONO");
+			Boleta x = new Boleta(id, id_f, id_u, id_s, costo, abono);
+			
+			while(rs1.next()) {
+				int id1 = Integer.parseInt(rs1.getString("ID"));
+				String nombre = rs1.getString("NOMBRE");
+				int ident = Integer.parseInt(rs1.getString("IDENTIFICACION"));
+				String correo = rs1.getString("CORREO");
+				String rol = rs1.getString("ROL");
+				int id_p1 = Integer.parseInt(rs1.getString("ID_PREFERENCIA"));
+				
+				Usuario y = new Usuario(id1, nombre, ident, correo, rol, id_p1);
+				
+				if(y.getId() == x.getId_usuario()) {
+					usuario.add(y);
+				}
+			}
+		}
+		
+		Usuario z = null;
+		for(Usuario x : usuario) {
+			if(x.getId() == 4882) {
+				z = x;
+				break;
+			}
+		}
+		
+		Long finalConsulta = System.currentTimeMillis()-inicio;
+		
+		return z;
 	}
 }
