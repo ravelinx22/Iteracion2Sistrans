@@ -420,54 +420,105 @@ public class DAOTablaUsuarios {
 	// Iteracion 4
 	
 	public ArrayList<HashMap<String, Object>> darAsistencia(int id_compañia, Date fecha1, Date fecha2) throws Exception {
-		if(fecha1.after(fecha2))
-			throw new Exception("La fecha1 no puede ser despues de la fecha2");
+		ArrayList<HashMap<String, Object>> x = new ArrayList<>();
 		
-		ArrayList<HashMap<String, Object>> x = null;
-		
-		String sql = "SELECT * FROM ISIS2304B221710.USUARIOS WHERE ID = ?";
+		String sql = "SELECT y.* FROM   (SELECT y.* FROM   (SELECT * FROM   contribuidores x INNER JOIN compañias y ON x.id_compañia = y.id WHERE  y.id = ?) x INNER JOIN funciones y ON x.id_espectaculo = y.id_espectaculo WHERE  y.fecha BETWEEN ? AND ?) x INNER JOIN (SELECT x.id_funcion, y.* FROM   boletas x INNER JOIN usuarios y ON x.id_usuario = y.id) y ON x.id = y.id_funcion";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		//prepStmt.setInt(1, id);
+		prepStmt.setInt(1, id_compañia);
+		prepStmt.setDate(2, fecha1);
+		prepStmt.setDate(3, fecha2);
 
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 
+		// Agregar while
+		while(rs.next()) {
+			String id_funcion = rs.getString("ID_FUNCION");
+			String id = rs.getString("ID");
+			String nombre = rs.getString("NOMBRE");
+			String identificacion = rs.getString("IDENTIFICACION");
+			String correo = rs.getString("CORREO");
+			String rol = rs.getString("ROL");
+			String id_preferencia = rs.getString("ID_PREFERENCIA");
+			HashMap<String, Object> mapa = new HashMap<>();
+			mapa.put("ID_FUNCION", id_funcion);
+			mapa.put("ID", id);
+			mapa.put("NOMBRE", nombre);
+			mapa.put("IDENTIFICACION", identificacion);
+			mapa.put("CORREO", correo);
+			mapa.put("ROL", rol);
+			mapa.put("ID_PREFERENCIA", id_preferencia);
+			x.add(mapa);
+		}
+		
 		
 		return x;
 		
 	}
 	
 	public ArrayList<HashMap<String, Object>> darAsistenciaVersion2(int id_compañia, Date fecha1, Date fecha2) throws Exception {
-		if(fecha1.after(fecha2))
-			throw new Exception("La fecha1 no puede ser despues de la fecha2");
+		ArrayList<HashMap<String, Object>> x = new ArrayList<>();
 		
-		ArrayList<HashMap<String, Object>> x = null;
-		
-		String sql = "SELECT * FROM ISIS2304B221710.USUARIOS WHERE ID = ?";
+		String sql = "SELECT y.* FROM   (SELECT y.* FROM   (SELECT * FROM   contribuidores x INNER JOIN compañias y ON x.id_compañia = y.id WHERE  y.id = ?) x INNER JOIN funciones y ON x.id_espectaculo = y.id_espectaculo WHERE  y.fecha BETWEEN ? AND ?) x RIGHT JOIN (SELECT x.id_funcion, y.* FROM   boletas x INNER JOIN usuarios y ON x.id_usuario = y.id) y ON x.id = y.id_funcion WHERE  x.id IS NULL";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		//prepStmt.setInt(1, id);
+		prepStmt.setInt(1, id_compañia);
+		prepStmt.setDate(2, fecha1);
+		prepStmt.setDate(3, fecha2);
 
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 
+		// Agregar while 
+		while(rs.next()) {
+			String id_funcion = rs.getString("ID_FUNCION");
+			String id = rs.getString("ID");
+			String nombre = rs.getString("NOMBRE");
+			String identificacion = rs.getString("IDENTIFICACION");
+			String correo = rs.getString("CORREO");
+			String rol = rs.getString("ROL");
+			String id_preferencia = rs.getString("ID_PREFERENCIA");
+			HashMap<String, Object> mapa = new HashMap<>();
+			mapa.put("ID_FUNCION", id_funcion);
+			mapa.put("ID", id);
+			mapa.put("NOMBRE", nombre);
+			mapa.put("IDENTIFICACION", identificacion);
+			mapa.put("CORREO", correo);
+			mapa.put("ROL", rol);
+			mapa.put("ID_PREFERENCIA", id_preferencia);
+			x.add(mapa);
+		}
+		
 		
 		return x;
-		
 	}
 	
 	public ArrayList<HashMap<String, Object>> consultarBuenosClientes(int nBoletas) throws Exception {
 		if(nBoletas <= 0)
 			throw new Exception("nBoletas no puede ser tan pequeño");
 		
-		ArrayList<HashMap<String, Object>> x = null;
+		ArrayList<HashMap<String, Object>> x = new ArrayList<>();
 		
-		String sql = "SELECT * FROM ISIS2304B221710.USUARIOS WHERE ID = ?";
+		String sql = "SELECT * FROM   (SELECT usuarios.id, nombre, correo, Count(usuarios.id) AS NUMERO_BOLETAS FROM   usuarios INNER JOIN boletas ON usuarios.id = boletas.id_usuario WHERE  costo >= 8000 GROUP  BY usuarios.id, nombre, correo) WHERE  numero_boletas > ?";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		//prepStmt.setInt(1, id);
+		prepStmt.setInt(1, nBoletas);
 
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 
+		while(rs.next()) {
+			String id = rs.getString("ID");
+			String nombre = rs.getString("NOMBRE");
+			String correo = rs.getString("CORREO");
+			String numero_boletas = rs.getString("NUMERO_BOLETAS");
+
+			HashMap<String, Object> mapa = new HashMap<>();
+			mapa.put("ID", id);
+			mapa.put("NOMBRE", nombre);
+			mapa.put("CORREO", correo);
+			mapa.put("NUMERO_BOLETAS", numero_boletas);
+
+			x.add(mapa);
+		}
 		
 		return x;
 		
