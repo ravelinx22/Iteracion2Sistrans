@@ -189,13 +189,13 @@ public class BoletaMaster extends FestivAndesMaster {
 	
 	// Iteracion 4
 	
-	public ArrayList<HashMap<String, Object>> consultarCompraBoletas(int id_compañia, Date fecha1, Date fecha2) throws Exception {
+	public ArrayList<HashMap<String, Object>> consultarCompraBoletas(int id, Date fecha1, Date fecha2) throws Exception {
 		DAOTablaBoletas daoBoletas = new DAOTablaBoletas();
 		ArrayList<HashMap<String, Object>> mapa = new ArrayList<HashMap<String, Object>>();
 		try {
 			this.conn = darConexion();
 			daoBoletas.setConnection(conn);
-			mapa = daoBoletas.consultarCompraBoletas(id_compañia, fecha1, fecha2);
+			mapa = daoBoletas.consultarCompraBoletas(id, fecha1, fecha2);
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;

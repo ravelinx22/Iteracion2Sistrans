@@ -1,6 +1,8 @@
 package rest;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -153,5 +155,20 @@ public class BoletaServices extends FestivAndesServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(registro).build();
+	}
+	
+	@GET
+	@Path("/compraBoletas/{id}/{fecha1}/{fecha2}/")
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response consultarCompraBoletas(@PathParam("id") int id, @PathParam("fecha1") Date fecha1, @PathParam("fecha2") Date fecha2) {
+		BoletaMaster tm = new BoletaMaster(getPath());
+		ArrayList<HashMap<String, Object>> respuesta = null;
+		try {
+			respuesta = tm.consultarCompraBoletas(id, fecha1, fecha2);
+		} catch(Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+
+		return Response.status(200).entity(respuesta).build();
 	}
 }

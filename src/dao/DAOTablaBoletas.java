@@ -429,19 +429,34 @@ public class DAOTablaBoletas {
 	
 	// Iteracion 4
 	
-	public ArrayList<HashMap<String, Object>> consultarCompraBoletas(int id_compañia, Date fecha1, Date fecha2) throws Exception {
-		if(fecha1.after(fecha2))
-			throw new Exception("La fecha1 no puede ser despues de la fecha2");
+	public ArrayList<HashMap<String, Object>> consultarCompraBoletas(int id, Date fecha1, Date fecha2) throws Exception {
+		ArrayList<HashMap<String, Object>> x = new ArrayList<>();
 		
-		ArrayList<HashMap<String, Object>> x = null;
-		
-		String sql = "SELECT * FROM ISIS2304B221710.USUARIOS WHERE ID = ?";
+		String sql = "(SELECT ID_FUNCION AS ID, NOMBRE, FECHA, COUNT(bol.ID) AS VENDIDAS, COUNT(bol.ID_USUARIO) AS CLIENTES_REGISTRADOS FROM (SELECT x.* FROM BOLETAS x INNER JOIN (SELECT x.ID FROM SILLAS x INNER JOIN LOCALIDADES y ON x.ID_LOCALIDAD = y.ID WHERE y.ID = ?) y ON x.ID = y.ID) bol INNER JOIN (SELECT FUNCIONES.ID AS IDF, ESPECTACULOS.NOMBRE AS NOMBRE, FECHA FROM FUNCIONES  INNER JOIN ESPECTACULOS ON FUNCIONES.ID_ESPECTACULO = ESPECTACULOS.ID WHERE FECHA BETWEEN ? AND ?) ON bol.ID_FUNCION = IDF group by NOMBRE, ID_FUNCION, FECHA)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		//prepStmt.setInt(1, id);
+		prepStmt.setInt(1, id);
+		prepStmt.setDate(2, fecha1);
+		prepStmt.setDate(3, fecha2);
 
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 
+		while(rs.next()) {
+			String id_1 = rs.getString("ID");
+			String nombre = rs.getString("NOMBRE");
+			String fecha = rs.getString("FECHA");
+			String vendidas = rs.getString("VENDIDAS");
+			String cliente_registrados = rs.getString("CLIENTES_REGISTRADOS");
+
+			HashMap<String, Object> mapa = new HashMap<>();
+			mapa.put("ID", id_1);
+			mapa.put("NOMBRE", nombre);
+			mapa.put("FECHA", fecha);
+			mapa.put("VENDIDAS", vendidas);
+			mapa.put("CLIENTES_REGISTRADOS", cliente_registrados);
+
+			x.add(mapa);
+		}
 		
 		return x;
 		
