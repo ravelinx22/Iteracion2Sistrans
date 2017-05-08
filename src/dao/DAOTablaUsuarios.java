@@ -419,6 +419,7 @@ public class DAOTablaUsuarios {
 	
 	// Iteracion 4
 	
+	//RF9
 	public ArrayList<HashMap<String, Object>> darAsistencia(int id_compañia, Date fecha1, Date fecha2) throws Exception {
 		ArrayList<HashMap<String, Object>> x = new ArrayList<>();
 		
@@ -456,6 +457,35 @@ public class DAOTablaUsuarios {
 		
 	}
 	
+	//RF9
+	public ArrayList<HashMap<String, Object>> darAsistencia(int id_compañia, Date fecha1, Date fecha2, String group, String orden) throws Exception {
+		ArrayList<HashMap<String, Object>> x = new ArrayList<>();
+		
+		String sql = "SELECT y." +group +" FROM   (SELECT y.* FROM   (SELECT * FROM   contribuidores x INNER JOIN compañias y ON x.id_compañia = y.id WHERE  y.id = ?) x INNER JOIN funciones y ON x.id_espectaculo = y.id_espectaculo WHERE  y.fecha BETWEEN ? AND ?) x INNER JOIN (SELECT x.id_funcion, y.* FROM   boletas x INNER JOIN usuarios y ON x.id_usuario = y.id) y ON x.id = y.id_funcion GROUP BY " +group +" ORDER BY " +group +" " +orden;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id_compañia);
+		prepStmt.setDate(2, fecha1);
+		prepStmt.setDate(3, fecha2);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		// Agregar while
+		while(rs.next()) {
+			String dato = rs.getString(group);
+
+			HashMap<String, Object> mapa = new HashMap<>();
+			mapa.put(group, dato);
+
+			x.add(mapa);
+		}
+		
+		
+		return x;
+		
+	}
+	
+	// RF10
 	public ArrayList<HashMap<String, Object>> darAsistenciaVersion2(int id_compañia, Date fecha1, Date fecha2) throws Exception {
 		ArrayList<HashMap<String, Object>> x = new ArrayList<>();
 		
@@ -485,6 +515,33 @@ public class DAOTablaUsuarios {
 			mapa.put("CORREO", correo);
 			mapa.put("ROL", rol);
 			mapa.put("ID_PREFERENCIA", id_preferencia);
+			x.add(mapa);
+		}
+		
+		
+		return x;
+	}
+	
+	//RF10
+	public ArrayList<HashMap<String, Object>> darAsistenciaVersion2(int id_compañia, Date fecha1, Date fecha2, String group, String orden) throws Exception {
+		ArrayList<HashMap<String, Object>> x = new ArrayList<>();
+		
+		String sql = "SELECT y." +group +" FROM   (SELECT y.* FROM   (SELECT * FROM   contribuidores x INNER JOIN compañias y ON x.id_compañia = y.id WHERE  y.id = ?) x INNER JOIN funciones y ON x.id_espectaculo = y.id_espectaculo WHERE  y.fecha BETWEEN ? AND ?) x RIGHT JOIN (SELECT x.id_funcion, y.* FROM   boletas x INNER JOIN usuarios y ON x.id_usuario = y.id) y ON x.id = y.id_funcion WHERE  x.id IS NULL GROUP BY " +group +" ORDER BY " +group +" " +orden;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id_compañia);
+		prepStmt.setDate(2, fecha1);
+		prepStmt.setDate(3, fecha2);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		// Agregar while 
+		while(rs.next()) {
+			String dato = rs.getString(group);
+
+			HashMap<String, Object> mapa = new HashMap<>();
+			mapa.put(group, dato);
+
 			x.add(mapa);
 		}
 		

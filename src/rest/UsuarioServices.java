@@ -236,6 +236,23 @@ public class UsuarioServices extends FestivAndesServices {
 
 		return Response.status(200).entity(respuesta).build();
 	}
+	
+
+	@GET
+	@Path("/asistencia/{id}/{fecha1}/{fecha2}/{group}/{orden}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response  darAsistencia(@PathParam("id") int id_compañia, @PathParam("fecha1") Date fecha1, @PathParam("fecha2") Date fecha2, @PathParam("group") String group, @PathParam("orden") String orden) {
+		UsuarioMaster tm = new UsuarioMaster(getPath());
+		ArrayList<HashMap<String, Object>> respuesta = null;
+		try {
+			respuesta = tm.darAsistencia(id_compañia, fecha1, fecha2, group, orden);
+		} catch(Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+
+		return Response.status(200).entity(respuesta).build();
+	}
 
 	@GET
 	@Path("/asistenciav2/{id}/{fecha1}/{fecha2}")
@@ -246,6 +263,22 @@ public class UsuarioServices extends FestivAndesServices {
 		ArrayList<HashMap<String, Object>> respuesta = null;
 		try {
 			respuesta = tm.darAsistenciaVersion2(id_compañia, fecha1, fecha2);
+		} catch(Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+
+		return Response.status(200).entity(respuesta).build();
+	}
+	
+	@GET
+	@Path("/asistenciav2/{id}/{fecha1}/{fecha2}/{group}/{orden}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response  darAsistenciaVersion2(@PathParam("id") int id_compañia, @PathParam("fecha1") Date fecha1, @PathParam("fecha2") Date fecha2, @PathParam("group") String group, @PathParam("orden") String orden) {
+		UsuarioMaster tm = new UsuarioMaster(getPath());
+		ArrayList<HashMap<String, Object>> respuesta = null;
+		try {
+			respuesta = tm.darAsistenciaVersion2(id_compañia, fecha1, fecha2, group, orden);
 		} catch(Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

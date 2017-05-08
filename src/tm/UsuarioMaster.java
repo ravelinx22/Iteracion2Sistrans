@@ -319,6 +319,33 @@ public class UsuarioMaster extends FestivAndesMaster {
 		return mapa;
 	}
 	
+	public ArrayList<HashMap<String, Object>> darAsistencia(int id_compañia, Date fecha1, Date fecha2, String group, String orden) throws Exception {
+		DAOTablaUsuarios daoUsuarios = new DAOTablaUsuarios();
+		ArrayList<HashMap<String, Object>> mapa = new ArrayList<HashMap<String, Object>>();
+		try {
+			this.conn = darConexion();
+			daoUsuarios.setConnection(conn);
+			mapa = daoUsuarios.darAsistencia(id_compañia, fecha1, fecha2,group, orden);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuarios.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return mapa;
+	}
+	
 	public ArrayList<HashMap<String, Object>> darAsistenciaVersion2(int id_compañia, Date fecha1, Date fecha2) throws Exception {
 		DAOTablaUsuarios daoUsuarios = new DAOTablaUsuarios();
 		ArrayList<HashMap<String, Object>> mapa = new ArrayList<HashMap<String, Object>>();
@@ -326,6 +353,33 @@ public class UsuarioMaster extends FestivAndesMaster {
 			this.conn = darConexion();
 			daoUsuarios.setConnection(conn);
 			mapa = daoUsuarios.darAsistenciaVersion2(id_compañia, fecha1, fecha2);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuarios.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return mapa;
+	}
+	
+	public ArrayList<HashMap<String, Object>> darAsistenciaVersion2(int id_compañia, Date fecha1, Date fecha2, String group, String orden) throws Exception {
+		DAOTablaUsuarios daoUsuarios = new DAOTablaUsuarios();
+		ArrayList<HashMap<String, Object>> mapa = new ArrayList<HashMap<String, Object>>();
+		try {
+			this.conn = darConexion();
+			daoUsuarios.setConnection(conn);
+			mapa = daoUsuarios.darAsistenciaVersion2(id_compañia, fecha1, fecha2, group, orden);
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;
