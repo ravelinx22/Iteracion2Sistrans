@@ -1,5 +1,6 @@
 package tm;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -95,9 +96,13 @@ public class AbonoMaster extends FestivAndesMaster {
 		DAOTablaAbonos daoAbonos = new DAOTablaAbonos();
 		try {
 			this.conn = darConexion();
+			this.conn.setAutoCommit(false);
+			this.conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			daoAbonos.setConnection(conn);
 			daoAbonos.addAbono(abono);
 			conn.commit();
+			this.conn.setAutoCommit(true);
+			this.conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 		} catch(SQLException e) {
 			this.conn.rollback();
 			e.printStackTrace();
