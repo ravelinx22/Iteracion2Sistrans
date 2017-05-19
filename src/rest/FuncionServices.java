@@ -38,24 +38,6 @@ public class FuncionServices extends FestivAndesServices {
 	// Rest
 	
 	/**
-	 * Da las funciones de la base de datos
-	 * @return Funciones de la base de datos.
-	 */
-	@GET
-	@Produces({MediaType.APPLICATION_JSON})
-	public Response getFunciones() {
-		FuncionMaster tm = new FuncionMaster(getPath());
-		ListaFunciones funciones;
-		try {
-			funciones = tm.darFunciones();
-		} catch(Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		
-		return Response.status(200).entity(funciones).build();
-	}
-	
-	/**
 	 * Agrega una funcion a la base de datos
 	 * @param funcion Funcion a agregar
 	 * @return Resultado de intentar agregar la funcion 
@@ -110,5 +92,25 @@ public class FuncionServices extends FestivAndesServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(funcion).build();
+	}
+	
+	// ITERACION 5
+	
+	/**
+	 * Da las funciones de la base de datos
+	 * @return Funciones de la base de datos.
+	 */
+	@GET
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response getFunciones() {
+		FuncionMaster tm = new FuncionMaster(getPath());
+		ListaFunciones funciones;
+		try {
+			funciones = tm.darFunciones();
+		} catch(Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		
+		return Response.status(200).entity(funciones).build();
 	}
 }

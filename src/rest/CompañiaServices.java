@@ -1,5 +1,6 @@
 package rest;
 
+import java.sql.Date;
 import java.util.HashMap;
 
 import javax.servlet.ServletContext;
@@ -116,7 +117,7 @@ public class CompañiaServices extends FestivAndesServices {
 	// ITERACION 5
 
 	@DELETE
-	@Path("{idCompañia}/retirar/usuario/{idUsuario}")
+	@Path("/{idCompañia}/retirar/usuario/{idUsuario}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response retirarCompañia(@PathParam("idCompañia") int idCompañia, @PathParam("idUsuario") int idUsuario) {
@@ -132,5 +133,14 @@ public class CompañiaServices extends FestivAndesServices {
 			return Response.status(500).entity(respuesta).build();
 		}
 		return Response.status(200).entity(respuesta).build();
+	}
+	
+	@GET
+	@Path("/{idCompañia}/rentabilidad/inicio/{fecha1}/final/{fecha2}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darRentabilidad(@PathParam("idCompañia") int idCompañia, @PathParam("fecha1") Date inicioF, @PathParam("fecha2") Date finalF) {
+		CompañiaMaster tm = new CompañiaMaster(getPath());
+		
+		return null;
 	}
 }
