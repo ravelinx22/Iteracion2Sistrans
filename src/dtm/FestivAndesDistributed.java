@@ -1,13 +1,22 @@
 package dtm;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+
 import javax.jms.JMSException;
 import javax.jms.QueueConnectionFactory;
 import javax.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 
+import jms.FuncionesMDB;
 import tm.FestivAndesMaster;
+import tm.FuncionMaster;
+import vos.ListaFunciones;
 
 public class FestivAndesDistributed {
 	// Constantes para la conexion
@@ -17,6 +26,7 @@ public class FestivAndesDistributed {
 	private static FestivAndesDistributed instance;
 	
 	//TODO DECLARAR JMS
+	private FuncionesMDB funcionesMQ;
 	
 	private static String path;
 	
@@ -30,10 +40,14 @@ public class FestivAndesDistributed {
 		InitialContext ctx = new InitialContext();
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
 		//TODO INICIALIZAR JMS
+		funcionesMQ = new FuncionesMDB(factory, ctx);
+		
+		funcionesMQ.start();
 	}
 	
-	public void stop() {
+	public void stop() throws JMSException {
 		//TODO 
+		funcionesMQ.close();
 	}
 	
 	public static void setPath(String p) {
@@ -77,11 +91,18 @@ public class FestivAndesDistributed {
 	
 	// Getters de las listas locales
 	
-	// TODO Hacer metodos
+	public ListaFunciones getLocalFunciones() throws Exception
+	{
+		FuncionMaster x = (FuncionMaster) tm;
+		return x.darFunciones();
+	}
 	
 	// Getters de las listas remotas
 	
-	// TODO Hacer metodos
+	public ListaFunciones getRemoteAerolineas() throws JsonGenerationException, JsonMappingException, JMSException, IOException, Exception, InterruptedException, NoSuchAlgorithmException
+	{
+		return funcionesMQ.getRemoteFunciones();
+	}
 	
 	
 	
