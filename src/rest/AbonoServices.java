@@ -65,34 +65,6 @@ public class AbonoServices extends FestivAndesServices {
 	/**
 	 * Agrega un abono a la base de datos
 	 * @param abono Abono a agregar
-	 * @param id Id del usuario que va a comprar abono
-	 * @return Resultado de intentar agregar un abono
-	 */
-	@PUT
-	@Path("/usuario/{id}/abono")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addAbono(Abono abono, @PathParam("id") int id) {
-		AbonoMaster tm = new AbonoMaster(getPath());
-		UsuarioMaster sm = new UsuarioMaster(getPath());
-		
-		try {
-			Usuario x = sm.darUsuario(id);
-			if(x == null)
-				throw new Exception("El usuario no existe");
-			else if(x.getId() != abono.getId_usuario())
-				throw new Exception("El abono tiene que ser personal e intransferible");
-			
-			tm.addAbono(abono);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(abono).build();
-	}
-	
-	/**
-	 * Agrega un abono a la base de datos
-	 * @param abono Abono a agregar
 	 * @return Resultado de intentar agregar un abono
 	 */
 	@PUT
@@ -150,5 +122,35 @@ public class AbonoServices extends FestivAndesServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(registro).build();
+	}
+	
+	// ITERACION 5
+	
+	/**
+	 * Agrega un abono a la base de datos
+	 * @param abono Abono a agregar
+	 * @param id Id del usuario que va a comprar abono
+	 * @return Resultado de intentar agregar un abono
+	 */
+	@PUT
+	@Path("/usuario/{id}/abono")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addAbono(Abono abono, @PathParam("id") int id) {
+		AbonoMaster tm = new AbonoMaster(getPath());
+		UsuarioMaster sm = new UsuarioMaster(getPath());
+		
+		try {
+			Usuario x = sm.darUsuario(id);
+			if(x == null)
+				throw new Exception("El usuario no existe");
+			else if(x.getId() != abono.getId_usuario())
+				throw new Exception("El abono tiene que ser personal e intransferible");
+			
+			tm.addAbono(abono);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(abono).build();
 	}
 }

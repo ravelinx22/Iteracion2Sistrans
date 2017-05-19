@@ -1,5 +1,7 @@
 package rest;
 
+import java.util.HashMap;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -7,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -24,7 +27,7 @@ public class CompañiaServices extends FestivAndesServices {
 	 */
 	@Context
 	private ServletContext context;
-	
+
 	/**
 	 * Método que retorna el path de la carpeta WEB-INF/ConnectionData en el deploy actual dentro del servidor.
 	 * @return path de la carpeta WEB-INF/ConnectionData en el deploy actual.
@@ -32,9 +35,9 @@ public class CompañiaServices extends FestivAndesServices {
 	private String getPath() {
 		return context.getRealPath("WEB-INF/ConnectionData");
 	}
-	
+
 	// Rest
-	
+
 	/**
 	 * Da las compañias de la base de datos
 	 * @return Compañias de la base de datos
@@ -49,10 +52,10 @@ public class CompañiaServices extends FestivAndesServices {
 		} catch(Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		
+
 		return Response.status(200).entity(compañias).build();
 	}
-	
+
 	/**
 	 * Agrega una compañia a la base de datos
 	 * @param compañia Compañia a agregar
@@ -71,7 +74,7 @@ public class CompañiaServices extends FestivAndesServices {
 		}
 		return Response.status(200).entity(compañia).build();
 	}
-	
+
 	/**
 	 * Actualiza una compañia de la base de datos.
 	 * @param compañia Compañia con los nuevos datos.
@@ -90,7 +93,7 @@ public class CompañiaServices extends FestivAndesServices {
 		}
 		return Response.status(200).entity(compañia).build();
 	}
-	
+
 	/**
 	 * Elimina una compañia de la base de datos
 	 * @param compañia Compañia a eliminar de la base de datos.
@@ -108,5 +111,26 @@ public class CompañiaServices extends FestivAndesServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(compañia).build();
+	}
+
+	// ITERACION 5
+
+	@DELETE
+	@Path("{idCompañia}/retirar/usuario/{idUsuario}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response retirarCompañia(@PathParam("idCompañia") int idCompañia, @PathParam("idUsuario") int idUsuario) {
+		CompañiaMaster tm = new CompañiaMaster(getPath());
+		HashMap<String, String> respuesta = new HashMap<>();
+
+		try {
+			tm.retirarCompañia(idCompañia, idUsuario);
+			respuesta.put("Resultado", "Realizada");
+		} catch (Exception e) {
+			respuesta.put("Resultado", "Rechazada");
+			respuesta.put("Error", doErrorMessage(e));
+			return Response.status(500).entity(respuesta).build();
+		}
+		return Response.status(200).entity(respuesta).build();
 	}
 }

@@ -33,7 +33,11 @@ public class FuncionMaster extends FestivAndesMaster {
 		try {
 			this.conn = darConexion();
 			daoFunciones.setConnection(conn);
+			comienzoTransaccion(this.conn);
+			
 			funciones = daoFunciones.darFunciones();
+			
+			finalTransaccion(this.conn);
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;

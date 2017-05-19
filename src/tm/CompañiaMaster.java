@@ -3,6 +3,7 @@ package tm;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import dao.DAOTablaCompañias;
+import dao.DAOTablaUsuarios;
 import vos.Compañia;
 import vos.ListaCompañias;
 
@@ -152,16 +153,23 @@ public class CompañiaMaster extends FestivAndesMaster {
 	
 	/**
 	 * Retira la compañia del festival
-	 * @param id_compañia Id de la compañia 
+	 * @param id_compañia Id de la compañia
+	 * @param id_usuario Id del usuario administrador que va a hacer la transaccion 
 	 * @throws SQLException Si hay problema conectandose con la base de datos.
 	 * @throws Exception Si hay un problema manejando los datos
 	 */
-	public void retirarCompañia(int id_compañia) throws SQLException, Exception {
+	public void retirarCompañia(int id_compañia, int id_usuario) throws SQLException, Exception {
 		DAOTablaCompañias daoCompañia = new DAOTablaCompañias();
+		DAOTablaUsuarios daoUsuario = new DAOTablaUsuarios();
+		
 		try {
 			this.conn = darConexion();
 			daoCompañia.setConnection(conn);
+			daoUsuario.setConnection(conn);
 			comienzoTransaccion(this.conn);
+			
+			if(daoUsuario.esAdministrador(id_usuario))
+				throw new Exception("El usuario que hace la transaccion no es administrador");
 			
 			daoCompañia.retirarCompañia(id_compañia);
 			

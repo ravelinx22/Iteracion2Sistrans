@@ -404,4 +404,44 @@ public class UsuarioMaster extends FestivAndesMaster {
 		
 		return mapa;
 	}
+	
+	// ITERACION 5
+	
+	/**
+	 * Verifica si un usuario es administrador.
+	 * @param id_usuario Id del usuario a verificar.
+	 * @return True si el usuario es administrador, false de lo contrario.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error al convertir de datos a usuario.
+	 */
+	public boolean esAdministrador(int id_usuario) throws SQLException, Exception {
+		DAOTablaUsuarios daoUsuarios = new DAOTablaUsuarios();
+		boolean esAdmin = false;
+		try {
+			this.conn = darConexion();
+			daoUsuarios.setConnection(conn);
+			comienzoTransaccion(this.conn);
+			
+			esAdmin = daoUsuarios.esAdministrador(id_usuario);
+			
+			finalTransaccion(this.conn);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuarios.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+		
+		return esAdmin;
+	}
 }
