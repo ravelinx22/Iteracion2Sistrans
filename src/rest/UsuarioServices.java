@@ -180,24 +180,6 @@ public class UsuarioServices extends FestivAndesServices {
 		}
 		return Response.status(200).entity(arr).build();
 	}
-	/**
-	 * Elimina una funciÛn de la base de datos
-	 * @param usuario Usuario que intenta eliminar la funciÛn eliminar de la base de datos.
-	 * @return Resultado de intentar eliminar la funciÛn
-	 */
-	@DELETE
-	@Path("/usuario/cancelarFuncion/{id}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response cancerlarUnaFuncion(@PathParam("id") int idFuncion) {
-		UsuarioMaster tm = new UsuarioMaster(getPath());
-		try {
-			tm.cancerlarUnaFuncion(idFuncion);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(idFuncion).build();
-	}
 
 	/**
 	 * Consulta de la base de datos los resultados de las bases de datos

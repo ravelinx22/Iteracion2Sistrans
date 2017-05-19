@@ -2,6 +2,8 @@ package tm;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import dao.DAOTablaBoletas;
 import dao.DAOTablaFunciones;
 import vos.Funcion;
 import vos.ListaFunciones;
@@ -116,6 +118,8 @@ public class FuncionMaster extends FestivAndesMaster {
 		}
 	}
 
+	// ITERACION 5
+	
 	/**
 	 * Elimina la funcion de la base de datos.
 	 * @param funcion Funcion a eliminar
@@ -123,11 +127,17 @@ public class FuncionMaster extends FestivAndesMaster {
 	 */
 	public void deleteFuncion(Funcion funcion) throws Exception {
 		DAOTablaFunciones daoFunciones = new DAOTablaFunciones();
+		DAOTablaBoletas daoBoletas = new DAOTablaBoletas();
 		try {
 			this.conn = darConexion();
+			comienzoTransaccion(this.conn);
 			daoFunciones.setConnection(conn);
+			daoBoletas.setConnection(conn);
+			
 			daoFunciones.deleteFuncion(funcion);
-			conn.commit();
+			daoBoletas.deleteBoletasDeFuncion(funcion.getId());
+			
+			finalTransaccion(this.conn);
 		} catch(SQLException e) {
 			this.conn.rollback();
 			e.printStackTrace();

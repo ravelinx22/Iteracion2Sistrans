@@ -311,44 +311,7 @@ public class DAOTablaUsuarios {
 		}
 
 	}
-	//TODO RF14
-	/**
-	 * Cancela todas las boletas relacionadas con una funciÛn y retorna la cantidad de dinero a ser retornado
-	 * @param idFunciÛn Id de la funciÛn a cancerlar
-	 * @return El dinero total a ser reembolsado
-	 * @throws SQLException Si hay error conectandose con la base de datos.
-	 * @throws Exception Si hay error convirtiendo los datos
-	 */
 
-	public String cancerlarUnaFuncion(int idFuncion) throws SQLException, Exception
-	{
-		//repuesta
-		String respuesta = "";
-		// saldo que se debe reembolsar
-		double saldoTotal = 0;
-		DAOTablaBoletas bol = new DAOTablaBoletas();
-		bol.setConnection(conn);
-		//se obtienen todas las boletas de la tabla
-		ArrayList<Boleta> arr = bol.darBoletas();
-
-		//objeto que modelar· las boletas a eliminar durante la iteraciÛn
-		Boleta borrar = null;
-		// se crea un date con la fecha actual en milisegundos
-		Date fecha = new Date(System.currentTimeMillis());
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(fecha); // Configuramos la el calendario con la fecha actual
-		calendar.add(Calendar.DAY_OF_YEAR, 5); // se le suman 5 dÌas a la fecha de cancelaciÛn de la resarva ya que el mÈtodo cancela reservas con 5 dÌas de anterioridad y esta vez de necesitan cancelar funciones que incluso estan en desarrollo
-		fecha = (Date) calendar.getTime();
-		for(int i = 0; i < arr.size();  i++)
-		{ borrar = arr.get(i);
-		if(borrar.getId_funcion() == idFuncion)
-		{   saldoTotal += borrar.getCosto();
-		bol.deleteBoleta(borrar, (Date) fecha);
-		}
-		}
-		respuesta = saldoTotal + "";
-		return respuesta;
-	}
 	//RFC8
 	/**
 	 *Retorna el estado de todas las ganancias que se le permitan ver al usuario
@@ -579,6 +542,24 @@ public class DAOTablaUsuarios {
 		
 		return x;
 		
+	}
+	
+	// ITERACION 5
+	
+	/**
+	 * Verifica si un usuario es administrador.
+	 * @param id_usuario Id del usuario a verificar.
+	 * @return True si el usuario es administrador, false de lo contrario.
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error al convertir de datos a usuario.
+	 */
+	public boolean esAdministrador(int id_usuario) throws SQLException, Exception {
+		Usuario user = darUsuario(id_usuario);
+		
+		if(user == null)
+			throw new Exception("No existe el usuario.");
+		
+		return user.getRol().equalsIgnoreCase("Administrador");
 	}
 }
 

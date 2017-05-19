@@ -96,13 +96,12 @@ public class AbonoMaster extends FestivAndesMaster {
 		DAOTablaAbonos daoAbonos = new DAOTablaAbonos();
 		try {
 			this.conn = darConexion();
-			this.conn.setAutoCommit(false);
-			this.conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			comienzoTransaccion(this.conn);
+			
 			daoAbonos.setConnection(conn);
 			daoAbonos.addAbono(abono);
-			conn.commit();
-			this.conn.setAutoCommit(true);
-			this.conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			
+			finalTransaccion(this.conn);
 		} catch(SQLException e) {
 			this.conn.rollback();
 			e.printStackTrace();

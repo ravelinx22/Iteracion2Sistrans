@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import vos.Boleta;
 import vos.Funcion;
 import vos.Localidad;
 import vos.Reserva;
@@ -272,5 +274,71 @@ public class DAOTablaFunciones {
 		}
 
 		return funciones;	
+	}
+
+	// ITERACION 5
+
+	/**
+	 * Da las funciones de una compañia en especifico.
+	 * @param id_compañia Id de la compañia
+	 * @throws SQLException Si hay un error conectandose a la base de datos.
+	 * @throws Exception Si hay un error convirtiendo de dato a funcion.
+	 */
+	public ArrayList<Funcion> darFuncionesDeCompañia(int id_compañia) throws SQLException, Exception {
+		String sql = "SELECT y.* FROM (SELECT * FROM COMPAÑIAS x INNER JOIN CONTRIBUIDORES y ON x.ID = y.ID_COMPAÑIA WHERE x.ID = ?) x INNER JOIN FUNCIONES y ON x.ID_ESPECTACULO = y.ID_ESPECTACULO";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id_compañia);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		ArrayList<Funcion> funciones = new ArrayList<Funcion>();
+		while(rs.next()) {
+			int id = Integer.parseInt(rs.getString("ID"));
+			Date fecha = rs.getDate("FECHA");
+			int horaInicio = Integer.parseInt(rs.getString("HORA_INICIO"));
+			int boletasTotales = Integer.parseInt(rs.getString("BOLETAS_TOTALES"));
+			int idReserva = Integer.parseInt(rs.getString("ID_RESERVA"));
+			int idEspectaculo = Integer.parseInt(rs.getString("ID_ESPECTACULO"));
+			int idFestival = Integer.parseInt(rs.getString("ID_FESTIVAL"));
+
+			funciones.add(new Funcion(id, fecha, horaInicio, boletasTotales, idReserva, idEspectaculo, idFestival));
+		}
+		
+		return funciones;
+	}
+	
+	/**
+	 * Elimina una funcion en especifico.
+	 * @param id_funcion Id de la funcion a eliminar.
+	 * @throws SQLException Si hay un error conectandose a la base de datos.
+	 * @throws Exception Si hay un error convirtiendo de dato a funcion.
+	 */
+	public void deleteFuncion(int id_funcion) throws SQLException, Exception {
+		Funcion funcion = darFuncion(id_funcion);
+		
+		if(funcion == null)
+			throw new Exception("La funcion que esta intentando eliminar no existe");
+		
+		String sql = "DELETE FROM ISIS2304B221710.FUNCIONES WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id_funcion);
+		
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	
+	/**
+	 * Elimina las funciones de una compañia.
+	 * @param id_compañia Id de la compañia a eliminar.
+	 * @throws SQLException Si hay un error conectandose a la base de datos.
+	 * @throws Exception Si hay un error convirtiendo de dato a funcion.
+	 */
+	public void deleteFuncionesDeCompañia(int id_compañia) throws SQLException, Exception {
+		ArrayList<Funcion> funciones = darFuncionesDeCompañia(id_compañia);
+		
+		for(Funcion f : funciones) {
+			deleteFuncion(f.getId());
+		}
 	}
 }

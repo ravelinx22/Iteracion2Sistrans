@@ -82,7 +82,7 @@ public class DAOTablaBoletas {
 		}
 		return boletas;
 	}
-	
+
 	/**
 	 * Busca una boleta por id.
 	 * @param id Id de la boleta a buscar
@@ -180,14 +180,14 @@ public class DAOTablaBoletas {
 
 		if(!sePuedeBorrarBoleta(boleta, fechaEliminacion))
 			throw new Exception("Solo se puede eliminar una boleta con anticipacion de 5 dias para la funcion");
-		
+
 		String sql = "DELETE FROM ISIS2304B221710.BOLETAS";
 		sql += " WHERE id = " + boleta.getId();
 
 		System.out.println("SQL stmt:" + sql);
 
 		agregarBoletaCancelada(boleta.getId(), boleta.getId_usuario());
-		
+
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
@@ -385,11 +385,11 @@ public class DAOTablaBoletas {
 
 		if(!rs.next())
 			return 0;
-		
+
 		int maximo = Integer.parseInt(rs.getString("MAX"));
 		return maximo;
 	}
-	
+
 	/**
 	 * Verifica si se puede borrar una boleta
 	 * @param id Id de la boleta a verificar
@@ -401,14 +401,14 @@ public class DAOTablaBoletas {
 		DAOTablaFunciones daoFuncion = new DAOTablaFunciones();
 		daoFuncion.setConnection(this.conn);
 		Date funcion = daoFuncion.darFuncion(boleta.getId_funcion()).getFecha();
-		
+
 		int days1 = (int) (funcion.getTime() / (1000*60*60*24));
 		int days2 = (int) (fechaEliminacion.getTime() / (1000*60*60*24));
 
-		
+
 		return (days1-days2)>= 5;
 	}
-	
+
 	/**
 	 * Agrega boleta a canceladas
 	 * @param id_boleta Id de la boleta cancelada 
@@ -426,12 +426,12 @@ public class DAOTablaBoletas {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
-	
+
 	// Iteracion 4
-	
+
 	public ArrayList<HashMap<String, Object>> consultarCompraBoletas(int id, Date fecha1, Date fecha2) throws Exception {
 		ArrayList<HashMap<String, Object>> x = new ArrayList<>();
-		
+
 		String sql = "(SELECT ID_FUNCION AS ID, NOMBRE, FECHA, COUNT(bol.ID) AS VENDIDAS, COUNT(bol.ID_USUARIO) AS CLIENTES_REGISTRADOS FROM (SELECT x.* FROM BOLETAS x INNER JOIN (SELECT x.ID FROM SILLAS x INNER JOIN LOCALIDADES y ON x.ID_LOCALIDAD = y.ID WHERE y.ID = ?) y ON x.ID = y.ID) bol INNER JOIN (SELECT FUNCIONES.ID AS IDF, ESPECTACULOS.NOMBRE AS NOMBRE, FECHA FROM FUNCIONES  INNER JOIN ESPECTACULOS ON FUNCIONES.ID_ESPECTACULO = ESPECTACULOS.ID WHERE FECHA BETWEEN ? AND ?) ON bol.ID_FUNCION = IDF group by NOMBRE, ID_FUNCION, FECHA)";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		prepStmt.setInt(1, id);
@@ -457,17 +457,17 @@ public class DAOTablaBoletas {
 
 			x.add(mapa);
 		}
-		
+
 		return x;
-		
+
 	}
-	
+
 	/**
 	 * Prueba de memoria principal
 	 */
 	public Usuario memoriaPrincipal() throws Exception {
 		Long inicio = System.currentTimeMillis();
-		
+
 		String sql = "SELECT * FROM BOLETAS";
 		String sql1 = "SELECT * FROM USUARIOS";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -484,7 +484,7 @@ public class DAOTablaBoletas {
 			double costo = rs.getDouble("COSTO");
 			boolean abono = rs.getBoolean("ABONO");
 			Boleta x = new Boleta(id, id_f, id_u, id_s, costo, abono);
-			
+
 			while(rs1.next()) {
 				int id1 = Integer.parseInt(rs1.getString("ID"));
 				String nombre = rs1.getString("NOMBRE");
@@ -492,15 +492,15 @@ public class DAOTablaBoletas {
 				String correo = rs1.getString("CORREO");
 				String rol = rs1.getString("ROL");
 				int id_p1 = Integer.parseInt(rs1.getString("ID_PREFERENCIA"));
-				
+
 				Usuario y = new Usuario(id1, nombre, ident, correo, rol, id_p1);
-				
+
 				if(y.getId() == x.getId_usuario()) {
 					usuario.add(y);
 				}
 			}
 		}
-		
+
 		Usuario z = null;
 		for(Usuario x : usuario) {
 			if(x.getId() == 4882) {
@@ -508,9 +508,77 @@ public class DAOTablaBoletas {
 				break;
 			}
 		}
-		
+
 		Long finalConsulta = System.currentTimeMillis()-inicio;
-		
+
 		return z;
+	}
+
+	// ITERACION 5
+
+	/**
+	 * Da las boletas de una funcion especifica.
+	 * @param id_funcion Id de la funcion a buscar boletas
+	 * @return Lista con las boletas de una funcion
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error convirtiendo los datos
+	 */
+	public ArrayList<Boleta> darBoletasDeFuncion(int id_funcion) throws Exception, SQLException {
+		String sql = "SELECT * FROM BOLETAS WHERE ID_FUNCION = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id_funcion);
+
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		ArrayList<Boleta> boletas = new ArrayList<Boleta>();
+		while(rs.next()) {
+			int id = Integer.parseInt(rs.getString("ID"));
+			int id_fundacion = Integer.parseInt(rs.getString("ID_FUNCION"));
+			int id_usuario = Integer.parseInt(rs.getString("ID_USUARIO"));
+			int id_silla = Integer.parseInt(rs.getString("ID_SILLA"));
+			double costo = rs.getDouble("COSTO");
+			boolean abono = rs.getBoolean("ABONO");
+
+			boletas.add(new Boleta(id, id_fundacion, id_usuario, id_silla, costo, abono));
+		}
+
+		return boletas;
+	}
+
+	/**
+	 * Elimina una boleta con el id indicado.
+	 * @param id Id de la boleta a eliminar
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error convirtiendo los datos
+	 */
+	public void deleteBoleta(int id) throws Exception, SQLException {
+		Boleta bolEliminar = darBoleta(id);
+
+		if(bolEliminar == null)
+			throw new Exception("La boleta que esta intentando eliminar no existe");
+
+		String sql = "DELETE FROM ISIS2304B221710.BOLETAS WHERE id = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, id);
+
+		// TODO: Mirar si es necesario agregar a boletas canceladas
+
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	
+	/**
+	 * Elimina todas las boletas de una funcion
+	 * @param id_funcion Id de la funcion a la que se le van a eliminar las boletas
+	 * @throws SQLException Si hay error conectandose con la base de datos.
+	 * @throws Exception Si hay error convirtiendo los datos
+	 */
+	public void deleteBoletasDeFuncion(int id_funcion) throws Exception, SQLException {
+		ArrayList<Boleta> boletas = darBoletasDeFuncion(id_funcion);
+		
+		for(Boleta b : boletas) {
+			deleteBoleta(b.getId());
+		}
 	}
 }

@@ -138,4 +138,18 @@ public class DAOTablaCompañias {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
+	
+	// ITERACION 5
+	
+	/**
+	 * Retira la compañia del festival
+	 * @param id_compañia Id de la compañia 
+	 * @throws SQLException Si hay problema conectandose con la base de datos.
+	 * @throws Exception Si hay un problema manejando los datos
+	 */
+	public void retirarCompañia(int id_compañia) throws SQLException, Exception {
+		DAOTablaFunciones func = new DAOTablaFunciones();
+		func.setConnection(this.conn);
+		func.deleteFuncionesDeCompañia(id_compañia);
+	}
 }

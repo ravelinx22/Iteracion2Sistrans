@@ -242,30 +242,7 @@ public class UsuarioMaster extends FestivAndesMaster {
 			}
 		}
 	}
-	public String cancerlarUnaFuncion(int idFuncion) throws SQLException, Exception {
-		DAOTablaUsuarios daoUsuario = new DAOTablaUsuarios();
-		String x = "";
-		try {
-			this.conn = darConexion();
-			daoUsuario.setConnection(conn);
-			x = daoUsuario.cancerlarUnaFuncion(idFuncion);
-		} catch(SQLException e) {
-			e.printStackTrace();
-			throw e;
-		} catch(Exception e) {
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoUsuario.cerrarRecursos();
-				if(this.conn != null)
-					this.conn.close();
-			} catch(SQLException e) {
-				e.printStackTrace();
-				throw e;
-			}
-		}return x;
-	} 
+	
 	public void consultarResumenEspectaculos(int idUsuario) throws SQLException, Exception{
 		DAOTablaUsuarios daoUsuario = new DAOTablaUsuarios();
 		try {

@@ -87,4 +87,29 @@ public class FestivAndesMaster {
 		System.out.println("Connecting to: " + url + " With user: " + user);
 		return DriverManager.getConnection(url, user, password);
 	}
+	
+	// ITERACION 5
+	
+	/** 
+	 * Alista la conexion para una transaccion
+	 * @param connection Conexion donde se va a realizar la transaccion
+	 * @throws SQLException Si hay un error al conectarse con la base de datos.
+	 * @throws Exception Si hay error al manejar los datos
+	 */
+	public void comienzoTransaccion(Connection connection) throws SQLException, Exception {
+		connection.setAutoCommit(false);
+		connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+	}
+	
+	/**
+	 * Reinicia el estado de la conexion una vez se ha realizado la transaccion.
+	 * @param connection Conexion donde se va a realizar la transaccion.
+	 * @throws SQLException Si hay un error al conectarse con la base de datos.
+	 * @throws Exception Si hay error al manejar los datos
+	 */
+	public void finalTransaccion(Connection connection) throws SQLException, Exception {
+		connection.commit();
+		connection.setAutoCommit(true);
+		connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+	}
 }
