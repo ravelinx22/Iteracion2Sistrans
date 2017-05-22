@@ -3,20 +3,15 @@ package dtm;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
-
 import javax.jms.JMSException;
 import javax.jms.QueueConnectionFactory;
 import javax.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
-
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
-
 import jms.AllFuncionesMDB;
-import jms.CompañiasMDB;
 import jms.NonReplyException;
 import tm.FestivAndesMaster;
 import tm.FuncionMaster;
@@ -36,7 +31,6 @@ public class FestivAndesDistributed {
 	private TopicConnectionFactory factory;
 	
 	private AllFuncionesMDB allFuncionesMQ;
-	private CompañiasMDB compañiaMQ;
 
 	
 	private static String path;
@@ -46,18 +40,13 @@ public class FestivAndesDistributed {
 	{
 		InitialContext ctx = new InitialContext();
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
-		allFuncionesMQ = new AllFuncionesMDB(factory, ctx);
-		compañiaMQ = new CompañiasMDB(factory, ctx);
-		
-		allFuncionesMQ.start();
-		compañiaMQ.start();
-		
+		allFuncionesMQ = new AllFuncionesMDB(factory, ctx);		
+		allFuncionesMQ.start();		
 	}
 	
 	public void stop() throws JMSException
 	{
 		allFuncionesMQ.close();
-		compañiaMQ.close();
 	}
 	
 	/**
@@ -127,6 +116,6 @@ public class FestivAndesDistributed {
 	
 	public ListaRentabilidad getRemoteRentabilidad(Date fechaInicio, Date fechaFinal, int id_compañia) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
-		return compañiaMQ.getRemoteRentabilidad(fechaInicio, fechaFinal, id_compañia);
+		return allFuncionesMQ.getRemoteRentabilidad(fechaInicio, fechaFinal, id_compañia);
 	}
 }

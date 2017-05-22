@@ -185,9 +185,9 @@ public class FestivAndesMaster {
 		ListaRentabilidad remL = darRentabilidadLocal(fechaInicio, fechaFinal, id_compañia);
 		try
 		{
-		//	ListaRentabilidad resp = dtm.getRemoteRentabilidad(fechaInicio, fechaFinal, id_compañia);
-			//System.out.println(resp.getRentabilidad().size());
-		//	remL.getRentabilidad().addAll(resp.getRentabilidad());
+			ListaRentabilidad resp = dtm.getRemoteRentabilidad(fechaInicio, fechaFinal, id_compañia);
+			System.out.println(resp.getRentabilidad().size());
+			remL.getRentabilidad().addAll(resp.getRentabilidad());
 			throw new NonReplyException("");
 		}
 		catch(NonReplyException e)
