@@ -41,25 +41,29 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 	public final static int TIME_OUT = 60;
 	private final static String APP = "app1";
 	
+	// TOPICS CONSTANTS
+	
 	private final static String GLOBAL_TOPIC_NAME_FUNCIONES = "java:global/RMQTopicAllFunciones";
 	private final static String LOCAL_TOPIC_NAME_FUNCIONES = "java:global/RMQAllFuncionesLocal";
 	private final static String GLOBAL_TOPIC_NAME_RENT = "java:global/RMQTopicRentabilidad";
 	private final static String LOCAL_TOPIC_NAME_RENT = "java:global/RMQRentabilidadLocal";
 	
+	// REQUESTS CONSTANTS
+	
 	private final static String REQUEST_FUNCIONES = "REQUEST_FUNC";
 	private final static String REQUEST_ANSWER_FUNCIONES = "REQUEST_ANSWER_FUNC";
-	
 	private final static String REQUEST_RENT = "REQUEST_RENT";
 	private final static String REQUEST_ANSWER_RENT = "REQUEST_ANSWER_RENT";
 	
-	private TopicConnection topicConnection;
-	private TopicSession topicSession;
+	// TOPIC 
 	
 	private Topic globalTopicFunciones;
 	private Topic localTopicFunciones;
-	
 	private Topic globalTopicRent;
 	private Topic localTopicRent;
+	
+	private TopicConnection topicConnection;
+	private TopicSession topicSession;
 	
 	private List<Funcion> answer = new ArrayList<Funcion>();
 	private List<Rentabilidad> answerRent = new ArrayList<Rentabilidad>();

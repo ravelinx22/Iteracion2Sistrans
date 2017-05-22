@@ -156,52 +156,6 @@ public class CompañiaMaster extends FestivAndesMaster {
 		}
 	}
 	
-	// ITERACION 5
-	
-	/**
-	 * Retira la compañia del festival
-	 * @param id_compañia Id de la compañia
-	 * @param id_usuario Id del usuario administrador que va a hacer la transaccion 
-	 * @throws SQLException Si hay problema conectandose con la base de datos.
-	 * @throws Exception Si hay un problema manejando los datos
-	 */
-	public void retirarCompañia(int id_compañia, int id_usuario) throws SQLException, Exception {
-		DAOTablaCompañias daoCompañia = new DAOTablaCompañias();
-		DAOTablaUsuarios daoUsuario = new DAOTablaUsuarios();
-		
-		try {
-			this.conn = darConexion();
-			daoCompañia.setConnection(conn);
-			daoUsuario.setConnection(conn);
-			comienzoTransaccion(this.conn);
-			
-			if(daoUsuario.esAdministrador(id_usuario))
-				throw new Exception("El usuario que hace la transaccion no es administrador");
-			
-			daoCompañia.retirarCompañia(id_compañia);
-			
-			finalTransaccion(this.conn);
-		} catch(SQLException e) {
-			this.conn.rollback();
-			e.printStackTrace();
-			throw e;
-		} catch(Exception e) {
-			this.conn.rollback();
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoCompañia.cerrarRecursos();
-				if(this.conn != null)
-					this.conn.close();
-			} catch(SQLException e) {
-				e.printStackTrace();
-				throw e;
-			}
-		}
-	}
-	
-	// Iteracion 5
 	
 	
 }

@@ -99,6 +99,8 @@ public class FestivAndesDistributed {
 		return getInstance(tm);
 	}
 	
+	// Funciones
+	
 	public ListaFunciones getLocalFunciones() throws Exception
 	{
 		return tm.darFuncionesLocal();
@@ -109,6 +111,8 @@ public class FestivAndesDistributed {
 		return allFuncionesMQ.getRemoteFunciones();
 	}
 	
+	// Rentabilidad
+	
 	public ListaRentabilidad getLocalRentabilidad(Date fechaInicio, Date fechaFinal, int id_compañia) throws Exception
 	{
 		return tm.darRentabilidadLocal(fechaInicio, fechaFinal, id_compañia);
@@ -117,5 +121,15 @@ public class FestivAndesDistributed {
 	public ListaRentabilidad getRemoteRentabilidad(Date fechaInicio, Date fechaFinal, int id_compañia) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
 		return allFuncionesMQ.getRemoteRentabilidad(fechaInicio, fechaFinal, id_compañia);
+	}
+	
+	// Retirar compañia
+	
+	public void retirarCompañiaLocal(int id_compañia) throws Exception {
+		tm.retirarCompañiaLocal(id_compañia);
+	}
+	
+	public void retirarCompañiaRemote(int id_compañia) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException {
+		
 	}
 }

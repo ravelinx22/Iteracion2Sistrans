@@ -16,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import tm.CompañiaMaster;
+import tm.UsuarioMaster;
 import vos.Compañia;
 import vos.ListaCompañias;
 import vos.ListaRentabilidad;
@@ -134,15 +135,20 @@ public class CompañiaServices extends FestivAndesServices {
 	}
 	
 	@DELETE
-	@Path("/{idCompañia}/retirar/usuario/{idUsuario}")
+	@Path("/{idCompañia}/retirar/{idUsuario}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response retirarCompañia(@PathParam("idCompañia") int idCompañia, @PathParam("idUsuario") int idUsuario) {
 		CompañiaMaster tm = new CompañiaMaster(getPath());
+		UsuarioMaster us = new UsuarioMaster(getPath());
+		
 		HashMap<String, String> respuesta = new HashMap<>();
 
 		try {
-			tm.retirarCompañia(idCompañia, idUsuario);
+			if(us.esAdministrador(idUsuario))
+				throw new Exception("El usuario no es administrador");
+			
+			tm.retirarCompañiaLocal(idCompañia);
 			respuesta.put("Resultado", "Realizada");
 		} catch (Exception e) {
 			respuesta.put("Resultado", "Rechazada");

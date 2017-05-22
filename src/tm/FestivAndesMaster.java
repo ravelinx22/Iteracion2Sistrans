@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import dao.DAOTablaCompañias;
 import dao.DAOTablaFunciones;
+import dao.DAOTablaUsuarios;
 import dtm.FestivAndesDistributed;
 import jms.NonReplyException;
 import vos.Funcion;
@@ -129,6 +130,8 @@ public class FestivAndesMaster {
 	
 	// Transacciones
 	
+	// Dar funciones
+	
 	/**
 	 * Da las funciones en la base de datos
 	 * @return Lista de funciones con la base de datos
@@ -154,7 +157,6 @@ public class FestivAndesMaster {
 		DAOTablaFunciones daoFunciones = new DAOTablaFunciones();
 		try 
 		{
-			//////Transacción
 			this.conn = darConexion();
 			daoFunciones.setConnection(this.conn);
 			funciones = daoFunciones.darFunciones();
@@ -181,6 +183,8 @@ public class FestivAndesMaster {
 		return new ListaFunciones(funciones);
 	}
 	
+	// Dar rentabilidad
+	
 	public ListaRentabilidad darRentabilidad(Date fechaInicio, Date fechaFinal, int id_compañia) throws Exception {
 		ListaRentabilidad remL = darRentabilidadLocal(fechaInicio, fechaFinal, id_compañia);
 		try
@@ -202,7 +206,6 @@ public class FestivAndesMaster {
 		DAOTablaCompañias daoCompañia = new DAOTablaCompañias();
 		try 
 		{
-			//////Transacción
 			this.conn = darConexion();
 			daoCompañia.setConnection(this.conn);
 			rentabilidad = daoCompañia.darRentabilidadCompañias(fechaInicio, fechaFinal, id_compañia);
@@ -227,5 +230,42 @@ public class FestivAndesMaster {
 			}
 		}
 		return rentabilidad;
+	}
+	
+	// Retirar compañia
+	
+	/**
+	 * Retira la compañia del festival local
+	 * @param id_compañia Id de la compañia
+	 * @param id_usuario Id del usuario administrador que va a hacer la transaccion 
+	 * @throws SQLException Si hay problema conectandose con la base de datos.
+	 * @throws Exception Si hay un problema manejando los datos
+	 */
+	public void retirarCompañiaLocal(int id_compañia) throws SQLException, Exception {
+		DAOTablaCompañias daoCompañia = new DAOTablaCompañias();		
+		try {
+			this.conn = darConexion();
+			daoCompañia.setConnection(conn);	
+			// Quitar auto commit 
+			
+			daoCompañia.retirarCompañia(id_compañia);
+		} catch(SQLException e) {
+			this.conn.rollback();
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			this.conn.rollback();
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoCompañia.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
 	}
 }
