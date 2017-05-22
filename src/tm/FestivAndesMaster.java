@@ -49,10 +49,8 @@ public class FestivAndesMaster {
 	 */
 	public FestivAndesMaster(String contextPath) {
 		try {
-			//this.conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			this.connectionDataPath = contextPath + CONNECTION_DATA_FILE_NAME_REMOTE;
 			initConnectionData();
-			//this.conn.setAutoCommit(false);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -36,14 +36,14 @@ import excVos.ExchangeMsg;
 import vos.Funcion;
 import vos.ListaFunciones;
 
-public class FuncionesMDB implements MessageListener, ExceptionListener {
-
-	public final static int TIME_OUT = 5;
-	private final static String APP = "D03";
-
-	private final static String GLOBAL_TOPIC_NAME = "java:global/RMQTopicFunciones";
-	private final static String LOCAL_TOPIC_NAME = "java:global/RMQFuncionesLocal";
-
+public class AllFuncionesMDB implements MessageListener, ExceptionListener 
+{
+	public final static int TIME_OUT = 60;
+	private final static String APP = "app1";
+	
+	private final static String GLOBAL_TOPIC_NAME = "java:global/RMQTopicAllFunciones";
+	private final static String LOCAL_TOPIC_NAME = "java:global/RMQAllFuncionesLocal";
+	
 	private final static String REQUEST = "REQUEST";
 	private final static String REQUEST_ANSWER = "REQUEST_ANSWER";
 	
@@ -52,13 +52,14 @@ public class FuncionesMDB implements MessageListener, ExceptionListener {
 	private Topic globalTopic;
 	private Topic localTopic;
 	
-	private List<Funcion> answer = new ArrayList<>();
+	private List<Funcion> answer = new ArrayList<Funcion>();
 	
-	public FuncionesMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException {
+	public AllFuncionesMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
+	{	
 		topicConnection = factory.createTopicConnection();
 		topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		globalTopic = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME);
-		TopicSubscriber topicSubscriber = topicSession.createSubscriber(globalTopic);
+		TopicSubscriber topicSubscriber =  topicSession.createSubscriber(globalTopic);
 		topicSubscriber.setMessageListener(this);
 		localTopic = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME);
 		topicSubscriber =  topicSession.createSubscriber(localTopic);
@@ -70,14 +71,15 @@ public class FuncionesMDB implements MessageListener, ExceptionListener {
 	{
 		topicConnection.start();
 	}
-
+	
 	public void close() throws JMSException
 	{
 		topicSession.close();
 		topicConnection.close();
 	}
 	
-	public ListaFunciones getRemoteFunciones() throws JsonGenerationException, JsonMappingException, JMSException, IOException, Exception, InterruptedException, NoSuchAlgorithmException {
+	public ListaFunciones getRemoteFunciones() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	{
 		answer.clear();
 		String id = APP+""+System.currentTimeMillis();
 		MessageDigest md = MessageDigest.getInstance("MD5");
@@ -85,7 +87,7 @@ public class FuncionesMDB implements MessageListener, ExceptionListener {
 		
 		sendMessage("", REQUEST, globalTopic, id);
 		boolean waiting = true;
-		
+
 		int count = 0;
 		while(TIME_OUT != count){
 			TimeUnit.SECONDS.sleep(1);
@@ -94,23 +96,23 @@ public class FuncionesMDB implements MessageListener, ExceptionListener {
 		if(count == TIME_OUT){
 			if(this.answer.isEmpty()){
 				waiting = false;
-				throw new Exception("Time Out - No Reply");
+				throw new NonReplyException("Time Out - No Reply");
 			}
 		}
 		waiting = false;
-
-		if(answer.isEmpty())
-			throw new Exception("Non Response");
 		
-		ListaFunciones func = new ListaFunciones(answer);
-		return func;
+		if(answer.isEmpty())
+			throw new NonReplyException("Non Response");
+		ListaFunciones res = new ListaFunciones(answer);
+        return res;
 	}
+	
 	
 	private void sendMessage(String payload, String status, Topic dest, String id) throws JMSException, JsonGenerationException, JsonMappingException, IOException
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println(id);
-		ExchangeMsg msg = new ExchangeMsg("aerolineas.general.D03", APP, payload, status, id);
+		ExchangeMsg msg = new ExchangeMsg("funciones.general.app1", APP, payload, status, id);
 		TopicPublisher topicPublisher = topicSession.createPublisher(dest);
 		topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
 		TextMessage txtMsg = topicSession.createTextMessage();
@@ -122,7 +124,8 @@ public class FuncionesMDB implements MessageListener, ExceptionListener {
 	}
 	
 	@Override
-	public void onMessage(Message message) {
+	public void onMessage(Message message) 
+	{
 		TextMessage txt = (TextMessage) message;
 		try 
 		{
@@ -138,10 +141,9 @@ public class FuncionesMDB implements MessageListener, ExceptionListener {
 				if(ex.getStatus().equals(REQUEST))
 				{
 					FestivAndesDistributed dtm = FestivAndesDistributed.getInstance();
-
 					ListaFunciones funciones = dtm.getLocalFunciones();
 					String payload = mapper.writeValueAsString(funciones);
-					Topic t = new RMQDestination("", "aerolineas.test", ex.getRoutingKey(), "", false);
+					Topic t = new RMQDestination("", "funciones.test", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
@@ -150,31 +152,30 @@ public class FuncionesMDB implements MessageListener, ExceptionListener {
 					answer.addAll(v.getFunciones());
 				}
 			}
-
-		} 
-		catch (JMSException e) 
-		{
+			
+		} catch (JMSException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		catch (JsonParseException e)
-		{
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		catch (JsonMappingException e) 
-		{
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		catch (IOException e) 
-		{
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (Exception e) 
-		{
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
-	
+
 	@Override
-	public void onException(JMSException arg0) {
-		System.out.println("Hubo una exception");
+	public void onException(JMSException exception) 
+	{
+		System.out.println(exception);
 	}
+
 }

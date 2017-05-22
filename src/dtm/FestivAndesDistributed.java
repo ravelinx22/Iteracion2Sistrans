@@ -7,103 +7,107 @@ import javax.jms.JMSException;
 import javax.jms.QueueConnectionFactory;
 import javax.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 
-import jms.FuncionesMDB;
-import tm.FestivAndesMaster;
+import jms.AllFuncionesMDB;
+import jms.NonReplyException;
 import tm.FuncionMaster;
 import vos.ListaFunciones;
 
 public class FestivAndesDistributed {
-	// Constantes para la conexion
-	
 	private final static String QUEUE_NAME = "java:global/RMQAppQueue";
 	private final static String MQ_CONNECTION_NAME = "java:global/RMQClient";
+	
 	private static FestivAndesDistributed instance;
 	
-	//TODO DECLARAR JMS
-	private FuncionesMDB funcionesMQ;
+	private FuncionMaster tm;
 	
-	private static String path;
-	
-	// Atributos
-	
-	private FestivAndesMaster tm;
 	private QueueConnectionFactory queueFactory;
+	
 	private TopicConnectionFactory factory;
 	
-	private FestivAndesDistributed() throws JMSException, Exception {
+	private AllFuncionesMDB allFuncionesMQ;
+	
+	private static String path;
+
+
+	private FestivAndesDistributed() throws NamingException, JMSException
+	{
 		InitialContext ctx = new InitialContext();
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
-		//TODO INICIALIZAR JMS
-		funcionesMQ = new FuncionesMDB(factory, ctx);
+		allFuncionesMQ = new AllFuncionesMDB(factory, ctx);
 		
-		funcionesMQ.start();
+		allFuncionesMQ.start();
+		
 	}
 	
-	public void stop() throws JMSException {
-		//TODO 
-		funcionesMQ.close();
+	public void stop() throws JMSException
+	{
+		allFuncionesMQ.close();
 	}
 	
+	/**
+	 * Método que retorna el path de la carpeta WEB-INF/ConnectionData en el deploy actual dentro del servidor.
+	 * @return path de la carpeta WEB-INF/ConnectionData en el deploy actual.
+	 */
 	public static void setPath(String p) {
 		path = p;
 	}
 	
-	public void setUpTransactionManager(FestivAndesMaster tm) {
-		this.tm = tm;
+	public void setUpTransactionManager(FuncionMaster tm)
+	{
+	   this.tm = tm;
 	}
 	
-	private static FestivAndesDistributed getInst() {
+	private static FestivAndesDistributed getInst()
+	{
 		return instance;
 	}
 	
-	public static FestivAndesDistributed getInstance(FestivAndesMaster tm) {
-		if(instance == null) {
+	public static FestivAndesDistributed getInstance(FuncionMaster tm)
+	{
+		if(instance == null)
+		{
 			try {
 				instance = new FestivAndesDistributed();
-			} catch(JMSException e) {
+			} catch (NamingException e) {
 				e.printStackTrace();
-			} catch(Exception e) {
+			} catch (JMSException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
 		instance.setUpTransactionManager(tm);
 		return instance;
 	}
 	
-	public static FestivAndesDistributed getInstance() {
-		if(instance == null) {
-			FestivAndesMaster tm = new FestivAndesMaster(path);
+	public static FestivAndesDistributed getInstance()
+	{
+		if(instance == null)
+		{
+			FuncionMaster tm = new FuncionMaster(path);
 			return getInstance(tm);
 		}
-		if(instance.tm != null) {
+		if(instance.tm != null)
+		{
 			return instance;
 		}
-		FestivAndesMaster tm = new FestivAndesMaster(path);
+		FuncionMaster tm = new FuncionMaster(path);
 		return getInstance(tm);
 	}
 	
-	// Getters de las listas locales
-	
 	public ListaFunciones getLocalFunciones() throws Exception
 	{
-		FuncionMaster x = (FuncionMaster) tm;
-		return x.darFunciones();
+		return tm.darFuncionesLocal();
 	}
 	
-	// Getters de las listas remotas
-	
-	public ListaFunciones getRemoteAerolineas() throws JsonGenerationException, JsonMappingException, JMSException, IOException, Exception, InterruptedException, NoSuchAlgorithmException
+	public ListaFunciones getRemoteFunciones() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
-		return funcionesMQ.getRemoteFunciones();
+		return allFuncionesMQ.getRemoteFunciones();
 	}
-	
-	
-	
 }

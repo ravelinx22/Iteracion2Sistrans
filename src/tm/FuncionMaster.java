@@ -2,14 +2,17 @@ package tm;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import dao.DAOTablaBoletas;
 import dao.DAOTablaFunciones;
+import dtm.FestivAndesDistributed;
+import jms.NonReplyException;
 import vos.Funcion;
 import vos.ListaFunciones;
 
 public class FuncionMaster extends FestivAndesMaster {
-
+		
+	private FestivAndesDistributed dtm;
+	
 	/**
 	 * Método constructor de la clase FestivAndesMaster, esta clase modela y contiene cada una de las 
 	 * transacciones y la logica de negocios que estas conllevan.
@@ -17,6 +20,9 @@ public class FuncionMaster extends FestivAndesMaster {
 	 */
 	public FuncionMaster(String contextPath) {
 		super(contextPath);
+		System.out.println("Instancing DTM...");
+		dtm = FestivAndesDistributed.getInstance(this);
+		System.out.println("Done!");
 	}
 
 	// Transacciones
@@ -27,34 +33,49 @@ public class FuncionMaster extends FestivAndesMaster {
 	 * @throws Exception Si hay problema conectandose con la base de datos.
 	 */
 	public ListaFunciones darFunciones() throws Exception {
+		ListaFunciones remL = darFuncionesLocal();
+		try
+		{
+			ListaFunciones resp = dtm.getRemoteFunciones();
+			System.out.println(resp.getFunciones().size());
+			remL.getFunciones().addAll(resp.getFunciones());
+		}
+		catch(NonReplyException e)
+		{
+			System.out.println(e.getMessage());
+		}
+		return remL;
+	}
+	
+	public ListaFunciones darFuncionesLocal() throws Exception {
 		ArrayList<Funcion> funciones;
 		DAOTablaFunciones daoFunciones = new DAOTablaFunciones();
-
-		try {
+		try 
+		{
+			//////Transacción
 			this.conn = darConexion();
-			daoFunciones.setConnection(conn);
-			comienzoTransaccion(this.conn);
-			
+			daoFunciones.setConnection(this.conn);
 			funciones = daoFunciones.darFunciones();
-			
-			finalTransaccion(this.conn);
-		} catch(SQLException e) {
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
 			throw e;
-		} catch(Exception e) {
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
 			throw e;
 		} finally {
 			try {
 				daoFunciones.cerrarRecursos();
-				if(this.conn != null)
+				if(this.conn!=null)
 					this.conn.close();
-			} catch(SQLException e) {
-				e.printStackTrace();
-				throw e;
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
 			}
 		}
-
 		return new ListaFunciones(funciones);
 	}
 

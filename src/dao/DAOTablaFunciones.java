@@ -66,7 +66,7 @@ public class DAOTablaFunciones {
 	public ArrayList<Funcion> darFunciones() throws SQLException, Exception {
 		ArrayList<Funcion> funciones = new ArrayList<Funcion>();
 
-		String sql = "SELECT * FROM ISIS2304B221710.FUNCIONES";
+		String sql = "SELECT * FROM ISIS2304B221710.FUNCIONES WHERE ID < 30";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);

@@ -1,28 +1,36 @@
 package ls;
 
 import javax.jms.JMSException;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import dtm.FestivAndesDistributed;
 
+@WebListener
 public class ContextListener implements ServletContextListener {
-	
-	private FestivAndesDistributed dtm;
 
+	private FestivAndesDistributed dtm;
+	
 	@Override
-	public void contextDestroyed(ServletContextEvent arg0) {
+	public void contextDestroyed(ServletContextEvent arg0) 
+	{
 		try {
-			throw new JMSException("");
-		} catch(JMSException e) {
+			dtm.stop();
+		} catch (JMSException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		
+		final ServletContext context = arg0.getServletContext();
+		FestivAndesDistributed.setPath(context.getRealPath("WEB-INF/ConnectionData"));
+		dtm = FestivAndesDistributed.getInstance();
 	}
-	
-	
+
 }

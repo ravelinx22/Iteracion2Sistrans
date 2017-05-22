@@ -7,33 +7,33 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class ListaFunciones {
 
 	/**
-	 * Lista de funciones
+	 * List con los funciones
 	 */
 	@JsonProperty(value="funciones")
 	private List<Funcion> funciones;
-
+	
 	/**
-	 * Constructor de una nueva lista de canciones
-	 * @param funciones
+	 * Constructor de la clase ListaFunciones
+	 * @param funciones - funciones para agregar al arreglo de la clase
 	 */
-	public ListaFunciones(List<Funcion> funciones) {
-		super();
+	public ListaFunciones( @JsonProperty(value="funciones")List<Funcion> funciones){
 		this.funciones = funciones;
 	}
 
 	/**
-	 * Da la lista de funciones
-	 * @return Lista de funciones
+	 * Método que retorna la lista de funciones
+	 * @return  List - List con los funciones
 	 */
 	public List<Funcion> getFunciones() {
 		return funciones;
 	}
 
 	/**
-	 * Modifica la lista de funciones
-	 * @param funciones Nueva lista de funciones
+	 * Método que asigna la lista de funciones que entra como parametro
+	 * @param  funciones - List con los funciones ha agregar
 	 */
-	public void setFunciones(List<Funcion> funciones) {
+	public void setFuncione(List<Funcion> funciones) {
 		this.funciones = funciones;
 	}
+	
 }

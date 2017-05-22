@@ -3,7 +3,6 @@ package excVos;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class ExchangeMsg {
-
 	@JsonProperty(value="routingkey")
 	private String routingKey;
 	
