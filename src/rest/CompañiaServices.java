@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import tm.CompañiaMaster;
 import vos.Compañia;
 import vos.ListaCompañias;
+import vos.ListaRentabilidad;
 
 @Path("compañias")
 public class CompañiaServices extends FestivAndesServices {
@@ -116,6 +117,22 @@ public class CompañiaServices extends FestivAndesServices {
 
 	// ITERACION 5
 
+	@GET
+	@Path("/{id}/rentabilidad/{fecha1}/{fecha2}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darRentabilidad(@PathParam("id") int id, @PathParam("fecha1") Date fecha1, @PathParam("fecha2") Date fecha2) {
+		CompañiaMaster tm = new CompañiaMaster(getPath());
+		ListaRentabilidad rentabilidad;
+		try {
+			rentabilidad = tm.darRentabilidad(fecha1, fecha2, id);
+		} catch(Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		
+		return Response.status(200).entity(rentabilidad).build();
+	}
+	
 	@DELETE
 	@Path("/{idCompañia}/retirar/usuario/{idUsuario}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -133,14 +150,5 @@ public class CompañiaServices extends FestivAndesServices {
 			return Response.status(500).entity(respuesta).build();
 		}
 		return Response.status(200).entity(respuesta).build();
-	}
-	
-	@GET
-	@Path("/{idCompañia}/rentabilidad/inicio/{fecha1}/final/{fecha2}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response darRentabilidad(@PathParam("idCompañia") int idCompañia, @PathParam("fecha1") Date inicioF, @PathParam("fecha2") Date finalF) {
-		CompañiaMaster tm = new CompañiaMaster(getPath());
-		
-		return null;
 	}
 }

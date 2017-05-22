@@ -2,6 +2,7 @@ package dtm;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Date;
 
 import javax.jms.JMSException;
 import javax.jms.QueueConnectionFactory;
@@ -15,9 +16,12 @@ import org.codehaus.jackson.map.JsonMappingException;
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 
 import jms.AllFuncionesMDB;
+import jms.CompañiasMDB;
 import jms.NonReplyException;
+import tm.FestivAndesMaster;
 import tm.FuncionMaster;
 import vos.ListaFunciones;
+import vos.ListaRentabilidad;
 
 public class FestivAndesDistributed {
 	private final static String QUEUE_NAME = "java:global/RMQAppQueue";
@@ -25,13 +29,15 @@ public class FestivAndesDistributed {
 	
 	private static FestivAndesDistributed instance;
 	
-	private FuncionMaster tm;
+	private FestivAndesMaster tm;
 	
 	private QueueConnectionFactory queueFactory;
 	
 	private TopicConnectionFactory factory;
 	
 	private AllFuncionesMDB allFuncionesMQ;
+	private CompañiasMDB compañiaMQ;
+
 	
 	private static String path;
 
@@ -41,14 +47,17 @@ public class FestivAndesDistributed {
 		InitialContext ctx = new InitialContext();
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
 		allFuncionesMQ = new AllFuncionesMDB(factory, ctx);
+		compañiaMQ = new CompañiasMDB(factory, ctx);
 		
 		allFuncionesMQ.start();
+		compañiaMQ.start();
 		
 	}
 	
 	public void stop() throws JMSException
 	{
 		allFuncionesMQ.close();
+		compañiaMQ.close();
 	}
 	
 	/**
@@ -59,7 +68,7 @@ public class FestivAndesDistributed {
 		path = p;
 	}
 	
-	public void setUpTransactionManager(FuncionMaster tm)
+	public void setUpTransactionManager(FestivAndesMaster tm)
 	{
 	   this.tm = tm;
 	}
@@ -69,7 +78,7 @@ public class FestivAndesDistributed {
 		return instance;
 	}
 	
-	public static FestivAndesDistributed getInstance(FuncionMaster tm)
+	public static FestivAndesDistributed getInstance(FestivAndesMaster tm)
 	{
 		if(instance == null)
 		{
@@ -90,14 +99,14 @@ public class FestivAndesDistributed {
 	{
 		if(instance == null)
 		{
-			FuncionMaster tm = new FuncionMaster(path);
+			FestivAndesMaster tm = new FestivAndesMaster(path);
 			return getInstance(tm);
 		}
 		if(instance.tm != null)
 		{
 			return instance;
 		}
-		FuncionMaster tm = new FuncionMaster(path);
+		FestivAndesMaster tm = new FestivAndesMaster(path);
 		return getInstance(tm);
 	}
 	
@@ -109,5 +118,15 @@ public class FestivAndesDistributed {
 	public ListaFunciones getRemoteFunciones() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
 		return allFuncionesMQ.getRemoteFunciones();
+	}
+	
+	public ListaRentabilidad getLocalRentabilidad(Date fechaInicio, Date fechaFinal, int id_compañia) throws Exception
+	{
+		return tm.darRentabilidadLocal(fechaInicio, fechaFinal, id_compañia);
+	}
+	
+	public ListaRentabilidad getRemoteRentabilidad(Date fechaInicio, Date fechaFinal, int id_compañia) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	{
+		return compañiaMQ.getRemoteRentabilidad(fechaInicio, fechaFinal, id_compañia);
 	}
 }

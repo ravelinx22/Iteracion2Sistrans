@@ -1,12 +1,15 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 import vos.Compañia;
+import vos.ListaRentabilidad;
+import vos.Rentabilidad;
 
 public class DAOTablaCompañias {
 	/**
@@ -151,5 +154,36 @@ public class DAOTablaCompañias {
 		DAOTablaFunciones func = new DAOTablaFunciones();
 		func.setConnection(this.conn);
 		func.deleteFuncionesDeCompañia(id_compañia);
+	}
+	
+	/**
+	 * Da la rentabilidad de una compañia 
+	 * @param fechaInicio Fecha de inicio del rango
+	 * @param fechaFinal Fecha final del rango
+	 * @throws SQLException Si hay problema conectandose con la base de datos.
+	 * @throws Exception Si hay un problema manejando los datos
+	 */
+	public ListaRentabilidad darRentabilidadCompañias(Date fechaInicio, Date fechaFinal, int id_compañia) throws SQLException, Exception {
+		String sql = "SELECT ID AS ID_COMPAÑIA, NUMERO_BOLETAS, ASISTENTES_FUNCION, VALOR_FACTURADO, PROP_ASIST_CAP FROM (SELECT x.*, (x.ASISTENTES_FUNCION / y.CAPACIDAD) AS PROP_ASIST_CAP FROM (SELECT x.ID, x.ID_ESPECTACULO,y.PUBLICO_OBJETIVO, x.ID_SITIO, x.ID_LOCALIDAD, count(ID_FUNCION) AS NUMERO_BOLETAS, sum(COSTO) AS VALOR_FACTURADO, count(ID_BOLETA) AS ASISTENTES_FUNCION FROM (SELECT x.*, y.ID_SITIO FROM (SELECT x.*, y.ID_LOCALIDAD FROM (SELECT x.*, y.ID_SILLA, y.COSTO, y.ID AS ID_BOLETA FROM (SELECT x.*, y.ID AS ID_FUNCION FROM (SELECT x.ID, y.ID_ESPECTACULO FROM COMPAÑIAS x INNER JOIN CONTRIBUIDORES y ON x.ID = y.ID_COMPAÑIA WHERE ID < 30) x INNER JOIN FUNCIONES y ON x.ID_ESPECTACULO = y.ID_ESPECTACULO WHERE y.FECHA BETWEEN ? AND ?) x INNER JOIN BOLETAS y ON x.ID_FUNCION = y.ID_FUNCION) x INNER JOIN SILLAS y ON x.ID_SILLA = y.ID) x INNER JOIN LOCALIDADES y ON x.ID_LOCALIDAD = y.ID) x INNER JOIN ESPECTACULOS y ON x.ID_ESPECTACULO = y.ID GROUP BY x.ID, x.ID_ESPECTACULO,y.PUBLICO_OBJETIVO, x.ID_SITIO, x.ID_LOCALIDAD) x INNER JOIN SITIOS y ON x.ID_SITIO = y.ID) WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setDate(1, fechaInicio);
+		prepStmt.setDate(2, fechaFinal);
+		prepStmt.setInt(3, id_compañia);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		ArrayList<Rentabilidad> todo = new ArrayList<>();
+		while(rs.next()) {
+			
+			int id_comp = Integer.parseInt(rs.getString("ID_COMPAÑIA"));
+			int numero_boletas = Integer.parseInt(rs.getString("NUMERO_BOLETAS"));
+			int asistentes_funcion = Integer.parseInt(rs.getString("ASISTENTES_FUNCION"));
+			double valor_facturado = rs.getDouble("VALOR_FACTURADO");
+			double prop_asist_cap = rs.getDouble("PROP_ASIST_CAP");
+			
+			todo.add(new Rentabilidad(id_comp, numero_boletas, asistentes_funcion, valor_facturado, prop_asist_cap));
+		}
+		
+		return new ListaRentabilidad(todo);
 	}
 }

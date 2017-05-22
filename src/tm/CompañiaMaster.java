@@ -1,14 +1,21 @@
 package tm;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import dao.DAOTablaCompañias;
+import dao.DAOTablaFunciones;
 import dao.DAOTablaUsuarios;
+import jms.NonReplyException;
 import vos.Compañia;
+import vos.Funcion;
 import vos.ListaCompañias;
+import vos.ListaFunciones;
+import vos.ListaRentabilidad;
+import vos.Rentabilidad;
 
 public class CompañiaMaster extends FestivAndesMaster {
-	
+		
 	/**
 	 * Método constructor de la clase FestivAndesMaster, esta clase modela y contiene cada una de las 
 	 * transacciones y la logica de negocios que estas conllevan.
@@ -193,4 +200,8 @@ public class CompañiaMaster extends FestivAndesMaster {
 			}
 		}
 	}
+	
+	// Iteracion 5
+	
+	
 }
