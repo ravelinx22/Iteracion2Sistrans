@@ -259,8 +259,7 @@ public class FestivAndesMaster {
 			daoCompañia.setConnection(conn);	
 			// Quitar auto commit 
 			
-			//daoCompañia.retirarCompañia(id_compañia);
-			System.out.println("POSI POSI PO PO PO SE ELIMINO");
+			daoCompañia.retirarCompañia(id_compañia);			
 		} catch(SQLException e) {
 			this.conn.rollback();
 			e.printStackTrace();
