@@ -9,11 +9,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import dao.DAOTablaAbonos;
 import dao.DAOTablaCompañias;
 import dao.DAOTablaFunciones;
 import dao.DAOTablaUsuarios;
 import dtm.FestivAndesDistributed;
 import jms.NonReplyException;
+import vos.Abono;
 import vos.Funcion;
 import vos.ListaFunciones;
 import vos.ListaRentabilidad;
@@ -23,40 +25,40 @@ public class FestivAndesMaster {
 	 * Constante que contiene el path absoluto del archivo que tiene los datos de la conexión
 	 */
 	protected static final String CONNECTION_DATA_FILE_NAME_REMOTE = "conexion.properties";
-	
+
 	/**
 	 * Atributo que contiene el path absoluto del archivo que tiene los datos de la conexión
 	 */
 	protected String connectionDataPath;
-	
+
 	/**
 	 * Usuario de la base de datos.	
 	 */
 	protected String user;
-	
+
 	/**
 	 * Contraseña del usuario para conectarse a la base de datos.
 	 */
 	protected String password;
-	
+
 	/**
 	 * Url para conectarse a la base de datos.
 	 */
 	protected String url;
-	
+
 	/**
 	 * Driver que guarda los datos para conectarse a la base de datos.
 	 */
 	protected String driver;
-	
+
 	/**
 	 * Conexion a la base de datos.
 	 */
 	protected Connection  conn;
-	
+
 	private FestivAndesDistributed dtm;
-	
-	
+
+
 	/**
 	 * Crea un festiv andes master
 	 * @param contextPath
@@ -72,17 +74,17 @@ public class FestivAndesMaster {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Inicializa los datos para conectarse con la base datos.
 	 */
 	private void initConnectionData() {
 		try {
-//			File file = new File(this.connectionDataPath);
-//			Properties properties = new Properties();
-//			FileInputStream fi = new FileInputStream(file);
-//			properties.load(fi);
-//			fi.close();
+			//			File file = new File(this.connectionDataPath);
+			//			Properties properties = new Properties();
+			//			FileInputStream fi = new FileInputStream(file);
+			//			properties.load(fi);
+			//			fi.close();
 			this.url = "jdbc:oracle:thin:@fn3.oracle.virtual.uniandes.edu.co:1521:prod";
 			this.user = "ISIS2304B221710";
 			this.password = "simp37odDLy";
@@ -92,7 +94,7 @@ public class FestivAndesMaster {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Da la conexion creada con el usuario, clave y url asociados.
 	 * @return Conexion creada con el usuario, clave y url asociados.
@@ -102,9 +104,9 @@ public class FestivAndesMaster {
 		System.out.println("Connecting to: " + url + " With user: " + user);
 		return DriverManager.getConnection(url, user, password);
 	}
-	
+
 	// ITERACION 5
-	
+
 	/** 
 	 * Alista la conexion para una transaccion
 	 * @param connection Conexion donde se va a realizar la transaccion
@@ -115,7 +117,7 @@ public class FestivAndesMaster {
 		connection.setAutoCommit(false);
 		connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 	}
-	
+
 	/**
 	 * Reinicia el estado de la conexion una vez se ha realizado la transaccion.
 	 * @param connection Conexion donde se va a realizar la transaccion.
@@ -127,11 +129,11 @@ public class FestivAndesMaster {
 		connection.setAutoCommit(true);
 		connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 	}
-	
+
 	// Transacciones
-	
+
 	// Dar funciones
-	
+
 	/**
 	 * Da las funciones en la base de datos
 	 * @return Lista de funciones con la base de datos
@@ -151,7 +153,7 @@ public class FestivAndesMaster {
 		}
 		return remL;
 	}
-	
+
 	public ListaFunciones darFuncionesLocal() throws Exception {
 		ArrayList<Funcion> funciones;
 		DAOTablaFunciones daoFunciones = new DAOTablaFunciones();
@@ -182,9 +184,9 @@ public class FestivAndesMaster {
 		}
 		return new ListaFunciones(funciones);
 	}
-	
+
 	// Dar rentabilidad
-	
+
 	public ListaRentabilidad darRentabilidad(Date fechaInicio, Date fechaFinal, int id_compañia) throws Exception {
 		ListaRentabilidad remL = darRentabilidadLocal(fechaInicio, fechaFinal, id_compañia);
 		try
@@ -199,7 +201,7 @@ public class FestivAndesMaster {
 		}
 		return remL;
 	}
-	
+
 	public ListaRentabilidad darRentabilidadLocal(Date fechaInicio, Date fechaFinal, int id_compañia) throws Exception {
 		ListaRentabilidad rentabilidad;
 		DAOTablaCompañias daoCompañia = new DAOTablaCompañias();
@@ -229,11 +231,10 @@ public class FestivAndesMaster {
 		}
 		return rentabilidad;
 	}
-	
+
 	// Retirar compañia
-	
+
 	public void retirarCompañia(int id_compañia) throws Exception {
-		
 		retirarCompañiaLocal(id_compañia);
 		try
 		{
@@ -244,7 +245,7 @@ public class FestivAndesMaster {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Retira la compañia del festival local
 	 * @param id_compañia Id de la compañia
@@ -258,7 +259,7 @@ public class FestivAndesMaster {
 			this.conn = darConexion();
 			daoCompañia.setConnection(conn);	
 			// Quitar auto commit 
-			
+
 			daoCompañia.retirarCompañia(id_compañia);			
 		} catch(SQLException e) {
 			this.conn.rollback();
@@ -271,6 +272,53 @@ public class FestivAndesMaster {
 		} finally {
 			try {
 				daoCompañia.cerrarRecursos();
+				if(this.conn != null)
+					this.conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+	}
+
+	// Comprar abono
+
+	public void addAbono(Abono abono) throws Exception {
+		try
+		{
+			dtm.addAbonoRemote(abono);
+			addAbonoLocal(abono);
+		}
+		catch(NonReplyException e)
+		{
+			System.out.println(e.getMessage());
+		}
+	}
+
+	/**
+	 * Agrega un abono a la base de datos
+	 * @param abono Abono a agregar
+	 * @throws Exception Si hay problema conectandose con la base de datos.
+	 */
+	public void addAbonoLocal(Abono abono) throws Exception {
+		DAOTablaAbonos daoAbonos = new DAOTablaAbonos();
+		try {
+			this.conn = darConexion();
+			daoAbonos.setConnection(conn);
+			// Mirar autocommit
+
+			daoAbonos.addAbono(abono);
+		} catch(SQLException e) {
+			this.conn.rollback();
+			e.printStackTrace();
+			throw e;
+		} catch(Exception e) {
+			this.conn.rollback();
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoAbonos.cerrarRecursos();
 				if(this.conn != null)
 					this.conn.close();
 			} catch(SQLException e) {

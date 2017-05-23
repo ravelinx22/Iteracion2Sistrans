@@ -15,6 +15,7 @@ import jms.AllFuncionesMDB;
 import jms.NonReplyException;
 import tm.FestivAndesMaster;
 import tm.FuncionMaster;
+import vos.Abono;
 import vos.ListaFunciones;
 import vos.ListaRentabilidad;
 
@@ -131,5 +132,15 @@ public class FestivAndesDistributed {
 	
 	public void retirarCompañiaRemote(int id_compañia) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException {
 		allFuncionesMQ.retirarRemote(id_compañia);
+	}
+	
+	// Agregar abono
+	
+	public void addAbonoLocal(Abono abono) throws Exception {
+		tm.addAbonoLocal(abono);
+	}
+	
+	public void addAbonoRemote(Abono abono)   throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException {
+		allFuncionesMQ.addAbonoRemote(abono);
 	}
 }

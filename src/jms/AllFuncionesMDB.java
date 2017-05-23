@@ -31,6 +31,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.rabbitmq.jms.admin.RMQDestination;
 import dtm.FestivAndesDistributed;
 import excVos.ExchangeMsg;
+import vos.Abono;
 import vos.Funcion;
 import vos.ListaFunciones;
 import vos.ListaRentabilidad;
@@ -49,7 +50,8 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 	private final static String LOCAL_TOPIC_NAME_RENT = "java:global/RMQRentabilidadLocal";
 	private final static String GLOBAL_TOPIC_NAME_RETI = "java:global/RMQTopicRetirar";
 	private final static String LOCAL_TOPIC_NAME_RETI = "java:global/RMQRetirarLocal";
-	
+	private final static String GLOBAL_TOPIC_NAME_ABO = "java:global/RMQTopicAbono";
+	private final static String LOCAL_TOPIC_NAME_ABO = "java:global/RMQRAbonoLocal";
 	
 	// REQUESTS CONSTANTS
 	
@@ -59,6 +61,8 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 	private final static String REQUEST_ANSWER_RENT = "REQUEST_ANSWER_RENT";
 	private final static String REQUEST_RETI = "REQUEST_RETI";
 	private final static String REQUEST_ANSWER_RETI = "REQUEST_ANSWER_RETI";
+	private final static String REQUEST_ABO = "REQUEST_ABO";
+	private final static String REQUEST_ANSWER_ABO = "REQUEST_ANSWER_ABO";
 	
 	// TOPIC 
 	
@@ -68,6 +72,8 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 	private Topic localTopicRent;
 	private Topic globalTopicReti;
 	private Topic localTopicReti;
+	private Topic globalTopicAbo;
+	private Topic localTopicAbo;
 	
 	private TopicConnection topicConnection;
 	private TopicSession topicSession;
@@ -75,6 +81,7 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 	private List<Funcion> answer = new ArrayList<Funcion>();
 	private List<Rentabilidad> answerRent = new ArrayList<Rentabilidad>();
 	private String answerReti = "";
+	private String answerAbo = "";
 	
 	public AllFuncionesMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
 	{	
@@ -83,6 +90,7 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		globalTopicFunciones = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_FUNCIONES);
 		globalTopicRent = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_RENT);
 		globalTopicReti = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_RETI);
+		globalTopicAbo = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_ABO);
 		
 		TopicSubscriber topicSubscriber =  topicSession.createSubscriber(globalTopicFunciones);
 		topicSubscriber.setMessageListener(this);
@@ -93,9 +101,13 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		TopicSubscriber topicSubscripberReti = topicSession.createSubscriber(globalTopicReti);
 		topicSubscripberReti.setMessageListener(this);
 		
+		TopicSubscriber topicSubscripberAbo = topicSession.createSubscriber(globalTopicAbo);
+		topicSubscripberAbo.setMessageListener(this);
+		
 		localTopicFunciones = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_FUNCIONES);
 		localTopicRent = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_RENT);
 		localTopicReti = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_RETI);
+		localTopicAbo = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_ABO);
 		
 		topicSubscriber =  topicSession.createSubscriber(localTopicFunciones);
 		topicSubscriber.setMessageListener(this);
@@ -105,6 +117,9 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		
 		topicSubscripberReti = topicSession.createSubscriber(localTopicReti);
 		topicSubscripberReti.setMessageListener(this);
+		
+		topicSubscripberAbo = topicSession.createSubscriber(localTopicAbo);
+		topicSubscripberAbo.setMessageListener(this);
 		
 		topicConnection.setExceptionListener(this);
 	}
@@ -202,6 +217,9 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		waiting = false;
 	}
 	
+	public void addAbonoRemote(Abono abono) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException {
+		
+	}
 	
 	private void sendMessage(String payload, String status, Topic dest, String id, Integer id_compañia, Date fechaI, Date fechaF) throws JMSException, JsonGenerationException, JsonMappingException, IOException
 	{
@@ -233,6 +251,18 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 			ObjectMapper mapper = new ObjectMapper();
 			System.out.println(id);
 			ExchangeMsg msg = new ExchangeMsg("retirar.general." +APP, APP, payload, status, id);
+			TopicPublisher topicPublisher = topicSession.createPublisher(dest);
+			topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
+			TextMessage txtMsg = topicSession.createTextMessage();
+			txtMsg.setJMSType("TextMessage");
+			String envelope = mapper.writeValueAsString(msg);
+			System.out.println(envelope);
+			txtMsg.setText(envelope);
+			topicPublisher.publish(txtMsg);
+		} else if(status.equals(REQUEST_ABO) || status.equals(REQUEST_ANSWER_ABO)) {
+			ObjectMapper mapper = new ObjectMapper();
+			System.out.println(id);
+			ExchangeMsg msg = new ExchangeMsg("abono.general." +APP, APP, payload, status, id);
 			TopicPublisher topicPublisher = topicSession.createPublisher(dest);
 			topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
 			TextMessage txtMsg = topicSession.createTextMessage();
@@ -300,6 +330,10 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 				} else if(ex.getStatus().equals(REQUEST_ANSWER_RETI)) {
 					answerReti = ex.getPayload();
 					System.out.println("EXITO");
+				} else if(ex.getStatus().equals(REQUEST_ABO)) {
+					
+				} else if(ex.getStatus().equals(REQUEST_ANSWER_ABO)) {
+					
 				}
 			}
 			

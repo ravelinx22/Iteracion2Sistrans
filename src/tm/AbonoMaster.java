@@ -88,41 +88,6 @@ public class AbonoMaster extends FestivAndesMaster {
 	}
 	
 	/**
-	 * Agrega un abono a la base de datos
-	 * @param abono Abono a agregar
-	 * @throws Exception Si hay problema conectandose con la base de datos.
-	 */
-	public void addAbono(Abono abono) throws Exception {
-		DAOTablaAbonos daoAbonos = new DAOTablaAbonos();
-		try {
-			this.conn = darConexion();
-			comienzoTransaccion(this.conn);
-			
-			daoAbonos.setConnection(conn);
-			daoAbonos.addAbono(abono);
-			
-			finalTransaccion(this.conn);
-		} catch(SQLException e) {
-			this.conn.rollback();
-			e.printStackTrace();
-			throw e;
-		} catch(Exception e) {
-			this.conn.rollback();
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoAbonos.cerrarRecursos();
-				if(this.conn != null)
-					this.conn.close();
-			} catch(SQLException e) {
-				e.printStackTrace();
-				throw e;
-			}
-		}
-	}
-	
-	/**
 	 * Actualiza un abono de la base de datos.
 	 * @param abono Abono con los nuevos datos
 	 * @throws Exception Si hay problema conectandose con la base de datos.

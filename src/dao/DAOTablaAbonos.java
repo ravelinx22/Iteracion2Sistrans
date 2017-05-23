@@ -206,6 +206,9 @@ public class DAOTablaAbonos {
 				prepStmt2.executeQuery();
 			}
 		}
+		else {
+			throw new Exception("No se puede comprar abono");
+		}
 	}
 
 	/**
