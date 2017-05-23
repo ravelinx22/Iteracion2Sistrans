@@ -169,6 +169,8 @@ public class DAOTablaAbonos {
 		db.setConnection(this.conn);
 		DAOTablaLocalidades lc = new DAOTablaLocalidades();
 		lc.setConnection(this.conn);
+		DAOTablaFunciones func = new DAOTablaFunciones();
+		func.setConnection(this.conn);
 
 		int ultimaBoletaId = db.getLastId();
 
@@ -177,6 +179,9 @@ public class DAOTablaAbonos {
 		
 		if(sePuedeComprarAbono(abono.getLista_localidades(), abono.getLista_funciones())) {
 			for(int i = 0; i < abono.getLista_funciones().length; i++) {
+				if(func.darFuncion(abono.getLista_funciones()[i]) == null)
+					continue;
+				
 				int idSilla = lc.darSillaDisponible(abono.getLista_localidades()[i], abono.getLista_funciones()[i]);
 				db.addBoleta(new Boleta(++ultimaBoletaId, abono.getLista_funciones()[i], abono.getId_usuario(), idSilla, 0.0, true));
 			}
@@ -281,10 +286,15 @@ public class DAOTablaAbonos {
 	 */
 	public boolean sePuedeComprarAbono(Integer[] lista_localidades, Integer[] lista_funciones) throws SQLException, Exception {
 		DAOTablaLocalidades loc = new DAOTablaLocalidades();
+		DAOTablaFunciones func = new DAOTablaFunciones();
 		loc.setConnection(this.conn);
+		func.setConnection(this.conn);
 
 		boolean sePuede = false;
 		for(int i = 0; i < lista_funciones.length; i++) {
+			if(func.darFuncion(lista_funciones[i]) == null)
+				continue;
+			
 			loc.darSillaDisponible(lista_localidades[i], lista_funciones[i]);
 		}
 		sePuede = true;
