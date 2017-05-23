@@ -307,7 +307,8 @@ public class FestivAndesMaster {
 			daoAbonos.setConnection(conn);
 			// Mirar autocommit
 
-			daoAbonos.addAbono(abono);
+			//daoAbonos.addAbono(abono);
+			System.out.println("POSI POSI POSI " +abono);
 		} catch(SQLException e) {
 			this.conn.rollback();
 			e.printStackTrace();

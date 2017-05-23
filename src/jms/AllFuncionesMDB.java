@@ -196,6 +196,7 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 	
 	public void retirarRemote(int id_compañia) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
+		answerReti = "";
 		String id = APP+""+System.currentTimeMillis();
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
@@ -218,7 +219,29 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 	}
 	
 	public void addAbonoRemote(Abono abono) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException {
+		answerAbo = "";
+		String id = APP+""+System.currentTimeMillis();
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
 		
+		ObjectMapper mapper = new ObjectMapper();
+		String payload = mapper.writeValueAsString(abono);
+		
+		sendMessage(payload, REQUEST_ABO, globalTopicAbo, id, null, null, null);
+		boolean waiting = true;
+
+		int count = 0;
+		while(TIME_OUT != count){
+			TimeUnit.SECONDS.sleep(1);
+			count++;
+		}
+		if(count == TIME_OUT){
+			if(!this.answerAbo.equalsIgnoreCase("EXITO")){
+				waiting = false;
+				throw new NonReplyException("Time Out - No Reply");
+			}
+		}
+		waiting = false;
 	}
 	
 	private void sendMessage(String payload, String status, Topic dest, String id, Integer id_compañia, Date fechaI, Date fechaF) throws JMSException, JsonGenerationException, JsonMappingException, IOException
@@ -331,9 +354,14 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 					answerReti = ex.getPayload();
 					System.out.println("EXITO");
 				} else if(ex.getStatus().equals(REQUEST_ABO)) {
-					
+					FestivAndesDistributed dtm = FestivAndesDistributed.getInstance();
+					Abono abono = mapper.readValue(ex.getPayload(), Abono.class);
+					dtm.addAbonoLocal(abono);
+					Topic t = new RMQDestination("", "abono.test", ex.getRoutingKey(), "", false);
+					sendMessage("EXITO", REQUEST_ANSWER_ABO, t, id, null, null, null);
 				} else if(ex.getStatus().equals(REQUEST_ANSWER_ABO)) {
-					
+					answerAbo = ex.getPayload();
+					System.out.println("EXITO");
 				}
 			}
 			

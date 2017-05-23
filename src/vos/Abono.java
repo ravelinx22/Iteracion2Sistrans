@@ -191,4 +191,8 @@ public class Abono {
 		
 		return x;
 	}
+	
+	public String toString() {
+		return this.getId() +" " +this.getId_usuario() +" " +this.getId_festival() +" " +this.getLista_funciones() +" " +this.getLista_localidades();
+	}
 }
