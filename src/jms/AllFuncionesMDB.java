@@ -47,6 +47,9 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 	private final static String LOCAL_TOPIC_NAME_FUNCIONES = "java:global/RMQAllFuncionesLocal";
 	private final static String GLOBAL_TOPIC_NAME_RENT = "java:global/RMQTopicRentabilidad";
 	private final static String LOCAL_TOPIC_NAME_RENT = "java:global/RMQRentabilidadLocal";
+	private final static String GLOBAL_TOPIC_NAME_RETI = "java:global/RMQTopicRetirar";
+	private final static String LOCAL_TOPIC_NAME_RETI = "java:global/RMQRetirarLocal";
+	
 	
 	// REQUESTS CONSTANTS
 	
@@ -54,6 +57,8 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 	private final static String REQUEST_ANSWER_FUNCIONES = "REQUEST_ANSWER_FUNC";
 	private final static String REQUEST_RENT = "REQUEST_RENT";
 	private final static String REQUEST_ANSWER_RENT = "REQUEST_ANSWER_RENT";
+	private final static String REQUEST_RETI = "REQUEST_RETI";
+	private final static String REQUEST_ANSWER_RETI = "REQUEST_ANSWER_RETI";
 	
 	// TOPIC 
 	
@@ -61,12 +66,15 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 	private Topic localTopicFunciones;
 	private Topic globalTopicRent;
 	private Topic localTopicRent;
+	private Topic globalTopicReti;
+	private Topic localTopicReti;
 	
 	private TopicConnection topicConnection;
 	private TopicSession topicSession;
 	
 	private List<Funcion> answer = new ArrayList<Funcion>();
 	private List<Rentabilidad> answerRent = new ArrayList<Rentabilidad>();
+	private String answerReti = "";
 	
 	public AllFuncionesMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
 	{	
@@ -74,6 +82,7 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		globalTopicFunciones = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_FUNCIONES);
 		globalTopicRent = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_RENT);
+		globalTopicReti = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_RETI);
 		
 		TopicSubscriber topicSubscriber =  topicSession.createSubscriber(globalTopicFunciones);
 		topicSubscriber.setMessageListener(this);
@@ -81,14 +90,21 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		TopicSubscriber topicSubscripberRent = topicSession.createSubscriber(globalTopicRent);
 		topicSubscripberRent.setMessageListener(this);
 		
+		TopicSubscriber topicSubscripberReti = topicSession.createSubscriber(globalTopicReti);
+		topicSubscripberReti.setMessageListener(this);
+		
 		localTopicFunciones = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_FUNCIONES);
 		localTopicRent = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_RENT);
+		localTopicReti = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_RETI);
 		
 		topicSubscriber =  topicSession.createSubscriber(localTopicFunciones);
 		topicSubscriber.setMessageListener(this);
 		
 		topicSubscripberRent = topicSession.createSubscriber(localTopicRent);
 		topicSubscripberRent.setMessageListener(this);
+		
+		topicSubscripberReti = topicSession.createSubscriber(localTopicReti);
+		topicSubscripberReti.setMessageListener(this);
 		
 		topicConnection.setExceptionListener(this);
 	}
@@ -163,13 +179,36 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
         return res;
 	}
 	
+	public void retirarRemote(int id_compañia) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	{
+		String id = APP+""+System.currentTimeMillis();
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
+		
+		sendMessage(id_compañia+"", REQUEST_RETI, globalTopicReti, id, null, null, null);
+		boolean waiting = true;
+
+		int count = 0;
+		while(TIME_OUT != count){
+			TimeUnit.SECONDS.sleep(1);
+			count++;
+		}
+		if(count == TIME_OUT){
+			if(!this.answerReti.equalsIgnoreCase("EXITO")){
+				waiting = false;
+				throw new NonReplyException("Time Out - No Reply");
+			}
+		}
+		waiting = false;
+	}
+	
 	
 	private void sendMessage(String payload, String status, Topic dest, String id, Integer id_compañia, Date fechaI, Date fechaF) throws JMSException, JsonGenerationException, JsonMappingException, IOException
 	{
 		if(status.equals(REQUEST_FUNCIONES) || status.equals(REQUEST_ANSWER_FUNCIONES)) {
 			ObjectMapper mapper = new ObjectMapper();
 			System.out.println(id);
-			ExchangeMsg msg = new ExchangeMsg("funciones.general.app1", APP, payload, status, id);
+			ExchangeMsg msg = new ExchangeMsg("funciones.general."+APP, APP, payload, status, id);
 			TopicPublisher topicPublisher = topicSession.createPublisher(dest);
 			topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
 			TextMessage txtMsg = topicSession.createTextMessage();
@@ -181,7 +220,19 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		} else if(status.equals(REQUEST_RENT) || status.equals(REQUEST_ANSWER_RENT)) {
 			ObjectMapper mapper = new ObjectMapper();
 			System.out.println(id);
-			ExchangeMsg msg = new ExchangeMsg("rentabilidad.general.app1", APP, payload, status, id);
+			ExchangeMsg msg = new ExchangeMsg("rentabilidad.general."+APP, APP, payload, status, id);
+			TopicPublisher topicPublisher = topicSession.createPublisher(dest);
+			topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
+			TextMessage txtMsg = topicSession.createTextMessage();
+			txtMsg.setJMSType("TextMessage");
+			String envelope = mapper.writeValueAsString(msg);
+			System.out.println(envelope);
+			txtMsg.setText(envelope);
+			topicPublisher.publish(txtMsg);
+		} else if(status.equals(REQUEST_ANSWER_RETI) || status.equals(REQUEST_RETI)) {
+			ObjectMapper mapper = new ObjectMapper();
+			System.out.println(id);
+			ExchangeMsg msg = new ExchangeMsg("retirar.general." +APP, APP, payload, status, id);
 			TopicPublisher topicPublisher = topicSession.createPublisher(dest);
 			topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
 			TextMessage txtMsg = topicSession.createTextMessage();
@@ -240,6 +291,15 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 				} else if(ex.getStatus().equals(REQUEST_ANSWER_RENT)) {
 					ListaRentabilidad v = mapper.readValue(ex.getPayload(), ListaRentabilidad.class);
 					answerRent.addAll(v.getRentabilidad());
+				} else if(ex.getStatus().equals(REQUEST_RETI)) {
+					FestivAndesDistributed dtm = FestivAndesDistributed.getInstance();
+					int id_compañia = Integer.parseInt(ex.getPayload());
+					dtm.retirarCompañiaLocal(id_compañia);
+					Topic t = new RMQDestination("", "retirar.test", ex.getRoutingKey(), "", false);
+					sendMessage("EXITO", REQUEST_ANSWER_RETI, t, id, null, null, null);
+				} else if(ex.getStatus().equals(REQUEST_ANSWER_RETI)) {
+					answerReti = ex.getPayload();
+					System.out.println("EXITO");
 				}
 			}
 			
@@ -258,8 +318,7 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}	
 	}
 
 	@Override

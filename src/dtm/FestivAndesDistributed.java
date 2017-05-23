@@ -130,6 +130,6 @@ public class FestivAndesDistributed {
 	}
 	
 	public void retirarCompañiaRemote(int id_compañia) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException {
-		
+		allFuncionesMQ.retirarRemote(id_compañia);
 	}
 }

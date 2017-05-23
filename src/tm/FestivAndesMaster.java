@@ -192,7 +192,6 @@ public class FestivAndesMaster {
 			ListaRentabilidad resp = dtm.getRemoteRentabilidad(fechaInicio, fechaFinal, id_compañia);
 			System.out.println(resp.getRentabilidad().size());
 			remL.getRentabilidad().addAll(resp.getRentabilidad());
-			throw new NonReplyException("");
 		}
 		catch(NonReplyException e)
 		{
@@ -209,7 +208,6 @@ public class FestivAndesMaster {
 			this.conn = darConexion();
 			daoCompañia.setConnection(this.conn);
 			rentabilidad = daoCompañia.darRentabilidadCompañias(fechaInicio, fechaFinal, id_compañia);
-
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
@@ -234,6 +232,19 @@ public class FestivAndesMaster {
 	
 	// Retirar compañia
 	
+	public void retirarCompañia(int id_compañia) throws Exception {
+		
+		retirarCompañiaLocal(id_compañia);
+		try
+		{
+			dtm.retirarCompañiaRemote(id_compañia);
+		}
+		catch(NonReplyException e)
+		{
+			System.out.println(e.getMessage());
+		}
+	}
+	
 	/**
 	 * Retira la compañia del festival local
 	 * @param id_compañia Id de la compañia
@@ -248,7 +259,8 @@ public class FestivAndesMaster {
 			daoCompañia.setConnection(conn);	
 			// Quitar auto commit 
 			
-			daoCompañia.retirarCompañia(id_compañia);
+			//daoCompañia.retirarCompañia(id_compañia);
+			System.out.println("POSI POSI PO PO PO SE ELIMINO");
 		} catch(SQLException e) {
 			this.conn.rollback();
 			e.printStackTrace();

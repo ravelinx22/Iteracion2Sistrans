@@ -117,6 +117,30 @@ public class CompañiaServices extends FestivAndesServices {
 	}
 
 	// ITERACION 5
+	
+	@POST
+	@Path("/{id1}/retirar/{id2}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response retirarCompañia(@PathParam("id1") int idCompañia, @PathParam("id2") int idUsuario) {
+		CompañiaMaster tm = new CompañiaMaster(getPath());
+		UsuarioMaster us = new UsuarioMaster(getPath());
+		
+		HashMap<String, String> respuesta = new HashMap<>();
+
+		try {
+			if(!us.esAdministrador(idUsuario))
+				throw new Exception("El usuario no es administrador");
+			
+			tm.retirarCompañia(idCompañia);
+			respuesta.put("Resultado", "Realizada");
+		} catch (Exception e) {
+			respuesta.put("Resultado", "Rechazada");
+			respuesta.put("Error", doErrorMessage(e));
+			return Response.status(500).entity(respuesta).build();
+		}
+		return Response.status(200).entity(respuesta).build();
+	}
 
 	@GET
 	@Path("/{id}/rentabilidad/{fecha1}/{fecha2}")
@@ -132,29 +156,5 @@ public class CompañiaServices extends FestivAndesServices {
 		}
 		
 		return Response.status(200).entity(rentabilidad).build();
-	}
-	
-	@DELETE
-	@Path("/{idCompañia}/retirar/{idUsuario}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response retirarCompañia(@PathParam("idCompañia") int idCompañia, @PathParam("idUsuario") int idUsuario) {
-		CompañiaMaster tm = new CompañiaMaster(getPath());
-		UsuarioMaster us = new UsuarioMaster(getPath());
-		
-		HashMap<String, String> respuesta = new HashMap<>();
-
-		try {
-			if(us.esAdministrador(idUsuario))
-				throw new Exception("El usuario no es administrador");
-			
-			tm.retirarCompañiaLocal(idCompañia);
-			respuesta.put("Resultado", "Realizada");
-		} catch (Exception e) {
-			respuesta.put("Resultado", "Rechazada");
-			respuesta.put("Error", doErrorMessage(e));
-			return Response.status(500).entity(respuesta).build();
-		}
-		return Response.status(200).entity(respuesta).build();
 	}
 }
