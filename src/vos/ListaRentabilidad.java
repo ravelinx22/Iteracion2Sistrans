@@ -8,17 +8,17 @@ public class ListaRentabilidad {
 
 	@JsonProperty(value="rentabilidad")
 	
-	private List<Rentabilidad> rentabilidad;
+	private List<Object> rentabilidad;
 	
-	public ListaRentabilidad(@JsonProperty(value="rentabilidad") List<Rentabilidad> rentabilidad){
+	public ListaRentabilidad(@JsonProperty(value="rentabilidad") List<Object> rentabilidad){
 		this.rentabilidad = rentabilidad;
 	}
 
-	public List<Rentabilidad> getRentabilidad() {
+	public List<Object> getRentabilidad() {
 		return rentabilidad;
 	}
 
-	public void setRentabilidad(List<Rentabilidad> rentabilidad) {
+	public void setRentabilidad(List<Object> rentabilidad) {
 		this.rentabilidad = rentabilidad;
 	}
 }

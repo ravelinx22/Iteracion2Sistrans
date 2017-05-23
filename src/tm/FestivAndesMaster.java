@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import dao.DAOTablaAbonos;
@@ -155,9 +156,9 @@ public class FestivAndesMaster {
 	}
 
 	public ListaFunciones darFuncionesLocal() throws Exception {
-		ArrayList<Funcion> funciones;
+		List funciones;
 		DAOTablaFunciones daoFunciones = new DAOTablaFunciones();
-		try 
+		try
 		{
 			this.conn = darConexion();
 			daoFunciones.setConnection(this.conn);
@@ -307,8 +308,7 @@ public class FestivAndesMaster {
 			daoAbonos.setConnection(conn);
 			// Mirar autocommit
 
-			//daoAbonos.addAbono(abono);
-			System.out.println("POSI POSI POSI " +abono);
+			daoAbonos.addAbono(abono);
 		} catch(SQLException e) {
 			this.conn.rollback();
 			e.printStackTrace();

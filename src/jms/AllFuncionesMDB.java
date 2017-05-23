@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,9 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import com.rabbitmq.jms.admin.RMQDestination;
+
+import app3.ListaFuncion3;
+import app3.ListaRentabilidad3;
 import dtm.FestivAndesDistributed;
 import excVos.ExchangeMsg;
 import vos.Abono;
@@ -39,7 +43,7 @@ import vos.Rentabilidad;
 
 public class AllFuncionesMDB implements MessageListener, ExceptionListener 
 {
-	public final static int TIME_OUT = 60;
+	public final static int TIME_OUT = 5;
 	private final static String APP = "app1";
 	
 	// TOPICS CONSTANTS
@@ -78,8 +82,8 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 	private TopicConnection topicConnection;
 	private TopicSession topicSession;
 	
-	private List<Funcion> answer = new ArrayList<Funcion>();
-	private List<Rentabilidad> answerRent = new ArrayList<Rentabilidad>();
+	private List<Object> answer = new ArrayList<Object>();
+	private List<Object> answerRent = new ArrayList<Object>();
 	private String answerReti = "";
 	private String answerAbo = "";
 	
@@ -91,6 +95,8 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		globalTopicRent = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_RENT);
 		globalTopicReti = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_RETI);
 		globalTopicAbo = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_ABO);
+		
+		// Crear subscripber global
 		
 		TopicSubscriber topicSubscriber =  topicSession.createSubscriber(globalTopicFunciones);
 		topicSubscriber.setMessageListener(this);
@@ -104,10 +110,14 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		TopicSubscriber topicSubscripberAbo = topicSession.createSubscriber(globalTopicAbo);
 		topicSubscripberAbo.setMessageListener(this);
 		
+		// Buscar context
+		
 		localTopicFunciones = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_FUNCIONES);
 		localTopicRent = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_RENT);
 		localTopicReti = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_RETI);
 		localTopicAbo = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_ABO);
+		
+		// Crear subscriber local
 		
 		topicSubscriber =  topicSession.createSubscriber(localTopicFunciones);
 		topicSubscriber.setMessageListener(this);
@@ -120,7 +130,7 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		
 		topicSubscripberAbo = topicSession.createSubscriber(localTopicAbo);
 		topicSubscripberAbo.setMessageListener(this);
-		
+	
 		topicConnection.setExceptionListener(this);
 	}
 	
@@ -171,7 +181,14 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
 		
-		String dato = fechaI.toString()+";;;"+fechaF.toString()+";;;"+idCompañia;
+		 // TODO: ARREGLO
+		
+		SimpleDateFormat newFormat = new SimpleDateFormat("dd/MM/yyyy");
+		String fechaIS = newFormat.format(fechaI);
+		
+		String fechaFS = newFormat.format(fechaF);
+		
+		String dato = idCompañia+";;;"+fechaIS+";;;"+fechaFS;
 		sendMessage(dato, REQUEST_RENT, globalTopicRent, id, idCompañia, fechaI, fechaF);
 		boolean waiting = true;
 
@@ -322,28 +339,52 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER_FUNCIONES))
 				{
-					ListaFunciones v = mapper.readValue(ex.getPayload(), ListaFunciones.class);
-					answer.addAll(v.getFunciones());
+					ListaFuncion3 v = mapper.readValue(ex.getPayload(), ListaFuncion3.class);
+					answer.addAll(v.getReportes());
 				} else if(ex.getStatus().equals(REQUEST_RENT)) {
-					FestivAndesDistributed dtm = FestivAndesDistributed.getInstance();
-					String[] datos = ex.getPayload().split(";;;");
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-					
-					java.util.Date parsed1 = format.parse(datos[0]);
-					Date fechaI = new Date(parsed1.getTime());
-					
-					java.util.Date parsed2 = format.parse(datos[1]);
-					Date fechaF = new Date(parsed2.getTime());
-					
-					Integer idCompañia = Integer.parseInt(datos[2]);
-					
-					ListaRentabilidad rent = dtm.getLocalRentabilidad(fechaI, fechaF, idCompañia);
-					String payload = mapper.writeValueAsString(rent);
-					Topic t = new RMQDestination("", "rentabilidad.test", ex.getRoutingKey(), "", false);
-					sendMessage(payload, REQUEST_ANSWER_RENT, t, id, null, null, null);			
+					if(ex.getSender().equals(3)) {
+						FestivAndesDistributed dtm = FestivAndesDistributed.getInstance();
+						String[] datos = ex.getPayload().split(";;;");
+						SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+						
+						java.util.Date parsed1 = format.parse(datos[0]);
+						Date fechaI = new Date(parsed1.getTime());
+						
+						java.util.Date parsed2 = format.parse(datos[1]);
+						Date fechaF = new Date(parsed2.getTime());
+						
+						Integer idCompañia = Integer.parseInt(datos[2]);
+						
+						ListaRentabilidad rent = dtm.getLocalRentabilidad(fechaI, fechaF, idCompañia);
+						String payload = mapper.writeValueAsString(rent);
+						Topic t = new RMQDestination("", "rentabilidad.test", ex.getRoutingKey(), "", false);
+						sendMessage(payload, REQUEST_ANSWER_RENT, t, id, null, null, null);	
+					} else {
+						FestivAndesDistributed dtm = FestivAndesDistributed.getInstance();
+						String[] datos = ex.getPayload().split(";;;");
+						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+						
+						java.util.Date parsed1 = format.parse(datos[0]);
+						Date fechaI = new Date(parsed1.getTime());
+						
+						java.util.Date parsed2 = format.parse(datos[1]);
+						Date fechaF = new Date(parsed2.getTime());
+						
+						Integer idCompañia = Integer.parseInt(datos[2]);
+						
+						ListaRentabilidad rent = dtm.getLocalRentabilidad(fechaI, fechaF, idCompañia);
+						String payload = mapper.writeValueAsString(rent);
+						Topic t = new RMQDestination("", "rentabilidad.test", ex.getRoutingKey(), "", false);
+						sendMessage(payload, REQUEST_ANSWER_RENT, t, id, null, null, null);	
+					}
 				} else if(ex.getStatus().equals(REQUEST_ANSWER_RENT)) {
-					ListaRentabilidad v = mapper.readValue(ex.getPayload(), ListaRentabilidad.class);
-					answerRent.addAll(v.getRentabilidad());
+					if(ex.getSender().equals(3)) {
+						ListaRentabilidad3 v = mapper.readValue(ex.getPayload(), ListaRentabilidad3.class);
+						answerRent.addAll(v.getRentabilidad());
+					} else {
+						ListaRentabilidad v = mapper.readValue(ex.getPayload(), ListaRentabilidad.class);
+						answerRent.addAll(v.getRentabilidad());
+					}
 				} else if(ex.getStatus().equals(REQUEST_RETI)) {
 					FestivAndesDistributed dtm = FestivAndesDistributed.getInstance();
 					int id_compañia = Integer.parseInt(ex.getPayload());
@@ -362,6 +403,13 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 				} else if(ex.getStatus().equals(REQUEST_ANSWER_ABO)) {
 					answerAbo = ex.getPayload();
 					System.out.println("EXITO");
+				} else if(ex.getStatus().equals("REQUEST")) {
+					System.out.println("BUENAS");
+					FestivAndesDistributed dtm = FestivAndesDistributed.getInstance();
+					Topic t = new RMQDestination("", "funciones.test", ex.getRoutingKey(), "", false);
+					sendMessage("", "REQUEST_ANSWER", t, id, null, null, null);
+				} else if(ex.getStatus().equals("REQUEST_ANSWER")) {
+					System.out.println("POSI " +ex.getPayload());
 				}
 			}
 			

@@ -10,13 +10,13 @@ public class ListaFunciones {
 	 * List con los funciones
 	 */
 	@JsonProperty(value="funciones")
-	private List<Funcion> funciones;
+	private List<Object> funciones;
 	
 	/**
 	 * Constructor de la clase ListaFunciones
 	 * @param funciones - funciones para agregar al arreglo de la clase
 	 */
-	public ListaFunciones( @JsonProperty(value="funciones")List<Funcion> funciones){
+	public ListaFunciones( @JsonProperty(value="funciones")List<Object> funciones){
 		this.funciones = funciones;
 	}
 
@@ -24,7 +24,7 @@ public class ListaFunciones {
 	 * Método que retorna la lista de funciones
 	 * @return  List - List con los funciones
 	 */
-	public List<Funcion> getFunciones() {
+	public List<Object> getFunciones() {
 		return funciones;
 	}
 
@@ -32,7 +32,7 @@ public class ListaFunciones {
 	 * Método que asigna la lista de funciones que entra como parametro
 	 * @param  funciones - List con los funciones ha agregar
 	 */
-	public void setFuncione(List<Funcion> funciones) {
+	public void setFuncione(List<Object> funciones) {
 		this.funciones = funciones;
 	}
 	
