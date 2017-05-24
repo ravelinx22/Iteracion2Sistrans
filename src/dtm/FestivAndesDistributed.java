@@ -13,6 +13,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import jms.AllFuncionesMDB;
 import jms.NonReplyException;
+import jms.RentabilidadMDB;
 import tm.FestivAndesMaster;
 import tm.FuncionMaster;
 import vos.Abono;
@@ -32,6 +33,7 @@ public class FestivAndesDistributed {
 	private TopicConnectionFactory factory;
 	
 	private AllFuncionesMDB allFuncionesMQ;
+	private RentabilidadMDB allRentabilidadMQ;
 
 	
 	private static String path;
@@ -42,12 +44,15 @@ public class FestivAndesDistributed {
 		InitialContext ctx = new InitialContext();
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
 		allFuncionesMQ = new AllFuncionesMDB(factory, ctx);		
-		allFuncionesMQ.start();		
+		allRentabilidadMQ = new RentabilidadMDB(factory, ctx);
+		
+		allRentabilidadMQ.start();
 	}
 	
 	public void stop() throws JMSException
 	{
 		allFuncionesMQ.close();
+		allRentabilidadMQ.close();
 	}
 	
 	/**
@@ -121,7 +126,8 @@ public class FestivAndesDistributed {
 	
 	public ListaRentabilidad getRemoteRentabilidad(Date fechaInicio, Date fechaFinal, int id_compañia) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
-		return allFuncionesMQ.getRemoteRentabilidad(fechaInicio, fechaFinal, id_compañia);
+		//allFuncionesMQ.close();
+		return allRentabilidadMQ.getRemoteRentabilidad(fechaInicio, fechaFinal, id_compañia);
 	}
 	
 	// Retirar compañia
@@ -130,17 +136,5 @@ public class FestivAndesDistributed {
 		tm.retirarCompañiaLocal(id_compañia);
 	}
 	
-	public void retirarCompañiaRemote(int id_compañia) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException {
-		allFuncionesMQ.retirarRemote(id_compañia);
-	}
 	
-	// Agregar abono
-	
-	public void addAbonoLocal(Abono abono) throws Exception {
-		tm.addAbonoLocal(abono);
-	}
-	
-	public void addAbonoRemote(Abono abono)   throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException {
-		allFuncionesMQ.addAbonoRemote(abono);
-	}
 }

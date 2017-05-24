@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.DeliveryMode;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
@@ -24,11 +25,14 @@ import javax.jms.TopicSubscriber;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.xml.bind.DatatypeConverter;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+
 import com.rabbitmq.jms.admin.RMQDestination;
+
 import app3.ListaFuncion3;
 import app3.ListaRentabilidad3;
 import dtm.FestivAndesDistributed;
@@ -37,86 +41,74 @@ import vos.Abono;
 import vos.ListaFunciones;
 import vos.ListaRentabilidad;
 
-public class AllFuncionesMDB implements MessageListener, ExceptionListener 
-{
+public class AbonoMDB implements MessageListener, ExceptionListener  {
 	public final static int TIME_OUT = 5;
 	private final static String APP = "app1";
-	
-	// TOPICS CONSTANTS
-	
-	private final static String GLOBAL_TOPIC_NAME_FUNCIONES = "java:global/RMQTopicAllFunciones";
-	private final static String LOCAL_TOPIC_NAME_FUNCIONES = "java:global/RMQAllFuncionesLocal";
-	
-	// REQUESTS CONSTANTS
-	
-	private final static String REQUEST_FUNCIONES = "REQUEST_FUNC";
-	private final static String REQUEST_ANSWER_FUNCIONES = "REQUEST_ANSWER_FUNC";
 
-	
+	// TOPICS CONSTANTS
+
+	private final static String GLOBAL_TOPIC_NAME_ABO = "java:global/RMQTopicAbono";
+	private final static String LOCAL_TOPIC_NAME_ABO = "java:global/RMQRAbonoLocal";
+
+	// REQUESTS CONSTANTS
+
+	private final static String REQUEST_ABO = "REQUEST_ABO";
+	private final static String REQUEST_ANSWER_ABO = "REQUEST_ANSWER_ABO";
+
 	// TOPIC 
-	
-	private Topic globalTopicFunciones;
-	private Topic localTopicFunciones;
-	private Topic globalTopicRent;
-	private Topic localTopicRent;
-	private Topic globalTopicReti;
-	private Topic localTopicReti;
+
 	private Topic globalTopicAbo;
 	private Topic localTopicAbo;
-	
+
 	private TopicConnection topicConnection;
 	private TopicSession topicSession;
-	
-	private List<Object> answer = new ArrayList<Object>();
-	private List<Object> answerRent = new ArrayList<Object>();
-	private String answerReti = "";
+
 	private String answerAbo = "";
-	
-	public AllFuncionesMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
+
+	public AbonoMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
 	{	
-		String x = "BUENAS BUENAS POSI POSI";
-		System.out.println(x);
-		
 		topicConnection = factory.createTopicConnection();
 		topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-		globalTopicFunciones = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_FUNCIONES);
-		
+		globalTopicAbo = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME_ABO);
+
 		// Crear subscripber global
-		
-		TopicSubscriber topicSubscriber =  topicSession.createSubscriber(globalTopicFunciones);
-		topicSubscriber.setMessageListener(this);
-	
+
+		TopicSubscriber topicSubscripberAbo = topicSession.createSubscriber(globalTopicAbo);
+		topicSubscripberAbo.setMessageListener(this);
+
 		// Buscar context
-		
-		localTopicFunciones = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_FUNCIONES);
-		
+
+		localTopicAbo = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME_ABO);
+
 		// Crear subscriber local
-		
-		topicSubscriber =  topicSession.createSubscriber(localTopicFunciones);
-		topicSubscriber.setMessageListener(this);
+
+		topicSubscripberAbo = topicSession.createSubscriber(localTopicAbo);
+		topicSubscripberAbo.setMessageListener(this);
 
 		topicConnection.setExceptionListener(this);
 	}
-	
+
 	public void start() throws JMSException
 	{
 		topicConnection.start();
 	}
-	
+
 	public void close() throws JMSException
 	{
 		topicSession.close();
 		topicConnection.close();
 	}
-	
-	public ListaFunciones getRemoteFunciones() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
-	{
-		answer.clear();
+
+	public void addAbonoRemote(Abono abono) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException {
+		answerAbo = "";
 		String id = APP+""+System.currentTimeMillis();
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
-		
-		sendMessage("", REQUEST_FUNCIONES, globalTopicFunciones, id, null, null, null);
+
+		ObjectMapper mapper = new ObjectMapper();
+		String payload = mapper.writeValueAsString(abono);
+
+		sendMessage(payload, REQUEST_ABO, globalTopicAbo, id, null, null, null);
 		boolean waiting = true;
 
 		int count = 0;
@@ -125,25 +117,20 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 			count++;
 		}
 		if(count == TIME_OUT){
-			if(this.answer.isEmpty()){
+			if(!this.answerAbo.equalsIgnoreCase("EXITO")){
 				waiting = false;
 				throw new NonReplyException("Time Out - No Reply");
 			}
 		}
 		waiting = false;
-		
-		if(answer.isEmpty())
-			throw new NonReplyException("Non Response");
-		ListaFunciones res = new ListaFunciones(answer);
-        return res;
 	}
-	
-	
+
 	private void sendMessage(String payload, String status, Topic dest, String id, Integer id_compañia, Date fechaI, Date fechaF) throws JMSException, JsonGenerationException, JsonMappingException, IOException
 	{
+		if(status.equals(REQUEST_ABO) || status.equals(REQUEST_ANSWER_ABO)) {
 			ObjectMapper mapper = new ObjectMapper();
 			System.out.println(id);
-			ExchangeMsg msg = new ExchangeMsg("funcionesgeneral", APP, payload, status, id);
+			ExchangeMsg msg = new ExchangeMsg("abono.general." +APP, APP, payload, status, id);
 			TopicPublisher topicPublisher = topicSession.createPublisher(dest);
 			topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
 			TextMessage txtMsg = topicSession.createTextMessage();
@@ -152,18 +139,16 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 			System.out.println(envelope);
 			txtMsg.setText(envelope);
 			topicPublisher.publish(txtMsg);
-		 
+		}
 	}
-	
+
 	@Override
 	public void onMessage(Message message) 
 	{
 		TextMessage txt = (TextMessage) message;
 		try 
-		{
-			System.out.println("ALLFUNCIONES POSI POSI BUENAS");
-
-			String body = txt.getText();
+	{
+						String body = txt.getText();
 			System.out.println(body);
 			ObjectMapper mapper = new ObjectMapper();
 			ExchangeMsg ex = mapper.readValue(body, ExchangeMsg.class);
@@ -172,21 +157,18 @@ public class AllFuncionesMDB implements MessageListener, ExceptionListener
 			System.out.println(ex.getStatus());
 			if(!ex.getSender().equals(APP))
 			{
-				if(ex.getStatus().equals(REQUEST_FUNCIONES))
-				{
+				if(ex.getStatus().equals(REQUEST_ABO)) {
 					FestivAndesDistributed dtm = FestivAndesDistributed.getInstance();
-					ListaFunciones funciones = dtm.getLocalFunciones();
-					String payload = mapper.writeValueAsString(funciones);
-					Topic t = new RMQDestination("asdñflkajsdflñkjsdalkjasf", "funciones.test", ex.getRoutingKey(), "", false);
-					sendMessage(payload, REQUEST_ANSWER_FUNCIONES, t, id, null, null, null);
+					Abono abono = mapper.readValue(ex.getPayload(), Abono.class);
+					//dtm.addAbonoLocal(abono);
+					Topic t = new RMQDestination("", "abono.test", ex.getRoutingKey(), "", false);
+					sendMessage("EXITO", REQUEST_ANSWER_ABO, t, id, null, null, null);
+				} else if(ex.getStatus().equals(REQUEST_ANSWER_ABO)) {
+					answerAbo = ex.getPayload();
+					System.out.println("EXITO");
 				}
-				else if(ex.getStatus().equals(REQUEST_ANSWER_FUNCIONES))
-				{
-					ListaFuncion3 v = mapper.readValue(ex.getPayload(), ListaFuncion3.class);
-					answer.addAll(v.getReportes());
-				} 
 			}
-			
+
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

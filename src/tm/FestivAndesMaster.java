@@ -239,7 +239,8 @@ public class FestivAndesMaster {
 		retirarCompañiaLocal(id_compañia);
 		try
 		{
-			dtm.retirarCompañiaRemote(id_compañia);
+			//dtm.retirarCompañiaRemote(id_compañia);
+			throw new NonReplyException("");
 		}
 		catch(NonReplyException e)
 		{
@@ -287,7 +288,7 @@ public class FestivAndesMaster {
 	public void addAbono(Abono abono) throws Exception {
 		try
 		{
-			dtm.addAbonoRemote(abono);
+			//dtm.addAbonoRemote(abono);
 			addAbonoLocal(abono);
 		}
 		catch(NonReplyException e)
